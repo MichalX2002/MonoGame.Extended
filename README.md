@@ -1,5 +1,9 @@
 ![MonoGame.Extended Logo](https://raw.githubusercontent.com/craftworkgames/MonoGame.Extended/master/Logos/logo-banner-800.png)
 
+# Notice
+This is a fork, check out the original repository; https://github.com/craftworkgames/MonoGame.Extended
+(This "README.md" has been edited.)
+
 # MonoGame.Extended
 It makes MonoGame more awesome.
 
@@ -23,9 +27,9 @@ MonoGame.Extended is an open source collection of NuGet packages for [MonoGame](
  - **MonoGame.Extended.Tiled** - load and render maps created with the popular [Tiled Map Editor](http://www.mapeditor.org/).
  - **MonoGame.Extended.Tweening (experimental)** - tween based animations.
 
-## Patreon Supporters
+## Patreon Supporters (Patreon for original MonoGame.Extended by craftworkgames)
 
-Thanks to all those that support the project on Patreon!  Running an open source project can be done on a shoe string budget, but it's certainly not free. A little funding goes a long way. It keeps the build server up and running and let's me devote more of my time to the project. Even just a few supporters really helps.
+Thanks to all those that support the project on Patreon! Running an open source project can be done on a shoe string budget, but it's certainly not free. A little funding goes a long way. It keeps the build server up and running and let's me devote more of my time to the project. Even just a few supporters really helps.
 
 **What happens to MonoGame.Extended if we don't get the funding?** Never fear. The project won't die. The code will always be safely open sourced on github.
 
@@ -56,30 +60,16 @@ Please keep in mind that the project is still evolving. Some breaking API change
 
 Our forum is part of the [MonoGame community](http://community.monogame.net/category/extended). Please ask any questions or post about problems or bugs that you have found there. Let us know if you're making a game with MonoGame.Extended!
 
-## Documentation
-
-We've got several feature demos in the repository and we're working on a new [documentation site](http://craftworkgames.github.io/MonoGame.Extended/). You can also pop into [the forums](http://community.monogame.net/c/extended), check out [my blog](http://dylanwilson.net/), ask a question on [gamedev stack overflow](http://gamedev.stackexchange.com/questions/tagged/monogame-extended) or use our [live chat](https://gitter.im/craftworkgames/MonoGame.Extended).
-
-## Contributing
-
-If you would like to contribute start with one of the following:
-
- - Please post your thoughts on our [forum](http://community.monogame.net/category/extended).
- - Join the discussion on one of the [issues](https://github.com/craftworkgames/MonoGame.Extended/issues). We often use github issues to discuss new features as well.
- - Talk about it on your [blog](http://dylanwilson.net/) or [twitter](https://twitter.com/craftworkgames).
- - and of course, you can fork the project.
- 
 ## Design goals
  - The primary goal is to make it easier to *make games*.
  - Choose the features you like and the rest stays out of your way.
  - A clean and consistent API familiar to MonoGame developers.
  - It's *not* a game engine, but extends the framework.
- - Follows [C# coding guidelines](https://msdn.microsoft.com/en-us/library/ms229002(v=vs.110).aspx).
 
 ## License
 
 MonoGame.Extended is released under the [The MIT License (MIT)](https://github.com/craftworkgames/MonoGame.Extended/blob/master/LICENSE).
- 
+
 ## Special Thanks
 
  - Matthew-Davey for letting us use the [Mercury Particle Engine](https://github.com/Matthew-Davey/mercury-particle-engine).
