@@ -44,6 +44,11 @@ namespace MonoGame.Extended.Particles
         public int SizeInBytes => Particle.SizeInBytes*(Size + 1);
         // total size of active particles
         public int ActiveSizeInBytes => Particle.SizeInBytes*Count;
+        
+        public void Clear()
+        {
+            Reclaim(Count);
+        }
 
         public void Dispose()
         {

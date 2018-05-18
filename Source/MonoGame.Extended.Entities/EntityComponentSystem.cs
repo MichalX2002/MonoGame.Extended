@@ -101,9 +101,7 @@ namespace MonoGame.Extended.Entities
 
         private int RegisterComponents(List<TypeInfo> componentTypeInfos)
         {
-            List<TypeInfo> registeredComponentTypeInfos;
-            List<Tuple<TypeInfo, EntityComponentPoolAttribute>> registeredPooledComponentTypeInfos;
-            GetRegisteredComponents(componentTypeInfos, out registeredComponentTypeInfos, out registeredPooledComponentTypeInfos);
+            GetRegisteredComponents(componentTypeInfos, out List<TypeInfo> registeredComponentTypeInfos, out List<Tuple<TypeInfo, EntityComponentPoolAttribute>> registeredPooledComponentTypeInfos);
 
             EntityManager.CreateComponentTypesFrom(registeredComponentTypeInfos);
             EntityManager.CreateComponentPoolsFrom(registeredPooledComponentTypeInfos);

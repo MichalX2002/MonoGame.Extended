@@ -143,8 +143,7 @@ namespace MonoGame.Extended.Graphics.Effects
                     _projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, -1);
                 }
 
-                Matrix worldViewProjection;
-                Matrix.Multiply(ref _world, ref _view, out worldViewProjection);
+                Matrix.Multiply(ref _world, ref _view, out Matrix worldViewProjection);
                 Matrix.Multiply(ref worldViewProjection, ref _projection, out worldViewProjection);
                 _matrixParameter.SetValue(worldViewProjection);
 

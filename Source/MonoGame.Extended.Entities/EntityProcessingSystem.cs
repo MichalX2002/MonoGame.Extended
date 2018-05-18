@@ -112,8 +112,7 @@ namespace MonoGame.Extended.Entities
 
             entity.SystemBits[Index] = false;
 
-            int activeEntityIndex;
-            if (!_activeEntitiesLookup.TryGetValue(entity, out activeEntityIndex))
+            if (!_activeEntitiesLookup.TryGetValue(entity, out int activeEntityIndex))
                 return;
             _activeEntitiesLookup.Remove(entity);
 

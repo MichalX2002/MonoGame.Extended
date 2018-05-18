@@ -53,8 +53,7 @@ namespace MonoGame.Extended.Gui.Serialization
                 var propertyName = keyValuePair.Key;
                 var rawValue = keyValuePair.Value;
 
-                PropertyInfo propertyInfo;
-                var value = properties.TryGetValue(propertyName, out propertyInfo)
+                var value = properties.TryGetValue(propertyName, out PropertyInfo propertyInfo)
                     ? DeserializeValueAs(serializer, rawValue, propertyInfo.PropertyType)
                     : DeserializeValueAs(serializer, rawValue, typeof(object));
 

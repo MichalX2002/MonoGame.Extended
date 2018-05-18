@@ -272,8 +272,7 @@ namespace MonoGame.Extended.Graphics
                 var advance = fontRegion.XAdvance + bitmapFont.LetterSpacing;
                 if (BitmapFont.UseKernings && lastGlyph != null)
                 {
-                    int amount;
-                    if (lastGlyph.Kernings.TryGetValue(character, out amount))
+                    if (lastGlyph.Kernings.TryGetValue(character, out int amount))
                     {
                         advance += amount;
                     }
@@ -320,8 +319,7 @@ namespace MonoGame.Extended.Graphics
             float rotation = 0f, Vector2? origin = null, Vector2? scale = null,
             FlipFlags flags = FlipFlags.None, float depth = 0f)
         {
-            Matrix2D transformMatrix;
-            Matrix2D.CreateFrom(position, rotation, scale, origin, out transformMatrix);
+            Matrix2D.CreateFrom(position, rotation, scale, origin, out Matrix2D transformMatrix);
             DrawString(bitmapFont, text, ref transformMatrix, color, flags, depth);
         }
 
@@ -398,8 +396,7 @@ namespace MonoGame.Extended.Graphics
             float rotation = 0f, Vector2? origin = null, Vector2? scale = null,
             FlipFlags flags = FlipFlags.None, float depth = 0f)
         {
-            Matrix2D matrix;
-            Matrix2D.CreateFrom(position, rotation, scale, origin, out matrix);
+            Matrix2D.CreateFrom(position, rotation, scale, origin, out Matrix2D matrix);
             DrawString(bitmapFont, text, ref matrix, color, flags, depth);
         }
 

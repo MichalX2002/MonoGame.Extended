@@ -45,7 +45,7 @@ namespace MonoGame.Extended.TextureAtlases
         {
             Texture = texture ?? throw new ArgumentNullException(nameof(texture));
             Name = name;
-            Bounds = new Rectangle(X, Y, Width, Height);
+            Bounds = new Rectangle(x, y, width, height);
         }
 
         public override string ToString()

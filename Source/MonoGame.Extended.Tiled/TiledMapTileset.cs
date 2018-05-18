@@ -81,8 +81,7 @@ namespace MonoGame.Extended.Tiled
 
         public TiledMapTilesetAnimatedTile GetAnimatedTilesetTileByLocalTileIdentifier(int localTileIdentifier)
         {
-            TiledMapTilesetAnimatedTile animatedTile;
-            _animatedTilesByLocalTileIdentifier.TryGetValue(localTileIdentifier, out animatedTile);
+            _animatedTilesByLocalTileIdentifier.TryGetValue(localTileIdentifier, out TiledMapTilesetAnimatedTile animatedTile);
             return animatedTile;
         }
 

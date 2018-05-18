@@ -254,9 +254,8 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
                 // check if we already have built a list of models for this tileset
                 TiledMapLayerModelContent model;
-                List<TiledMapLayerModelContent> models;
 
-                if (modelsByTileset.TryGetValue(tileset, out models))
+                if (modelsByTileset.TryGetValue(tileset, out List<TiledMapLayerModelContent> models))
                 {
                     // if we found the list of models for this tileset, try to use the last model added
                     // (assuming the the ones before the last are all full)

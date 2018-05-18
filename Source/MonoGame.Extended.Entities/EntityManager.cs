@@ -106,8 +106,7 @@ namespace MonoGame.Extended.Entities
             var entity = _pool.New();
             MarkEntityToBeAdded(entity);
 
-            EntityTemplate entityTemplate;
-            _entityTemplatesByName.TryGetValue(name, out entityTemplate);
+            _entityTemplatesByName.TryGetValue(name, out EntityTemplate entityTemplate);
             if (entityTemplate == null)
                 throw new InvalidOperationException($"EntityTemplate '{name}' is not registered.");
 
@@ -129,8 +128,7 @@ namespace MonoGame.Extended.Entities
             if (string.IsNullOrEmpty(name))
                 return null;
 
-            Entity entity;
-            _entitiesByName.TryGetValue(name, out entity);
+            _entitiesByName.TryGetValue(name, out Entity entity);
             if (entity != null)
                 return entity;
             RemoveEntityName(name);
@@ -158,8 +156,7 @@ namespace MonoGame.Extended.Entities
             if (string.IsNullOrEmpty(groupName))
                 return null;
 
-            Bag<Entity> bag;
-            _entitiesByGroup.TryGetValue(groupName, out bag);
+            _entitiesByGroup.TryGetValue(groupName, out Bag<Entity> bag);
             return bag;
         }
 
@@ -174,8 +171,7 @@ namespace MonoGame.Extended.Entities
 
             entity._group = group;
 
-            Bag<Entity> entities;
-            if (!_entitiesByGroup.TryGetValue(group, out entities))
+            if (!_entitiesByGroup.TryGetValue(group, out Bag<Entity> entities))
             {
                 entities = new Bag<Entity>();
                 _entitiesByGroup.Add(group, entities);
@@ -189,8 +185,7 @@ namespace MonoGame.Extended.Entities
             if (string.IsNullOrEmpty(entity._group))
                 return;
 
-            Bag<Entity> entities;
-            if (_entitiesByGroup.TryGetValue(entity._group, out entities))
+            if (_entitiesByGroup.TryGetValue(entity._group, out Bag<Entity> entities))
                 entities.Remove(entity);
         }
 
@@ -305,8 +300,7 @@ namespace MonoGame.Extended.Entities
 
             EntityComponent component;
 
-            IComponentPool componentPool;
-            if (_componentPoolsByComponentTypeIndex.TryGetValue(componentType.Index, out componentPool))
+            if (_componentPoolsByComponentTypeIndex.TryGetValue(componentType.Index, out IComponentPool componentPool))
             {
                 component = componentPool.New();
                 if (component == null)
@@ -314,7 +308,7 @@ namespace MonoGame.Extended.Entities
             }
             else
             {
-                component =  _dependencyResolver.Resolve<EntityComponent>(componentType.Type);
+                component = _dependencyResolver.Resolve<EntityComponent>(componentType.Type);
             }
 
             component.Entity = entity;
@@ -376,8 +370,7 @@ namespace MonoGame.Extended.Entities
 
                 Debug.Assert(components != null);
 
-                EntityComponent component;
-                if (!components.TryGetValue(entity, out component))
+                if (!components.TryGetValue(entity, out EntityComponent component))
                     continue;
 
                 entity.ComponentBits[componentType.Index] = false;
@@ -403,8 +396,7 @@ namespace MonoGame.Extended.Entities
                 if (components == null)
                     continue;
 
-                EntityComponent component;
-                if (!components.TryGetValue(entity, out component))
+                if (!components.TryGetValue(entity, out EntityComponent component))
                     continue;
 
                 components.Remove(entity);
@@ -423,9 +415,8 @@ namespace MonoGame.Extended.Entities
 
         internal EntityComponentType GetComponentTypeFrom(Type type)
         {
-            EntityComponentType result;
 
-            if (!_componentTypes.TryGetValue(type, out result))
+            if (!_componentTypes.TryGetValue(type, out EntityComponentType result))
                 throw new InvalidOperationException($"{type.Name} is not marked with the EntityComponent attribute");
 
             return result;

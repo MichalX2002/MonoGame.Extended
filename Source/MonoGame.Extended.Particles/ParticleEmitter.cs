@@ -38,17 +38,6 @@ namespace MonoGame.Extended.Particles
         {
         }
 
-        public void Dispose()
-        {
-            Buffer.Dispose();
-            GC.SuppressFinalize(this);
-        }
-        
-        ~ParticleEmitter()
-        {
-            Dispose();
-        }
-
         public string Name { get; set; }
         public int ActiveParticles => Buffer.Count;
         public Vector2 Offset { get; set; }
@@ -127,6 +116,11 @@ namespace MonoGame.Extended.Particles
                 Buffer.Reclaim(expired);
         }
 
+        public void Clear()
+        {
+            Buffer.Clear();
+        }
+
         public bool Update(float elapsedSeconds, Vector2 position = default(Vector2))
         {
             _totalSeconds += elapsedSeconds;
@@ -186,8 +180,7 @@ namespace MonoGame.Extended.Particles
             {
                 var particle = iterator.Next();
 
-                Vector2 heading;
-                Profile.GetOffsetAndHeading(out particle->Position, out heading);
+                Profile.GetOffsetAndHeading(out particle->Position, out Vector2 heading);
 
                 particle->Age = 0f;
                 particle->Inception = _totalSeconds;
@@ -207,6 +200,17 @@ namespace MonoGame.Extended.Particles
                 particle->Mass = _random.NextSingle(Parameters.Mass);
                 particle->LayerDepth = layerDepth;
             }
+        }
+
+        public void Dispose()
+        {
+            Buffer.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        ~ParticleEmitter()
+        {
+            Dispose();
         }
 
         public override string ToString()

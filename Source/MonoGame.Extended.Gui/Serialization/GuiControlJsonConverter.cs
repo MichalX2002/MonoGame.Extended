@@ -27,9 +27,8 @@ namespace MonoGame.Extended.Gui.Serialization
             var template = GetControlTemplate(style);
             var control = skin.Create(style.TargetType, template);
 
-            object childControls;
 
-            if (style.TryGetValue(nameof(GuiControl.Controls), out childControls))
+            if (style.TryGetValue(nameof(GuiControl.Controls), out object childControls))
             {
                 var controlCollection = childControls as GuiControlCollection;
 
@@ -51,9 +50,8 @@ namespace MonoGame.Extended.Gui.Serialization
 
         private static string GetControlTemplate(GuiControlStyle style)
         {
-            object template;
 
-            if (style.TryGetValue(_styleProperty, out template))
+            if (style.TryGetValue(_styleProperty, out object template))
                 return template as string;
 
             return null;

@@ -200,8 +200,7 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
             // Make sure the renderer specified a valid frame name. If someone modifies
             // the skin or uses a skin which does not support all required controls,
             // this will provide the user with a clear error message.
-            Frame frame;
-            if (!_frames.TryGetValue(frameName, out frame))
+            if (!_frames.TryGetValue(frameName, out Frame frame))
                 throw new ArgumentException("Unknown frame type: '" + frameName + "'", "frameName");
 
             return frame;
