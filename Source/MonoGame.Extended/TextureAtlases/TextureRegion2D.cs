@@ -6,6 +6,21 @@ namespace MonoGame.Extended.TextureAtlases
 {
     public class TextureRegion2D
     {
+        public string Name { get; }
+        public Texture2D Texture { get; protected set; }
+        public object Tag { get; set; }
+
+        public Rectangle Bounds { get; protected set; }
+        public int X => Bounds.X;
+        public int Y => Bounds.Y;
+        public int Width => Bounds.Width;
+        public int Height => Bounds.Height;
+        public Size2 Size => new Size2(Width, Height);
+
+        public Vector2 Texel => Texture.Texel;
+        public float TexelWidth => Texture.TexelWidth;
+        public float TexelHeight => Texture.TexelHeight;
+
         public TextureRegion2D(Texture2D texture, int x, int y, int width, int height)
             : this(null, texture, x, y, width, height)
         {
@@ -30,24 +45,8 @@ namespace MonoGame.Extended.TextureAtlases
         {
             Texture = texture ?? throw new ArgumentNullException(nameof(texture));
             Name = name;
-            X = x;
-            Y = y;
-            Width = width;
-            Height = height;
+            Bounds = new Rectangle(X, Y, Width, Height);
         }
-
-        public string Name { get; }
-        public Texture2D Texture { get; protected set; }
-        public int X { get; }
-        public int Y { get; }
-        public int Width { get; }
-        public int Height { get; }
-        public Size2 Size => new Size2(Width, Height);
-        public object Tag { get; set; }
-        public Rectangle Bounds => new Rectangle(X, Y, Width, Height);
-        public Vector2 Texel => Texture.Texel;
-        public float TexelWidth => Texture.TexelWidth;
-        public float TexelHeight => Texture.TexelHeight;
 
         public override string ToString()
         {
