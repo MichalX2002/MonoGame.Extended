@@ -6,7 +6,7 @@ namespace MonoGame.Extended
     /// <summary>
     ///     A random number generator that uses a fast algorithm to generate random values.
     ///     The speed comes at the price of true 'randomness' though, there are noticeable
-    ///     patterns & it compares quite unfavourably to other algorithms in that respect.
+    ///     patterns and it compares quite unfavourably to other algorithms in that respect.
     ///     It's a good choice in situations where speed is more desirable than a
     ///     good random distribution, and a poor choice when random distribution is important.
     /// </summary>
@@ -22,7 +22,8 @@ namespace MonoGame.Extended
         public FastRandom(int seed)
         {
             if (seed < 1)
-                throw new ArgumentOutOfRangeException(nameof(seed), "seed must be greater than zero");
+                throw new ArgumentOutOfRangeException(
+                    nameof(seed), $"{nameof(seed)} must be greater than zero.");
 
             _state = seed;
         }

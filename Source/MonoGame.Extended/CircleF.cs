@@ -129,7 +129,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first circle.</param>
         /// <param name="second">The second circle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(ref CircleF first, ref CircleF second)
         {
@@ -148,7 +148,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first circle.</param>
         /// <param name="second">The second circle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(CircleF first, CircleF second)
         {
@@ -187,7 +187,7 @@ namespace MonoGame.Extended
         /// <param name="circle">The circle.</param>
         /// <param name="rectangle">The rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="circle" /> intersects with the <see cref="rectangle" />; otherwise, <c>false</c>
+        ///     <c>true</c> if the <paramref name="circle" /> intersects with the <paramref name="rectangle" />; otherwise, <c>false</c>
         ///     .
         /// </returns>
         public static bool Intersects(ref CircleF circle, ref BoundingRectangle rectangle)
@@ -206,7 +206,7 @@ namespace MonoGame.Extended
         /// <param name="circle">The circle.</param>
         /// <param name="rectangle">The rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="circle" /> intersects with the <see cref="rectangle" />; otherwise, <c>false</c>
+        ///     <c>true</c> if the <paramref name="circle" /> intersects with the <paramref name="rectangle" />; otherwise, <c>false</c>
         ///     .
         /// </returns>
         public static bool Intersects(CircleF circle, BoundingRectangle rectangle)

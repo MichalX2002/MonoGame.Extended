@@ -10,8 +10,8 @@ namespace MonoGame.Extended.Collections
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         <see cref="BitVector32" /> is more efficient than <see cref="BitVector" /> for boolean values and small integers
-    ///         that are used internally. A <see cref="BitVector" /> can grow indefinitely as needed, but it has the memory and
+    ///         <see cref="BitVector32" /> is more efficient than <see cref="BitArray" /> for boolean values and small integers
+    ///         that are used internally. A <see cref="BitArray" /> can grow indefinitely as needed, but it has the memory and
     ///         performance overhead that a class instance requires. In contrast, a <see cref="BitVector32" /> uses only 32
     ///         bits.
     ///     </para>
@@ -26,9 +26,9 @@ namespace MonoGame.Extended.Collections
     ///     </para>
     ///     <para>
     ///         Some members can be used for a <see cref="BitVector32" /> that is set up as sections, while other members can
-    ///         be used for one that is set up as bit flags. For example, the <see cref="Item(Section)" /> property is the
-    ///         indexer for a <see cref="BitVector32" /> that is set up as sections, and the <see cref="Item(uint)" /> property
-    ///         is the indexer for a <see cref="BitVector32" /> that is set up as bit flags. <see cref="CreateMask(int)" />
+    ///         be used for one that is set up as bit flags. For example, the <see cref="this[Section]" /> property is the
+    ///         indexer for a <see cref="BitVector32" /> that is set up as sections, and the <see cref="this[uint]" /> property
+    ///         is the indexer for a <see cref="BitVector32" /> that is set up as bit flags. <see cref="CreateMask(uint)" />
     ///         creates a series of masks that can be used to access individual bits in a <see cref="BitVector32" /> that is
     ///         set up as bit flags.
     ///     </para>
@@ -82,8 +82,8 @@ namespace MonoGame.Extended.Collections
         /// <returns><c>true</c> if the specified bit flag is on (1); otherwise, <c>false</c>.</returns>
         /// <remarks>
         ///     <para>
-        ///         The <see cref="Item(Section)" /> property is the indexer for a <see cref="BitVector32" /> that is set up as
-        ///         sections, and the <see cref="Item(uint)" /> property is the indexer for a <see cref="BitVector32" /> that is
+        ///         The <see cref="this[Section]" /> property is the indexer for a <see cref="BitVector32" /> that is set up as
+        ///         sections, and the <see cref="this[uint]" /> property is the indexer for a <see cref="BitVector32" /> that is
         ///         set up as bit flags.
         ///     </para>
         ///     <para>
@@ -111,8 +111,8 @@ namespace MonoGame.Extended.Collections
         /// <returns>The value stored in the specified <see cref="Section" />.</returns>
         /// <remarks>
         ///     <para>
-        ///         The <see cref="Item(Section)" /> property is the indexer for a <see cref="BitVector32" /> that is set up as
-        ///         sections, and the <see cref="Item(uint)" /> property is the indexer for a <see cref="BitVector32" /> that is
+        ///         The <see cref="this[Section]" /> property is the indexer for a <see cref="BitVector32" /> that is set up as
+        ///         sections, and the <see cref="this[uint]" /> property is the indexer for a <see cref="BitVector32" /> that is
         ///         set up as bit flags.
         ///     </para>
         ///     <para>
@@ -192,7 +192,7 @@ namespace MonoGame.Extended.Collections
         /// <returns>A mask that isolates the first bit flag in the <see cref="BitVector32" />.</returns>
         /// <remarks>
         ///     <para>
-        ///         Use <see cref="CreateMask()" /> to create the first mask in a series and <see cref="CreateMask(int)" /> for
+        ///         Use <see cref="CreateMask()" /> to create the first mask in a series and <see cref="CreateMask(uint)" /> for
         ///         all subsequent masks.
         ///     </para>
         ///     <para>Multiple masks can be created to refer to the same bit flag.</para>
@@ -223,7 +223,7 @@ namespace MonoGame.Extended.Collections
         /// </exception>
         /// <remarks>
         ///     <para>
-        ///         Use <see cref="CreateMask()" /> to create the first mask in a series and <see cref="CreateMask(int)" /> for
+        ///         Use <see cref="CreateMask()" /> to create the first mask in a series and <see cref="CreateMask(uint)" /> for
         ///         all subsequent masks.
         ///     </para>
         ///     <para>Multiple masks can be created to refer to the same bit flag.</para>
@@ -300,14 +300,14 @@ namespace MonoGame.Extended.Collections
         /// <param name="previous">The previous <see cref="Section" /> in the <see cref="BitVector32" />.</param>
         /// <returns>A <see cref="Section" /> that can hold a number from zero to <paramref name="maxValue" />.</returns>
         /// <exception cref="ArgumentException">
-        ///     <param name="maxValue"> is less than 1.</param>
+        ///     <paramref name="maxValue"> is less than 1.</paramref>
         /// </exception>
         /// <exception cref="InvalidOperationException">
         ///     <paramref name="previous" /> includes the final bit in the
         ///     <see cref="BitVector32" />.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        ///     <param name="maxValue"></param>
+        ///     <paramref name="maxValue"></paramref>
         ///     is greater than the highest value that can be represented by the number of bits after <paramref name="previous" />.
         /// </exception>
         /// <remarks>

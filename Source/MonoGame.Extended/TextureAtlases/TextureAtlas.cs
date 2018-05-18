@@ -156,7 +156,7 @@ namespace MonoGame.Extended.TextureAtlases
         /// <summary>
         ///     Removes a texture region from the <see cref="TextureAtlas" />
         /// </summary>
-        /// <param name="index">An index of the <see cref="TextureRegion2D" /> in <see cref="Region" /> to remove</param>
+        /// <param name="index">An index of the <see cref="TextureRegion2D" /> in <see cref="Regions" /> to remove</param>
         public void RemoveRegion(int index)
         {
             _regions.RemoveAt(index);
@@ -180,7 +180,7 @@ namespace MonoGame.Extended.TextureAtlases
         /// <summary>
         ///     Gets a <see cref="TextureRegion2D" /> from the <see cref="TextureAtlas" />' list.
         /// </summary>
-        /// <param name="index">An index of the <see cref="TextureRegion2D" /> in <see cref="Region" /> to get.</param>
+        /// <param name="index">An index of the <see cref="TextureRegion2D" /> in <see cref="Regions" /> to get.</param>
         /// <returns>The <see cref="TextureRegion2D" />.</returns>
         public TextureRegion2D GetRegion(int index)
         {
