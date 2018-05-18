@@ -58,7 +58,7 @@
     <Compile Include="Modifiers\Interpolators\RotationInterpolator.cs" />
     <Compile Include="Modifiers\Interpolators\ScaleInterpolator.cs" />
     <Compile Include="Modifiers\LinearGravityModifier.cs" />
-    <Compile Include="Modifiers\OpacityFastFadeModifier.cs" />
+    <Compile Include="Modifiers\OpacityFadeModifier.cs" />
     <Compile Include="Modifiers\RotationModifier.cs" />
     <Compile Include="Modifiers\VelocityColorModifier.cs" />
     <Compile Include="Modifiers\VelocityModifier.cs" />
