@@ -393,7 +393,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first rectangle.</param>
         /// <param name="second">The second rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref nane="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(ref RectangleF first, ref RectangleF second)
         {
@@ -407,7 +407,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first rectangle.</param>
         /// <param name="second">The second rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(RectangleF first, RectangleF second)
         {

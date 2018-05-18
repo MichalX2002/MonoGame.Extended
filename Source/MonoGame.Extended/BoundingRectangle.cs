@@ -282,7 +282,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first bounding rectangle.</param>
         /// <param name="second">The second bounding rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(ref BoundingRectangle first, ref BoundingRectangle second)
         {
@@ -299,7 +299,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first bounding rectangle.</param>
         /// <param name="second">The second bounding rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(BoundingRectangle first, BoundingRectangle second)
         {
