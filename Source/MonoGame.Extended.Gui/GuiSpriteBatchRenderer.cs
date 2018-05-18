@@ -75,7 +75,7 @@ namespace MonoGame.Extended.Gui
             if (clippingRectangle.HasValue)
                 rectangle = rectangle.Clip(clippingRectangle.Value);
 
-            _spriteBatch.FillRectangle(rectangle, color);
+            _spriteBatch.DrawFilledRectangle(rectangle, color);
         }
     }
 }

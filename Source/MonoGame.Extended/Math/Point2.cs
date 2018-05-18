@@ -28,7 +28,7 @@ namespace MonoGame.Extended
         /// <summary>
         ///     Returns a <see cref="Point2" /> with <see cref="X" /> and <see cref="Y" /> equal to <c>0.0f</c>.
         /// </summary>
-        public static readonly Point2 Zero = new Point2();
+        public static readonly Point2 Zero = new Point2(0, 0);
 
         /// <summary>
         ///     Returns a <see cref="Point2" /> with <see cref="X" /> and <see cref="Y" /> set to not a number.
@@ -320,7 +320,7 @@ namespace MonoGame.Extended
         ///     The the <see cref="Point2" /> that contains the maximal coordinate values from two <see cref="Point2" />
         ///     structures.
         /// </returns>
-        public static Point2 Maximum(Point2 first, Point2 second)
+        public static Point2 Maximum(Vector2 first, Vector2 second)
         {
             return new Point2(first.X > second.X ? first.X : second.X,
                 first.Y > second.Y ? first.Y : second.Y);

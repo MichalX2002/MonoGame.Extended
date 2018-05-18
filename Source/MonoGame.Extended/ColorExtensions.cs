@@ -9,6 +9,11 @@ namespace MonoGame.Extended
     /// </summary>
     public static class ColorExtensions
     {
+        public const float COLOR_DIVIDER = 1 / 255f;
+        public const float ONE_DEGREE = 1 / 360f;
+        public const float ONE_THIRD = 1f / 3f;
+        public const float TWO_THIRD = 2f / 3f;
+
         public static Color FromHex(string value)
         {
             var r = int.Parse(value.Substring(1, 2), NumberStyles.HexNumber);
@@ -17,50 +22,54 @@ namespace MonoGame.Extended
             var a = value.Length > 7 ? int.Parse(value.Substring(7, 2), NumberStyles.HexNumber) : 255;
             return new Color(r, g, b, a);
         }
-
+        
         public static Color ToRgb(this HslColor c)
         {
-            var h = c.H;
             var s = c.S;
             var l = c.L;
 
             if (s == 0f)
                 return new Color(l, l, l);
 
-            h = h/360f;
-            var max = l < 0.5f ? l*(1 + s) : l + s - l*s;
-            var min = 2f*l - max;
+            var max = l < 0.5f ? l * (1 + s) : l + s - l * s;
+            var min = 2f * l - max;
+
+            var h = c.H * ONE_DEGREE;
 
             return new Color(
-                ComponentFromHue(min, max, h + 1f/3f),
-                ComponentFromHue(min, max, h),
-                ComponentFromHue(min, max, h - 1f/3f));
+                ComponentFromHue(min, max, h + ONE_THIRD),
+                ComponentFromHue(min, max, h), 
+                ComponentFromHue(min, max, h - ONE_THIRD));
         }
 
         private static float ComponentFromHue(float m1, float m2, float h)
         {
-            h = (h + 1f)%1f;
-            if (h*6f < 1)
-                return m1 + (m2 - m1)*6f*h;
-            if (h*2 < 1)
+            if (m1 < 0)
+                return 0;
+
+            if (h * 6f < 1f)
+                return m1 + (m2 - m1) * 6f * h;
+            if (h * 2f < 1f)
                 return m2;
-            if (h*3 < 2)
-                return m1 + (m2 - m1)*(2f/3f - h)*6f;
+            if (h * 3f < 2f)
+                return m1 + (m2 - m1) * (TWO_THIRD - h) * 6f;
+
             return m1;
         }
 
         public static HslColor ToHsl(this Color c)
         {
-            var r = c.R/255f;
-            var b = c.B/255f;
-            var g = c.G/255f;
+            float r = c.R * COLOR_DIVIDER;
+            float b = c.B * COLOR_DIVIDER;
+            float g = c.G * COLOR_DIVIDER;
 
-            var max = Math.Max(Math.Max(r, g), b);
-            var min = Math.Min(Math.Min(r, g), b);
-            var chroma = max - min;
-            var sum = max + min;
+            float max = Math.Max(Math.Max(r, g), b);
+            float min = Math.Min(Math.Min(r, g), b);
 
-            var l = sum*0.5f;
+            float chroma = max - min;
+            float sum = max + min;
+
+            float l = sum * 0.5f;
 
             if (chroma == 0)
                 return new HslColor(0f, 0f, l);
@@ -68,18 +77,18 @@ namespace MonoGame.Extended
             float h;
 
             if (r == max)
-                h = (60*(g - b)/chroma + 360)%360;
+                h = (60 * (g - b) / chroma + 360) % 360;
             else
             {
                 if (g == max)
-                    h = 60*(b - r)/chroma + 120f;
+                    h = 60 * (b - r) / chroma + 120f;
                 else
-                    h = 60*(r - g)/chroma + 240f;
+                    h = 60 * (r - g) / chroma + 240f;
             }
 
-            var s = l <= 0.5f ? chroma/sum : chroma/(2f - sum);
+            float s = l <= 0.5f ? chroma / sum : chroma / (2f - sum);
 
             return new HslColor(h, s, l);
         }
-	}
+    }
 }

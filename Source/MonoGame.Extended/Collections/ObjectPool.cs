@@ -61,9 +61,8 @@ namespace MonoGame.Extended.Collections
 
         public T New()
         {
-            T poolable;
 
-            if (!_freeItems.RemoveFromFront(out poolable))
+            if (!_freeItems.RemoveFromFront(out T poolable))
             {
                 if (TotalCount <= Capacity)
                 {

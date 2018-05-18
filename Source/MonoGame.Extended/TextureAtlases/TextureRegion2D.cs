@@ -28,10 +28,8 @@ namespace MonoGame.Extended.TextureAtlases
 
         public TextureRegion2D(string name, Texture2D texture, int x, int y, int width, int height)
         {
-            if (texture == null) throw new ArgumentNullException(nameof(texture));
-
+            Texture = texture ?? throw new ArgumentNullException(nameof(texture));
             Name = name;
-            Texture = texture;
             X = x;
             Y = y;
             Width = width;
@@ -47,6 +45,9 @@ namespace MonoGame.Extended.TextureAtlases
         public Size2 Size => new Size2(Width, Height);
         public object Tag { get; set; }
         public Rectangle Bounds => new Rectangle(X, Y, Width, Height);
+        public Vector2 Texel => Texture.Texel;
+        public float TexelWidth => Texture.TexelWidth;
+        public float TexelHeight => Texture.TexelHeight;
 
         public override string ToString()
         {

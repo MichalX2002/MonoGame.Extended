@@ -274,8 +274,7 @@ namespace MonoGame.Extended.Collections
         public int IndexOf(T item)
         {
             var comparer = EqualityComparer<T>.Default;
-            T checkFrontBackItem;
-            if (Get(0, out checkFrontBackItem) && comparer.Equals(checkFrontBackItem, item))
+            if (Get(0, out T checkFrontBackItem) && comparer.Equals(checkFrontBackItem, item))
                 return 0;
             var backIndex = Count - 1;
             if (Get(backIndex, out checkFrontBackItem) && comparer.Equals(checkFrontBackItem, item))

@@ -168,9 +168,8 @@ namespace MonoGame.Extended.TextureAtlases
         /// <param name="name">Name of the <see cref="TextureRegion2D" /> to remove</param>
         public void RemoveRegion(string name)
         {
-            int index;
 
-            if (_regionMap.TryGetValue(name, out index))
+            if (_regionMap.TryGetValue(name, out int index))
             {
                 RemoveRegion(index);
                 _regionMap.Remove(name);
@@ -209,9 +208,8 @@ namespace MonoGame.Extended.TextureAtlases
         /// <returns>The texture region</returns>
         public T GetRegion<T>(string name) where T : TextureRegion2D
         {
-            int index;
 
-            if (_regionMap.TryGetValue(name, out index))
+            if (_regionMap.TryGetValue(name, out int index))
                 return (T)GetRegion(index);
 
             throw new KeyNotFoundException(name);

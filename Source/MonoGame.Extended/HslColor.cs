@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 
 namespace MonoGame.Extended
@@ -8,8 +9,11 @@ namespace MonoGame.Extended
     ///     An immutable data structure representing a 24bit color composed of separate hue, saturation and lightness channels.
     /// </summary>
     //[Serializable]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct HslColor : IEquatable<HslColor>, IComparable<HslColor>
     {
+        public static readonly HslColor White = FromRgb(Color.White);
+
         /// <summary>
         ///     Gets the value of the hue channel in degrees.
         /// </summary>
@@ -27,8 +31,11 @@ namespace MonoGame.Extended
 
         private static float NormalizeHue(float h)
         {
-            if (h < 0) return h + 360*((int) (h/360) + 1);
-            return h%360;
+            if (h < 0)
+                return h + 360 * ((int) (h * ColorExtensions.ONE_DEGREE) + 1);
+            if(h > 360)
+                return h % 360;
+            return h;
         }
 
         /// <summary>
@@ -37,7 +44,7 @@ namespace MonoGame.Extended
         /// <param name="h">The value of the hue channel.</param>
         /// <param name="s">The value of the saturation channel.</param>
         /// <param name="l">The value of the lightness channel.</param>
-        public HslColor(float h, float s, float l) : this()
+        public HslColor(float h, float s, float l)
         {
             // normalize the hue
             H = NormalizeHue(h);
@@ -215,20 +222,27 @@ namespace MonoGame.Extended
 
         public static HslColor Lerp(HslColor c1, HslColor c2, float t)
         {
+            Lerp(c1, c2, t, out HslColor output);
+            return output;
+        }
+
+        public static void Lerp(
+            HslColor c1, HslColor c2, float t, out HslColor output)
+        {
             // loop around if c2.H < c1.H
             var h2 = c2.H >= c1.H ? c2.H : c2.H + 360;
-            return new HslColor(
-                c1.H + t*(h2 - c1.H),
-                c1.S + t*(c2.S - c1.S),
-                c1.L + t*(c2.L - c2.L));
+            output = new HslColor(
+                c1.H + t * (h2 - c1.H),
+                c1.S + t * (c2.S - c1.S),
+                c1.L + t * (c2.L - c2.L));
         }
 
         public static HslColor FromRgb(Color color)
         {
             // derived from http://www.geekymonkey.com/Programming/CSharp/RGB2HSL_HSL2RGB.htm
-            var r = color.R / 255f;
-            var g = color.G / 255f;
-            var b = color.B / 255f;
+            var r = color.R * ColorExtensions.COLOR_DIVIDER;
+            var g = color.G * ColorExtensions.COLOR_DIVIDER;
+            var b = color.B * ColorExtensions.COLOR_DIVIDER;
             var h = 0f; // default to black
             var s = 0f;
             var l = 0f;
@@ -237,16 +251,16 @@ namespace MonoGame.Extended
 
             var m = Math.Min(r, g);
             m = Math.Min(m, b);
-            l = (m + v) / 2.0f;
+            l = (m + v) * 0.5f;
 
             if (l <= 0.0)
                 return new HslColor(h, s, l);
 
-            var vm = v - m;
+            float vm = v - m;
             s = vm;
 
-            if (s > 0.0)
-                s /= l <= 0.5f ? v + m : 2.0f - v - m;
+            if (s > 0f)
+                s /= l <= 0.5f ? v + m : 2f - v - m;
             else
                 return new HslColor(h, s, l);
 
@@ -260,11 +274,8 @@ namespace MonoGame.Extended
                 h = Math.Abs(b - m) < float.Epsilon ? 1.0f + r2 : 3.0f - b2;
             else
                 h = Math.Abs(r - m) < float.Epsilon ? 3.0f + g2 : 5.0f - r2;
-
-            h *= 60;
-            h = NormalizeHue(h);
-
-            return new HslColor(h, s, l);
+            
+            return new HslColor(NormalizeHue(h * 60), s, l);
         }
     }
 }

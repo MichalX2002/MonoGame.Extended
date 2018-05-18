@@ -13,32 +13,57 @@ namespace MonoGame.Extended.TextureAtlases
         public static void Draw(this SpriteBatch spriteBatch, TextureRegion2D textureRegion, Vector2 position, Color color,
             float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth, Rectangle? clippingRectangle = null)
         {
-            var sourceRectangle = textureRegion.Bounds;
+            Rectangle srcRect = textureRegion.Bounds;
 
-            if (clippingRectangle.HasValue)
+            if (IsVisible(srcRect, ref position, origin, scale, clippingRectangle, out srcRect) == false)
+                return;
+
+            spriteBatch.Draw(textureRegion.Texture, position, srcRect, color, rotation, origin, scale, effects, layerDepth);
+        }
+
+        public static bool IsVisible(this Rectangle sourceRect, ref Vector2 position,
+            Vector2 origin, Vector2 scale, Rectangle? clipRect, out Rectangle clipped)
+        {
+            /* source
+            
+            var x = (int)(position.X - origin.X);
+            var y = (int)(position.Y - origin.Y);
+            var width = (int)(textureRegion.Width * scale.X);
+            var height = (int)(textureRegion.Height * scale.Y);
+            var destinationRectangle = new Rectangle(x, y, width, height);
+
+            sourceRectangle = ClipSourceRectangle(textureRegion.Bounds, destinationRectangle, clippingRectangle.Value);
+            position.X += sourceRectangle.X - textureRegion.Bounds.X;
+            position.Y += sourceRectangle.Y - textureRegion.Bounds.Y;
+
+            if(sourceRectangle.Width <= 0 || sourceRectangle.Height <= 0)
+                return;
+            */
+
+            if (clipRect.HasValue == false)
             {
-                var x = (int)(position.X - origin.X);
-                var y = (int)(position.Y - origin.Y);
-                var width = (int)(textureRegion.Width * scale.X);
-                var height = (int)(textureRegion.Height * scale.Y);
-                var destinationRectangle = new Rectangle(x, y, width, height);
-
-                sourceRectangle = ClipSourceRectangle(textureRegion.Bounds, destinationRectangle, clippingRectangle.Value);
-                position.X += sourceRectangle.X - textureRegion.Bounds.X;
-                position.Y += sourceRectangle.Y - textureRegion.Bounds.Y;
-
-                if(sourceRectangle.Width <= 0 || sourceRectangle.Height <= 0)
-                    return;
+                clipped = sourceRect;
+                return true;
             }
 
-            spriteBatch.Draw(textureRegion.Texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+            int x = (int)(position.X - origin.X);
+            int y = (int)(position.Y - origin.Y);
+            int width = (int)(sourceRect.Width * scale.X);
+            int height = (int)(sourceRect.Height * scale.Y);
+            Rectangle destinationRectangle = new Rectangle(x, y, width, height);
+
+            clipped = ClipSourceRectangle(sourceRect, destinationRectangle, clipRect.Value);
+            position.X += clipped.X - sourceRect.X;
+            position.Y += clipped.Y - sourceRect.Y;
+
+            if (sourceRect.Width <= 0 || sourceRect.Height <= 0)
+                return false;
+            return true;
         }
 
         public static void Draw(this SpriteBatch spriteBatch, TextureRegion2D textureRegion, Rectangle destinationRectangle, Color color, Rectangle? clippingRectangle = null)
         {
-            var ninePatchRegion = textureRegion as NinePatchRegion2D;
-
-            if (ninePatchRegion != null)
+            if (textureRegion is NinePatchRegion2D ninePatchRegion)
                 Draw(spriteBatch, ninePatchRegion, destinationRectangle, color, clippingRectangle);
             else
                 Draw(spriteBatch, textureRegion.Texture, textureRegion.Bounds, destinationRectangle, color, clippingRectangle);

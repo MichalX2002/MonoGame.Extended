@@ -11,57 +11,54 @@ namespace MonoGame.Extended.BitmapFonts
     {
         protected override BitmapFont Read(ContentReader reader, BitmapFont existingInstance)
         {
-            var textureAssetCount = reader.ReadInt32();
-            var assets = new List<string>();
+            int textureAssetCount = reader.ReadInt32();
+            Texture2D[] textures = new Texture2D[textureAssetCount];
 
             for (var i = 0; i < textureAssetCount; i++)
             {
-                var assetName = reader.ReadString();
-                assets.Add(assetName);
+                string assetName = reader.GetRelativeAssetName(reader.ReadString());
+                textures[i] = reader.ContentManager.Load<Texture2D>(assetName);
             }
 
-            var textures = assets
-                .Select(textureName => reader.ContentManager.Load<Texture2D>(reader.GetRelativeAssetName(textureName)))
-                .ToArray();
+            int lineHeight = reader.ReadInt32();
+            int regionCount = reader.ReadInt32();
+            var characterMap = new Dictionary<int, BitmapFontRegion>(regionCount);
 
-            var lineHeight = reader.ReadInt32();
-            var regionCount = reader.ReadInt32();
-            var regions = new BitmapFontRegion[regionCount];
-
-            for (var r = 0; r < regionCount; r++)
+            for (int r = 0; r < regionCount; r++)
             {
-                var character = reader.ReadInt32();
-                var textureIndex = reader.ReadInt32();
-                var x = reader.ReadInt32();
-                var y = reader.ReadInt32();
-                var width = reader.ReadInt32();
-                var height = reader.ReadInt32();
-                var xOffset = reader.ReadInt32();
-                var yOffset = reader.ReadInt32();
-                var xAdvance = reader.ReadInt32();
+                int character = reader.ReadInt32();
+                int textureIndex = reader.ReadInt32();
+                int x = reader.ReadInt32();
+                int y = reader.ReadInt32();
+                int width = reader.ReadInt32();
+                int height = reader.ReadInt32();
+                int xOffset = reader.ReadInt32();
+                int yOffset = reader.ReadInt32();
+                int xAdvance = reader.ReadInt32();
                 var textureRegion = new TextureRegion2D(textures[textureIndex], x, y, width, height);
-                regions[r] = new BitmapFontRegion(textureRegion, character, xOffset, yOffset, xAdvance);
+
+                var bmpReg = new BitmapFontRegion(textureRegion, character, xOffset, yOffset, xAdvance);
+                characterMap.Add(character, bmpReg);
             }
-
-            var characterMap = regions.ToDictionary(r => r.Character);
-            var kerningsCount = reader.ReadInt32();
-
-            for (var k = 0; k < kerningsCount; k++)
+            
+            int kerningsCount = reader.ReadInt32();
+            for (int k = 0; k < kerningsCount; k++)
             {
-                var first = reader.ReadInt32();
-                var second = reader.ReadInt32();
-                var amount = reader.ReadInt32();
+                int first = reader.ReadInt32();
+                int second = reader.ReadInt32();
+                int amount = reader.ReadInt32();
 
                 // Find region
-                BitmapFontRegion region;
-
-                if (!characterMap.TryGetValue(first, out region))
+                if (!characterMap.TryGetValue(first, out BitmapFontRegion region))
                     continue;
 
-                region.Kernings[second] = amount;
+                region.Kernings = new Dictionary<int, int>(1)
+                {
+                    { second, amount }
+                };
             }
 
-            return new BitmapFont(reader.AssetName, regions, lineHeight);
+            return new BitmapFont(reader.AssetName, characterMap, lineHeight);
         }
     }
 }

@@ -179,7 +179,7 @@ namespace MonoGame.Extended
         {
             unchecked
             {
-                return (Position.GetHashCode()*397) ^ Direction.GetHashCode();
+                return (Position.GetHashCode() * 397) ^ Direction.GetHashCode();
             }
         }
 

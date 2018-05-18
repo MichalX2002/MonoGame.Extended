@@ -3,18 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using TextAlign = MonoGame.Extended.BitmapFonts.TextAlignMode;
 
 namespace MonoGame.Extended.BitmapFonts
 {
     public class BitmapFont
     {
-        private readonly Dictionary<int, BitmapFontRegion> _characterMap = new Dictionary<int, BitmapFontRegion>();
-
-        public BitmapFont(string name, IEnumerable<BitmapFontRegion> regions, int lineHeight)
+        public struct Glyph
         {
+            public int Character;
+            public Vector2 Position;
+            public BitmapFontRegion FontRegion;
+        }
+
+        private readonly Dictionary<int, BitmapFontRegion> _characterMap;
+
+        public BitmapFont(string name, IEnumerable<BitmapFontRegion> regions, int lineHeight) :
+            this(name, lineHeight)
+        {
+            _characterMap = new Dictionary<int, BitmapFontRegion>();
             foreach (var region in regions)
                 _characterMap.Add(region.Character, region);
+        }
 
+        public BitmapFont(string name, Dictionary<int, BitmapFontRegion> regions, int lineHeight) :
+            this(name, lineHeight)
+        {
+            _characterMap = regions;
+        }
+
+        private BitmapFont(string name, int lineHeight)
+        {
             Name = name;
             LineHeight = lineHeight;
         }
@@ -26,42 +45,78 @@ namespace MonoGame.Extended.BitmapFonts
 
         public BitmapFontRegion GetCharacterRegion(int character)
         {
-            BitmapFontRegion region;
-            return _characterMap.TryGetValue(character, out region) ? region : null;
+            return _characterMap.TryGetValue(character, out BitmapFontRegion region) ? region : null;
         }
 
-        public Size2 MeasureString(string text)
+        public bool GetCharacterRegion(int character, out BitmapFontRegion region)
+        {
+            return _characterMap.TryGetValue(character, out region);
+        }
+
+        public Size2 MeasureString(string text, int offset, int length)
         {
             if (string.IsNullOrEmpty(text))
                 return Size2.Empty;
 
-            var stringRectangle = GetStringRectangle(text);
-            return new Size2(stringRectangle.Width, stringRectangle.Height);
+            return GetStringRectangle(text, Point2.Zero).Size;
         }
 
-        public Size2 MeasureString(StringBuilder text)
+        public Size2 MeasureString(StringBuilder text, int offset, int length)
         {
             if (text == null || text.Length == 0)
                 return Size2.Empty;
 
-            var stringRectangle = GetStringRectangle(text);
-            return new Size2(stringRectangle.Width, stringRectangle.Height);
+            return GetStringRectangle(text, Point2.Zero).Size;
         }
 
-        public RectangleF GetStringRectangle(string text, Point2? position = null)
+        public Size2 MeasureString(string text)
         {
-            var position1 = position ?? new Point2();
-            var glyphs = GetGlyphs(text, position1);
-            var rectangle = new RectangleF(position1.X, position1.Y, 0, LineHeight);
+            return MeasureString(text, 0, text.Length);
+        }
 
-            foreach (var glyph in glyphs)
+        public Size2 MeasureString(StringBuilder text)
+        {
+            return MeasureString(text, 0, text.Length);
+        }
+
+        public RectangleF GetStringRectangle(
+            string text, int offset, int length, Point2 position)
+        {
+            var enumerable = GetGlyphs(text, offset, length, position);
+            return GetStringRectangle(ref enumerable.Glyphs, position);
+        }
+
+        public RectangleF GetStringRectangle(
+            StringBuilder text, int offset, int length, Point2 position)
+        {
+            var enumerable = GetGlyphs(text, offset, length, position);
+            return GetStringRectangle(ref enumerable.Glyphs, position);
+        }
+
+        public RectangleF GetStringRectangle(string text, Point2 position)
+        {
+            return GetStringRectangle(text, 0, text.Length, position);
+        }
+
+        public RectangleF GetStringRectangle(StringBuilder text, Point2 position)
+        {
+            return GetStringRectangle(text, 0, text.Length, position);
+        }
+
+        private RectangleF GetStringRectangle(ref GlyphEnumerator iterator, Point2 position)
+        {
+            var rectangle = new RectangleF(position.X, position.Y, 0, LineHeight);
+            
+            while (iterator.MoveNext())
             {
+                ref Glyph glyph = ref iterator.CurrentGlyph;
+
                 if (glyph.FontRegion != null)
                 {
                     var right = glyph.Position.X + glyph.FontRegion.Width;
 
                     if (right > rectangle.Right)
-                        rectangle.Width = (int)(right - rectangle.Left);
+                        rectangle.Width = right - rectangle.Left;
                 }
 
                 if (glyph.Character == '\n')
@@ -71,129 +126,181 @@ namespace MonoGame.Extended.BitmapFonts
             return rectangle;
         }
 
-        public RectangleF GetStringRectangle(StringBuilder text, Point2? position = null)
+        public StringGlyphEnumerable GetGlyphs(
+            string text, int offset, int length, Point2 position)
         {
-            var position1 = position ?? new Point2();
-            var glyphs = GetGlyphs(text, position1);
-            var rectangle = new RectangleF(position1.X, position1.Y, 0, LineHeight);
-
-            foreach (var glyph in glyphs)
-            {
-                if (glyph.FontRegion != null)
-                {
-                    var right = glyph.Position.X + glyph.FontRegion.Width;
-
-                    if (right > rectangle.Right)
-                        rectangle.Width = (int)(right - rectangle.Left);
-                }
-
-                if (glyph.Character == '\n')
-                    rectangle.Height += LineHeight;
-            }
-
-            return rectangle;
+            return new StringGlyphEnumerable(this, text, offset, length, position);
         }
 
-        public StringGlyphEnumerable GetGlyphs(string text, Point2? position = null)
+        public StringBuilderGlyphEnumerable GetGlyphs(
+            StringBuilder text, int offset, int length, Point2 position)
         {
-            return new StringGlyphEnumerable(this, text, position);
+            return new StringBuilderGlyphEnumerable(this, text, offset, length, position);
         }
 
-        public StringBuilderGlyphEnumerable GetGlyphs(StringBuilder text, Point2? position)
+        public StringGlyphEnumerable GetGlyphs(string text, Point2 position)
         {
-            return new StringBuilderGlyphEnumerable(this, text, position);
+            return GetGlyphs(text, 0, text.Length, position);
+        }
+
+        public StringBuilderGlyphEnumerable GetGlyphs(StringBuilder text, Point2 position)
+        {
+            return GetGlyphs(text, 0, text.Length, position);
+        }
+
+        public StringGlyphEnumerable GetGlyphs(string text)
+        {
+            return GetGlyphs(text, Point2.Zero);
+        }
+
+        public StringBuilderGlyphEnumerable GetGlyphs(StringBuilder text)
+        {
+            return GetGlyphs(text, Point2.Zero);
         }
 
         public override string ToString()
         {
-            return $"{Name}";
+            return Name;
+        }
+        
+        public interface ITextIterator
+        {
+            int Offset { get; }
+            int Length { get; }
+            
+            int GetCharacter(ref int index);
         }
 
-        public struct StringGlyphEnumerable : IEnumerable<BitmapFontGlyph>
+        private struct StringBuilderTextIterator : ITextIterator
         {
-            private readonly StringGlyphEnumerator _enumerator;
+            private StringBuilder _text;
 
-            public StringGlyphEnumerable(BitmapFont font, string text, Point2? position)
+            public int Offset { get; }
+            public int Length { get; }
+
+            public StringBuilderTextIterator(StringBuilder text, int offset, int length)
             {
-                _enumerator = new StringGlyphEnumerator(font, text, position);
+                _text = text ?? throw new ArgumentNullException(nameof(text));
+                Offset = offset;
+                Length = length;
             }
 
-            public StringGlyphEnumerator GetEnumerator()
+            public int GetCharacter(ref int index)
             {
-                return _enumerator;
-            }
-
-            IEnumerator<BitmapFontGlyph> IEnumerable<BitmapFontGlyph>.GetEnumerator()
-            {
-                return _enumerator;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _enumerator;
+                return char.IsHighSurrogate(_text[index]) && ++index < _text.Length
+                    ? char.ConvertToUtf32(_text[index - 1], _text[index])
+                    : _text[index];
             }
         }
 
-        public struct StringGlyphEnumerator : IEnumerator<BitmapFontGlyph>
+        private struct StringTextIterator : ITextIterator
         {
-            private readonly BitmapFont _font;
-            private readonly string _text;
+            private string _text;
+
+            public int Offset { get; }
+            public int Length { get; }
+
+            public StringTextIterator(string text, int offset, int length)
+            {
+                _text = text ?? throw new ArgumentNullException(nameof(text));
+                Offset = offset;
+                Length = length;
+            }
+
+            public int GetCharacter(ref int index)
+            {
+                return char.IsHighSurrogate(_text[index]) && ++index < _text.Length
+                    ? char.ConvertToUtf32(_text[index - 1], _text[index])
+                    : _text[index];
+            }
+        }
+
+        public class StringGlyphEnumerable : IEnumerable<Glyph>
+        {
+            public GlyphEnumerator Glyphs;
+
+            public StringGlyphEnumerable(BitmapFont font,
+                string text, int offset, int length, Point2 position)
+            {
+                Glyphs = new GlyphEnumerator(
+                    font, new StringTextIterator(text, offset, length), position);
+            }
+            
+            IEnumerator<Glyph> IEnumerable<Glyph>.GetEnumerator() => Glyphs;
+
+            IEnumerator IEnumerable.GetEnumerator() => throw new InvalidOperationException();
+        }
+
+        public struct StringBuilderGlyphEnumerable : IEnumerable<Glyph>
+        {
+            public GlyphEnumerator Glyphs;
+
+            public StringBuilderGlyphEnumerable(
+                BitmapFont font, StringBuilder text, int offset, int length, Point2 position)
+            {
+                Glyphs = new GlyphEnumerator(
+                    font, new StringBuilderTextIterator(text, offset, length), position);
+            }
+
+            IEnumerator<Glyph> IEnumerable<Glyph>.GetEnumerator() => Glyphs;
+
+            IEnumerator IEnumerable.GetEnumerator() => throw new InvalidOperationException();
+        }
+
+        public struct GlyphEnumerator : IEnumerator<Glyph>
+        {
+            private BitmapFont _font;
+            private ITextIterator _textIterator;
+            private Point2 _position;
+
             private int _index;
-            private readonly Point2 _position;
             private Vector2 _positionDelta;
-            private BitmapFontGlyph _currentGlyph;
-            private BitmapFontGlyph? _previousGlyph;
+            private Glyph? _previousGlyph;
+            public Glyph CurrentGlyph;
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    // casting a struct to object will box it, behaviour we want to avoid...
-                    throw new InvalidOperationException();
-                }
-            }
+            // casting a struct to object will box it, a behaviour we want to avoid...
+            object IEnumerator.Current => throw new InvalidOperationException();
 
-            public BitmapFontGlyph Current => _currentGlyph;
+            public Glyph Current => CurrentGlyph;
 
-            public StringGlyphEnumerator(BitmapFont font, string text, Point2? position)
+            public GlyphEnumerator(BitmapFont font, ITextIterator text, Point2 position)
             {
                 _font = font;
-                _text = text;
+                _textIterator = text;
+                _position = position;
+
                 _index = -1;
-                _position = position ?? new Point2();
-                _positionDelta = new Vector2();
-                _currentGlyph = new BitmapFontGlyph();
+                _positionDelta = Vector2.Zero;
+                CurrentGlyph = new Glyph();
                 _previousGlyph = null;
             }
 
             public bool MoveNext()
             {
-                if (++_index >= _text.Length)
+                _index++;
+                if (_index >= _textIterator.Length)
                     return false;
 
-                var character = GetUnicodeCodePoint(_text, ref _index);
-                _currentGlyph.Character = character;
-                _currentGlyph.FontRegion = _font.GetCharacterRegion(character);
-                _currentGlyph.Position = _position + _positionDelta;
+                int character = _textIterator.GetCharacter(ref _index);
 
-                if (_currentGlyph.FontRegion != null)
+                CurrentGlyph.Character = character;
+                CurrentGlyph.FontRegion = _font.GetCharacterRegion(character);
+                CurrentGlyph.Position = _position + _positionDelta;
+
+                if (CurrentGlyph.FontRegion != null)
                 {
-                    _currentGlyph.Position.X += _currentGlyph.FontRegion.XOffset;
-                    _currentGlyph.Position.Y += _currentGlyph.FontRegion.YOffset;
-                    _positionDelta.X += _currentGlyph.FontRegion.XAdvance + _font.LetterSpacing;
+                    CurrentGlyph.Position.X += CurrentGlyph.FontRegion.XOffset;
+                    CurrentGlyph.Position.Y += CurrentGlyph.FontRegion.YOffset;
+                    _positionDelta.X += CurrentGlyph.FontRegion.XAdvance + _font.LetterSpacing;
                 }
 
-                if (UseKernings && _previousGlyph.HasValue && _previousGlyph.Value.FontRegion != null)
+                if (UseKernings && _previousGlyph?.FontRegion != null)
                 {
-                    int amount;
-                    if (_previousGlyph.Value.FontRegion.Kernings.TryGetValue(character, out amount))
-                    { 
+                    if (_previousGlyph.Value.FontRegion.Kernings.TryGetValue(character, out int amount))
                         _positionDelta.X += amount;
-                        _currentGlyph.Position.X += amount;
-                    }
                 }
 
-                _previousGlyph = _currentGlyph;
+                _previousGlyph = CurrentGlyph;
 
                 if (character != '\n')
                     return true;
@@ -205,15 +312,9 @@ namespace MonoGame.Extended.BitmapFonts
                 return true;
             }
 
-            private static int GetUnicodeCodePoint(string text, ref int index)
-            {
-                return char.IsHighSurrogate(text[index]) && ++index < text.Length
-                    ? char.ConvertToUtf32(text[index - 1], text[index])
-                    : text[index];
-            }
-
             public void Dispose()
             {
+
             }
 
             public void Reset()
@@ -223,130 +324,5 @@ namespace MonoGame.Extended.BitmapFonts
                 _previousGlyph = null;
             }
         }
-
-        public struct StringBuilderGlyphEnumerable : IEnumerable<BitmapFontGlyph>
-        {
-            private readonly StringBuilderGlyphEnumerator _enumerator;
-
-            public StringBuilderGlyphEnumerable(BitmapFont font, StringBuilder text, Point2? position)
-            {
-                _enumerator = new StringBuilderGlyphEnumerator(font, text, position);
-            }
-
-            public StringBuilderGlyphEnumerator GetEnumerator()
-            {
-                return _enumerator;
-            }
-
-            IEnumerator<BitmapFontGlyph> IEnumerable<BitmapFontGlyph>.GetEnumerator()
-            {
-                return _enumerator;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _enumerator;
-            }
-        }
-
-        public struct StringBuilderGlyphEnumerator : IEnumerator<BitmapFontGlyph>
-        {
-            private readonly BitmapFont _font;
-            private readonly StringBuilder _text;
-            private int _index;
-            private Point2 _position;
-            private Vector2 _positionDelta;
-            private BitmapFontGlyph _currentGlyph;
-            private BitmapFontGlyph? _previousGlyph;
-
-            object IEnumerator.Current
-            {
-                get
-                {
-                    // casting a struct to object will box it, behaviour we want to avoid...
-                    throw new InvalidOperationException();
-                }
-            }
-
-            public BitmapFontGlyph Current => _currentGlyph;
-
-            public StringBuilderGlyphEnumerator(BitmapFont font, StringBuilder text, Point2? position)
-            {
-                _font = font;
-                _text = text;
-                _index = -1;
-                _position = position ?? new Point2();
-                _positionDelta = new Vector2();
-                _currentGlyph = new BitmapFontGlyph();
-                _previousGlyph = null;
-            }
-
-            public bool MoveNext()
-            {
-                if (++_index >= _text.Length)
-                    return false;
-
-                var character = GetUnicodeCodePoint(_text, ref _index);
-                _currentGlyph = new BitmapFontGlyph
-                {
-                    Character = character,
-                    FontRegion = _font.GetCharacterRegion(character),
-                    Position = _position + _positionDelta
-                };
-
-                if (_currentGlyph.FontRegion != null)
-                {
-                    _currentGlyph.Position.X += _currentGlyph.FontRegion.XOffset;
-                    _currentGlyph.Position.Y += _currentGlyph.FontRegion.YOffset;
-                    _positionDelta.X += _currentGlyph.FontRegion.XAdvance + _font.LetterSpacing;
-                }
-
-                if (UseKernings && _previousGlyph.HasValue && _previousGlyph.Value.FontRegion != null)
-                {
-                    int amount;
-                    if (_previousGlyph.Value.FontRegion.Kernings.TryGetValue(character, out amount))
-                    { 
-                        _positionDelta.X += amount;
-                        _currentGlyph.Position.X += amount;
-                    }
-                }
-
-                _previousGlyph = _currentGlyph;
-
-                if (character != '\n')
-                    return true;
-
-                _positionDelta.Y += _font.LineHeight;
-                _positionDelta.X = _position.X;
-                _previousGlyph = null;
-
-                return true;
-            }
-
-            private static int GetUnicodeCodePoint(StringBuilder text, ref int index)
-            {
-                return char.IsHighSurrogate(text[index]) && ++index < text.Length
-                    ? char.ConvertToUtf32(text[index - 1], text[index])
-                    : text[index];
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public void Reset()
-            {
-                _positionDelta = new Point2();
-                _index = -1;
-                _previousGlyph = null;
-            }
-        }
-    }
-
-    public struct BitmapFontGlyph
-    {
-        public int Character;
-        public Vector2 Position;
-        public BitmapFontRegion FontRegion;
     }
 }

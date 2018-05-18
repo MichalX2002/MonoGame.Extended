@@ -46,9 +46,8 @@ namespace MonoGame.Extended.Serialization
         {
             var jObject = JObject.Load(reader);
             var key = jObject.GetValue("type", StringComparison.OrdinalIgnoreCase).ToObject<string>();
-            Type type;
 
-            if (_namesToTypes.TryGetValue(key, out type))
+            if (_namesToTypes.TryGetValue(key, out Type type))
             {
                 serializer.Converters.Remove(this);
                 var value = jObject.ToObject(type, serializer);
