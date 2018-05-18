@@ -5,12 +5,13 @@ namespace MonoGame.Extended.Input.InputListeners
     /// <summary>
     ///     This is a class that contains settings to be used to initialise a <see cref="GamePadListener" />.
     /// </summary>
-    /// <seealso cref="InputListenerManager" />
+    /// <seealso cref="InputListener" />
     public class GamePadListenerSettings : InputListenerSettings<GamePadListener>
     {
         public GamePadListenerSettings()
             : this(PlayerIndex.One)
         {
+
         }
 
         /// <summary>

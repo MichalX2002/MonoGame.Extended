@@ -8,7 +8,7 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
     }
 
     /// <summary>Interface for a class responsible to render a specific control type</summary>
-    /// <typeparam name="ControlType">Type of control the implementation class will render</typeparam>
+    /// <typeparam name="TControlType">Type of control the implementation class will render</typeparam>
     public interface IFlatControlRenderer<TControlType> : IFlatControlRenderer where TControlType : GuiControl
     {
         /// <summary>Renders the specified control using the provided graphics interface</summary>

@@ -33,6 +33,7 @@ namespace MonoGame.Extended.NuclexGui.Support
         {
         }
 
+        /*
         /// <summary>
         ///     Initializes a new instance of the WeakReference class, using deserialized
         ///     data from the specified serialization and stream objects.
@@ -48,6 +49,8 @@ namespace MonoGame.Extended.NuclexGui.Support
         /// <exception cref="System.ArgumentNullException">
         ///     The info parameter is null.
         /// </exception>
+        */
+
         /// <summary>
         ///     Gets or sets the object (the target) referenced by the current WeakReference
         ///     object.

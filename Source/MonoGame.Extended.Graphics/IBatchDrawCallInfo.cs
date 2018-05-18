@@ -9,7 +9,7 @@ namespace MonoGame.Extended.Graphics
     {
         /// <summary>
         ///     Applies any state from the <see cref="IBatchDrawCallInfo{TDrawCallInfo}" /> to the
-        ///     <see cref="Effect" /> or <see cref="Effect.GraphicsDevice"/>.
+        ///     <see cref="Effect" /> or <see cref="GraphicsResource.GraphicsDevice"/>.
         /// </summary>
         /// <param name="effect">The effect.</param>
         void SetState(Effect effect);

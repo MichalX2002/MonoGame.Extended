@@ -62,10 +62,10 @@ namespace MonoGame.Extended.Particles
 
         internal ParticleBuffer Buffer;
 
-		/// <summary>
-		/// Getter returns the <see cref="Buffer.Size" />.
-		/// Setter resizes the Buffer.
-		/// </summary>
+        /// <summary>
+        /// Getter returns the capacity of the size <see cref="ParticleBuffer" />.
+        /// Setter resizes the internal <see cref="Buffer"/>.
+        /// </summary>
         public int Capacity
         {
             get { return Buffer.Size; }

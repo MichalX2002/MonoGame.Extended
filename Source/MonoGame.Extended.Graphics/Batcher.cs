@@ -25,12 +25,12 @@ namespace MonoGame.Extended.Graphics
         private Matrix? _projectionMatrix;
 
         /// <summary>
-        ///     The array of <see cref="TDrawCallInfo" /> structs currently enqueued.
+        ///     The array of <see cref="Batcher{TDrawCallInfo}" /> structs currently enqueued.
         /// </summary>
         protected TDrawCallInfo[] DrawCalls;
 
         /// <summary>
-        ///     The number of <see cref="TDrawCallInfo" /> structs currently enqueued.
+        ///     The number of <see cref="Batcher{TDrawCallInfo}" /> structs currently enqueued.
         /// </summary>
         protected int EnqueuedDrawCallCount;
 
@@ -57,9 +57,9 @@ namespace MonoGame.Extended.Graphics
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="defaultEffect">The default effect.</param>
         /// <param name="maximumDrawCallsCount">
-        ///     The maximum number of <see cref="TDrawCallInfo" /> structs that can be enqueued before a
-        ///     <see cref="Batcher{TDrawCallInfo}.Flush" />
-        ///     is required. The default value is <code>2048</code>.
+        ///     The maximum number of <see cref="Batcher{TDrawCallInfo}" /> structs that can be enqueued 
+        ///     before a <see cref="Batcher{TDrawCallInfo}.Flush" /> is required.
+        ///     The default value is <code>2048</code>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="graphicsDevice" /> is
@@ -357,7 +357,8 @@ namespace MonoGame.Extended.Graphics
          */
 
         /// <summary>
-        ///     Submits a draw operation to the <see cref="GraphicsDevice" /> using the specified <see cref="TDrawCallInfo"/>.
+        ///     Submits a draw operation to the <see cref="GraphicsDevice" />
+        ///     using the specified <see cref="Batcher{TDrawCallInfo}" />Info}" />.
         /// </summary>
         /// <param name="drawCall">The draw call information.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

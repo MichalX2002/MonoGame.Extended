@@ -441,6 +441,8 @@ namespace MonoGame.Extended.NuclexGui.Controls
 
         /// <summary>Switches the mouse over control to a different control</summary>
         /// <param name="newMouseOverControl">New control the mouse is hovering over</param>
+        /// <param name="x">X coordinate of the mouse cursor on the GUI</param>
+        /// <param name="y">Y coordinate of the mouse cursor on the GUI</param>
         private void SwitchMouseOverControl(GuiControl newMouseOverControl, float x, float y)
         {
             if (_mouseOverControl != newMouseOverControl)

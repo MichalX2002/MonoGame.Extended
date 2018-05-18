@@ -1,7 +1,5 @@
 ﻿using MonoGame.Extended.Input.InputListeners;
-using MonoGame.Extended;
 using System;
-using Microsoft.Xna.Framework.Input;
 
 namespace MonoGame.Extended.NuclexGui.Controls.Desktop
 {
@@ -39,7 +37,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>Which sides are being resized</summary>
         private ResizingSides _resizingSides = ResizingSides.None;
 
-        /// <summary>Which Directions are being resized/summary>
+        /// <summary>Which Directions are being resized</summary>
         private ResizingDirections _resizingDirections = ResizingDirections.None;
 
         /// <summary>Whether the control is currently being dragged</summary>
@@ -55,7 +53,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         private float _grabY;
 
         /// <summary>Width of Border</summary>
-        private float _borderThickness = 8;
+        private readonly float _borderThickness = 8;
 
         /// <summary>Initializes a new draggable control</summary>
         public GuiResizableControl()

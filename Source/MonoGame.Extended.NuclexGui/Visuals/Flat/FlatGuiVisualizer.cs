@@ -256,7 +256,7 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
         ///     Adapter that automatically casts a control down to the renderer's supported
         ///     control type
         /// </summary>
-        /// <typeparam name="ControlType">
+        /// <typeparam name="TControlType">
         ///     Type of control the control renderer casts down to
         /// </typeparam>
         /// <remarks>
