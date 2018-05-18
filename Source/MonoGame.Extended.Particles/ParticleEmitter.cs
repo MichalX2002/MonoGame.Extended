@@ -11,6 +11,7 @@ namespace MonoGame.Extended.Particles
 {
     public unsafe class ParticleEmitter : IDisposable
     {
+		// Creates a not-so-random number.
         private readonly FastRandom _random = new FastRandom();
         private float _totalSeconds;
 
@@ -61,6 +62,10 @@ namespace MonoGame.Extended.Particles
 
         internal ParticleBuffer Buffer;
 
+		/// <summary>
+		/// Getter returns the <see cref="Buffer.Size" />.
+		/// Setter resizes the Buffer.
+		/// </summary>
         public int Capacity
         {
             get { return Buffer.Size; }
