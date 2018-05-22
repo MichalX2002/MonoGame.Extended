@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>6</LangVersion>
+    <LangVersion>7.0</LangVersion>
     <DocumentationFile>bin\Debug\MonoGame.Extended.Gui.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
@@ -33,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\MonoGame.Extended.Gui.XML</DocumentationFile>
+    <LangVersion>7.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Controls\GuiButton.cs" />
