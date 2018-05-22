@@ -72,7 +72,7 @@
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.7.0.479, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MonoGame\MonoGame.Framework\bin\WindowsGL\AnyCPU\Release\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\Binaries\MonoGame\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
