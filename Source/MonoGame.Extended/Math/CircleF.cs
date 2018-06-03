@@ -309,11 +309,13 @@ namespace MonoGame.Extended
             return Center + Radius * direction;
         }
 
+        /*
         [Obsolete("Circle.GetPointAlongEdge() may be removed in the future. Use BoundaryPointAt() instead.")]
         public Point2 GetPointAlongEdge(float angle)
         {
             return Center + new Vector2(Radius * (float) Math.Cos(angle), Radius * (float) Math.Sin(angle));
         }
+        */
 
         /// <summary>
         ///     Compares two <see cref="CircleF" /> structures. The result specifies whether the values of the
