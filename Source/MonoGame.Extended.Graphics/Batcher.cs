@@ -72,13 +72,10 @@ namespace MonoGame.Extended.Graphics
         protected Batcher(GraphicsDevice graphicsDevice, Effect defaultEffect,
             int maximumDrawCallsCount = DefaultBatchMaximumDrawCallsCount)
         {
-            if (graphicsDevice == null)
-                throw new ArgumentNullException(nameof(graphicsDevice));
-
             if (maximumDrawCallsCount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maximumDrawCallsCount));
 
-            GraphicsDevice = graphicsDevice;
+            GraphicsDevice = graphicsDevice ?? throw new ArgumentNullException(nameof(graphicsDevice));
             _defaultEffect = defaultEffect;
             DrawCalls = new TDrawCallInfo[maximumDrawCallsCount];
         }

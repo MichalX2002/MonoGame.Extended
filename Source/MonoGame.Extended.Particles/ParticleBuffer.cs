@@ -21,9 +21,9 @@ namespace MonoGame.Extended.Particles
             // add one extra spot in memory for margin between head and tail
             // so the iterator can see that it's at the end
             _nativePointer = Marshal.AllocHGlobal(SizeInBytes);
-            BufferEnd = (Particle*) (_nativePointer + SizeInBytes);
-            Head = (Particle*) _nativePointer;
-            Tail = (Particle*) _nativePointer;
+            BufferEnd = (Particle*)(_nativePointer + SizeInBytes);
+            Head = (Particle*)_nativePointer;
+            Tail = (Particle*)_nativePointer;
 
             _iterator = new ParticleIterator(this);
 
@@ -41,14 +41,9 @@ namespace MonoGame.Extended.Particles
         // current number of particles
         public int Count { get; private set; }
         // total size of the buffer
-        public int SizeInBytes => Particle.SizeInBytes*(Size + 1);
+        public int SizeInBytes => Particle.SizeInBytes * (Size + 1);
         // total size of active particles
-        public int ActiveSizeInBytes => Particle.SizeInBytes*Count;
-        
-        public void Clear()
-        {
-            Reclaim(Count);
-        }
+        public int ActiveSizeInBytes => Particle.SizeInBytes * Count;
 
         public void Dispose()
         {
@@ -57,7 +52,7 @@ namespace MonoGame.Extended.Particles
                 Marshal.FreeHGlobal(_nativePointer);
                 _disposed = true;
 
-                GC.RemoveMemoryPressure(Particle.SizeInBytes*Size);
+                GC.RemoveMemoryPressure(Particle.SizeInBytes * Size);
             }
 
             GC.SuppressFinalize(this);
@@ -118,7 +113,7 @@ namespace MonoGame.Extended.Particles
 
             private unsafe Particle* _current;
 
-            public int Total;
+            public int Total { get; private set; }
 
             public ParticleIterator(ParticleBuffer buffer)
             {
@@ -150,7 +145,7 @@ namespace MonoGame.Extended.Particles
                 var p = _current;
                 _current++;
                 if (_current == _buffer.BufferEnd)
-                    _current = (Particle*) _buffer._nativePointer;
+                    _current = (Particle*)_buffer._nativePointer;
 
                 return p;
             }

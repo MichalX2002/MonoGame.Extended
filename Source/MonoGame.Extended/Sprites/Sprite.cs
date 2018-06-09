@@ -12,9 +12,7 @@ namespace MonoGame.Extended.Sprites
 
         public Sprite(TextureRegion2D textureRegion)
         {
-            if (textureRegion == null) throw new ArgumentNullException(nameof(textureRegion));
-
-            _textureRegion = textureRegion;
+            _textureRegion = textureRegion ?? throw new ArgumentNullException(nameof(textureRegion));
 
             Alpha = 1.0f;
             Color = Color.White;
@@ -62,12 +60,10 @@ namespace MonoGame.Extended.Sprites
             get { return _textureRegion; }
             set
             {
-                if (value == null)
-                    throw new InvalidOperationException("TextureRegion cannot be null");
 
                 // preserve the origin if the texture size changes
                 var originNormalized = OriginNormalized;
-                _textureRegion = value;
+                _textureRegion = value ?? throw new InvalidOperationException("TextureRegion cannot be null");
                 OriginNormalized = originNormalized;
             }
         }

@@ -18,16 +18,13 @@ namespace MonoGame.Extended.Particles
 		[JsonConstructor]
 		public ParticleEmitter(string name, TextureRegion2D textureRegion, int capacity, TimeSpan lifeSpan, Profile profile)
 		{
-			if (profile == null)
-				throw new ArgumentNullException(nameof(profile));
-
-			_lifeSpanSeconds = (float)lifeSpan.TotalSeconds;
+            _lifeSpanSeconds = (float)lifeSpan.TotalSeconds;
 
 			Name = name;
 			TextureRegion = textureRegion;
 			Buffer = new ParticleBuffer(capacity);
 			Offset = Vector2.Zero;
-			Profile = profile;
+			Profile = profile ?? throw new ArgumentNullException(nameof(profile));
 			Modifiers = new List<Modifier>();
 			ModifierExecutionStrategy = ParticleModifierExecutionStrategy.Serial;
 			Parameters = new ParticleReleaseParameters();
@@ -45,8 +42,7 @@ namespace MonoGame.Extended.Particles
 		public Profile Profile { get; set; }
 		public ParticleReleaseParameters Parameters { get; set; }
 		public TextureRegion2D TextureRegion { get; set; }
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
+        
 		public ParticleModifierExecutionStrategy ModifierExecutionStrategy { get; set; }
 
 		internal ParticleBuffer Buffer;
@@ -60,9 +56,11 @@ namespace MonoGame.Extended.Particles
 			get { return Buffer.Size; }
 			set
 			{
-				var oldBuffer = Buffer;
-				oldBuffer.Dispose();
-				Buffer = new ParticleBuffer(value);
+                if (Buffer.Size != value)
+                {
+                    Buffer.Dispose();
+                    Buffer = new ParticleBuffer(value);
+                }
 			}
 		}
 
@@ -118,8 +116,11 @@ namespace MonoGame.Extended.Particles
 
 		public void Clear()
 		{
-			Buffer.Clear();
-		}
+            var oldBuffer = Buffer;
+            int size = oldBuffer.Size;
+            oldBuffer.Dispose();
+            Buffer = new ParticleBuffer(size);
+        }
 
 		public bool Update(float elapsedSeconds, Vector2 position = default(Vector2))
 		{
