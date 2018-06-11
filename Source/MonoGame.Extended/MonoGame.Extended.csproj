@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <LangVersion>7.0</LangVersion>
+    <LangVersion>7.2</LangVersion>
     <DocumentationFile>bin\Debug\MonoGame.Extended.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <DocumentationFile>bin\Release\MonoGame.Extended.XML</DocumentationFile>
-    <LangVersion>7.0</LangVersion>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BatchedSprite.cs" />

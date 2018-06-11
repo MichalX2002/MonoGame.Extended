@@ -91,7 +91,7 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, length = sprites.Count; i < length; i++)
             {
                 ref CharDrawSprite s = ref sprites.GetReferenceAt(i);
-                batch.Draw(s.Texture, ref s.Sprite);
+                batch.Draw(s.Texture, s.Sprite);
             }
         }
 
@@ -100,7 +100,7 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, length = sprites.Count; i < length; i++)
             {
                 ref CharDrawSprite s = ref sprites.GetReferenceAt(i);
-                batch.Draw(s.Texture, ref s.Sprite, depth);
+                batch.Draw(s.Texture, s.Sprite, depth);
             }
         }
 

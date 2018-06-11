@@ -23,32 +23,22 @@ namespace MonoGame.Extended
 
             return _texture;
         }
-
-        public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite sprite, float depth)
+        
+        public static void Draw(this SpriteBatch batch, Texture2D texture, in BatchedSprite sprite, float depth)
         {
-            batch.Draw(texture, ref sprite.TL, ref sprite.TR, ref sprite.BL, ref sprite.BR, depth);
+            batch.Draw(texture, sprite.TL, sprite.TR, sprite.BL, sprite.BR, depth);
         }
-
-        public static void Draw(this SpriteBatch batch, Texture2D texture, ref BatchedSprite sprite, float depth)
+    
+        public static void Draw(this SpriteBatch batch, Texture2D texture, in BatchedSprite sprite)
         {
-            batch.Draw(texture, ref sprite.TL, ref sprite.TR, ref sprite.BL, ref sprite.BR, depth);
-        }
-
-        public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite sprite)
-        {
-            batch.Draw(texture, ref sprite.TL, ref sprite.TR, ref sprite.BL, ref sprite.BR);
-        }
-
-        public static void Draw(this SpriteBatch batch, Texture2D texture, ref BatchedSprite sprite)
-        {
-            batch.Draw(texture, ref sprite.TL, ref sprite.TR, ref sprite.BL, ref sprite.BR);
+            batch.Draw(texture, sprite.TL, sprite.TR, sprite.BL, sprite.BR);
         }
 
         public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites)
         {
             for (int i = 0, length = sprites.Length; i < length; i++)
             {
-                batch.Draw(texture, ref sprites[i]);
+                batch.Draw(texture, sprites[i]);
             }
         }
 
@@ -56,7 +46,7 @@ namespace MonoGame.Extended
         {
             for (int i = 0, length = sprites.Length; i < length; i++)
             {
-                batch.Draw(texture, ref sprites[i], depth);
+                batch.Draw(texture, sprites[i], depth);
             }
         }
     }

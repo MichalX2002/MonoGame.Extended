@@ -490,6 +490,28 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
+        ///     Determines whether this <see cref="RectangleF" /> contains the specified
+        ///     <see cref="RectangleF" />.
+        /// </summary>
+        public bool Contains(ref RectangleF value)
+        {
+            return 
+                X <= value.X &&
+                value.X + value.Width <= X + Width &&
+                Y <= value.Y &&
+                value.Y + value.Height <= Y + Height;
+        }
+
+        /// <summary>
+        ///     Determines whether this <see cref="RectangleF" /> contains the specified
+        ///     <see cref="RectangleF" />.
+        /// </summary>
+        public bool Contains(RectangleF value)
+        {
+            return Contains(ref value);
+        }
+
+        /// <summary>
         ///     Updates this <see cref="RectangleF" /> from a list of <see cref="Point2" /> structures.
         /// </summary>
         /// <param name="points">The points.</param>
