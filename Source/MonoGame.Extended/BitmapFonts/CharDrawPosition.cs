@@ -15,8 +15,8 @@ namespace MonoGame.Extended.BitmapFonts
         public Vector2 Scale;
         public float Depth;
 
-        public CharDrawPosition(int character, Texture2D texture, Rectangle srcRect, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float layerDepth)
+        public CharDrawPosition(int character, Texture2D texture, in Rectangle srcRect, in Vector2 position,
+            in Color color, float rotation, in Vector2 origin, in Vector2 scale, float layerDepth)
         {
             Char = character;
             Texture = texture;
