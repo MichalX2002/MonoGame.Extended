@@ -93,7 +93,7 @@ namespace MonoGame.Extended
         }
 
         public static Matrix2D GetMatrixFromRect(
-            in Rectangle destination, Vector2 origin, float rotation, in Point sourceSize)
+            in RectangleF destination, Vector2 origin, float rotation, in Point sourceSize)
         {
             origin.X *= destination.Width / (float)sourceSize.X;
             origin.Y *= destination.Height / (float)sourceSize.Y;
@@ -117,7 +117,7 @@ namespace MonoGame.Extended
             SetTexCoords(region.Texture.Texel, region.Bounds);
         }
 
-        public void SetTexCoords(in Vector2 textureTexel, in Rectangle sourceRect)
+        public void SetTexCoords(in Vector2 textureTexel, in RectangleF sourceRect)
         {
             SourceRectToTexCoords(textureTexel, sourceRect,
                 ref TL.TextureCoordinate, ref TR.TextureCoordinate,
@@ -142,7 +142,7 @@ namespace MonoGame.Extended
         */
 
         public static void SourceRectToTexCoords(
-            in Vector2 textureTexel, in Rectangle sourceRect,
+            in Vector2 textureTexel, in RectangleF sourceRect,
             ref Vector2 tl, ref Vector2 tr, ref Vector2 bl, ref Vector2 br)
         {
             float x = sourceRect.X * textureTexel.X;

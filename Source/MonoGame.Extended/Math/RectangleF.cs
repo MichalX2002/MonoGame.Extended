@@ -579,6 +579,24 @@ namespace MonoGame.Extended
             Y += amount.Y;
         }
 
+        public static RectangleF operator +(RectangleF a, RectangleF b)
+        {
+            return new RectangleF(
+                a.X + b.X,
+                a.Y + b.Y,
+                a.Width + b.Width,
+                a.Height + b.Height);
+        }
+
+        public static RectangleF operator -(RectangleF a, RectangleF b)
+        {
+            return new RectangleF(
+                a.X - b.X,
+                a.Y - b.Y,
+                a.Width - b.Width,
+                a.Height - b.Height);
+        }
+
         /// <summary>
         ///     Compares two <see cref="RectangleF" /> structures. The result specifies whether the values of the
         ///     <see cref="X" />, <see cref="Y"/>, <see cref="Width"/> and <see cref="Height" /> fields of the two <see cref="RectangleF" /> structures
