@@ -490,6 +490,28 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
+        ///     Determines whether this <see cref="RectangleF" /> contains the specified
+        ///     <see cref="RectangleF" />.
+        /// </summary>
+        public bool Contains(ref RectangleF value)
+        {
+            return 
+                X <= value.X &&
+                value.X + value.Width <= X + Width &&
+                Y <= value.Y &&
+                value.Y + value.Height <= Y + Height;
+        }
+
+        /// <summary>
+        ///     Determines whether this <see cref="RectangleF" /> contains the specified
+        ///     <see cref="RectangleF" />.
+        /// </summary>
+        public bool Contains(RectangleF value)
+        {
+            return Contains(ref value);
+        }
+
+        /// <summary>
         ///     Updates this <see cref="RectangleF" /> from a list of <see cref="Point2" /> structures.
         /// </summary>
         /// <param name="points">The points.</param>
@@ -555,6 +577,24 @@ namespace MonoGame.Extended
         {
             X += amount.X;
             Y += amount.Y;
+        }
+
+        public static RectangleF operator +(RectangleF a, RectangleF b)
+        {
+            return new RectangleF(
+                a.X + b.X,
+                a.Y + b.Y,
+                a.Width + b.Width,
+                a.Height + b.Height);
+        }
+
+        public static RectangleF operator -(RectangleF a, RectangleF b)
+        {
+            return new RectangleF(
+                a.X - b.X,
+                a.Y - b.Y,
+                a.Width - b.Width,
+                a.Height - b.Height);
         }
 
         /// <summary>
