@@ -107,8 +107,7 @@ namespace MonoGame.Extended.Entities
             var entity = _pool.New();
             MarkEntityToBeAdded(entity);
 
-            EntityTemplate entityTemplate;
-            _entityTemplatesByName.TryGetValue(name, out entityTemplate);
+            _entityTemplatesByName.TryGetValue(name, out EntityTemplate entityTemplate);
 
             if (entityTemplate == null)
                 throw new InvalidOperationException($"EntityTemplate '{name}' is not registered.");
@@ -131,8 +130,7 @@ namespace MonoGame.Extended.Entities
             if (string.IsNullOrEmpty(name))
                 return null;
 
-            Entity entity;
-            _entitiesByName.TryGetValue(name, out entity);
+            _entitiesByName.TryGetValue(name, out Entity entity);
             if (entity != null)
                 return entity;
             RemoveEntityName(name);
@@ -160,8 +158,7 @@ namespace MonoGame.Extended.Entities
             if (string.IsNullOrEmpty(groupName))
                 return null;
 
-            Bag<Entity> bag;
-            _entitiesByGroup.TryGetValue(groupName, out bag);
+            _entitiesByGroup.TryGetValue(groupName, out Bag<Entity> bag);
             return bag;
         }
 
@@ -291,9 +288,8 @@ namespace MonoGame.Extended.Entities
         {
             Debug.Assert(entity != null);
             var type = typeof(T);
-            EntityComponentType entityComponentType;
 
-            if (!_componentTypes.TryGetValue(type, out entityComponentType))
+            if (!_componentTypes.TryGetValue(type, out EntityComponentType entityComponentType))
                 _componentTypes[type] = entityComponentType = new EntityComponentType(type);
 
             return (T)AddComponent(entity, entityComponentType, component);
@@ -322,9 +318,8 @@ namespace MonoGame.Extended.Entities
 
             if (component == null)
             {
-                IComponentPool componentPool;
 
-                if (_componentPoolsByComponentTypeIndex.TryGetValue(componentType.Index, out componentPool))
+                if (_componentPoolsByComponentTypeIndex.TryGetValue(componentType.Index, out IComponentPool componentPool))
                 {
                     component = componentPool.New();
 
@@ -362,8 +357,7 @@ namespace MonoGame.Extended.Entities
             if (components == null)
                 return null;
 
-            object component;
-            components.TryGetValue(entity, out component);
+            components.TryGetValue(entity, out object component);
             return component;
         }
 
@@ -395,8 +389,7 @@ namespace MonoGame.Extended.Entities
 
                 Debug.Assert(components != null);
 
-                object component;
-                if (!components.TryGetValue(entity, out component))
+                if (!components.TryGetValue(entity, out object component))
                     continue;
 
                 entity.ComponentBits[componentType.Index] = false;
@@ -420,9 +413,8 @@ namespace MonoGame.Extended.Entities
             {
                 var components = _entitiesToComponentsBag[i];
 
-                object component;
 
-                if (components == null || !components.TryGetValue(entity, out component))
+                if (components == null || !components.TryGetValue(entity, out object component))
                     continue;
 
                 components.Remove(entity);

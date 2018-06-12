@@ -72,9 +72,8 @@ namespace MonoGame.Extended
 
         public static Color FromName(string name)
         {
-            Color color;
 
-            if(_colorsByName.TryGetValue(name, out color))
+            if (_colorsByName.TryGetValue(name, out Color color))
                 return color;
 
             throw new InvalidOperationException($"{name} is not a valid color");

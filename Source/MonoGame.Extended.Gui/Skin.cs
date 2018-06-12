@@ -47,9 +47,8 @@ namespace MonoGame.Extended.Gui
 
         public ControlStyle GetStyle(string name)
         {
-            ControlStyle controlStyle;
 
-            if (Styles.TryGetValue(name, out controlStyle))
+            if (Styles.TryGetValue(name, out ControlStyle controlStyle))
                 return controlStyle;
 
             return null;

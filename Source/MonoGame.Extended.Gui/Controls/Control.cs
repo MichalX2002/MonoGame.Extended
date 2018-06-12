@@ -255,9 +255,8 @@ namespace MonoGame.Extended.Gui.Controls
 
         public object GetAttachedProperty(string name)
         {
-            object value;
 
-            if (AttachedProperties.TryGetValue(name, out value))
+            if (AttachedProperties.TryGetValue(name, out object value))
                 return value;
 
             return null;

@@ -77,8 +77,7 @@ namespace MonoGame.Extended
         /// <returns>An <see cref="CircleF" />.</returns>
         public static CircleF CreateFrom(Point2 minimum, Point2 maximum)
         {
-            CircleF result;
-            CreateFrom(minimum, maximum, out result);
+            CreateFrom(minimum, maximum, out CircleF result);
             return result;
         }
 
@@ -118,8 +117,7 @@ namespace MonoGame.Extended
         /// <returns>An <see cref="CircleF" />.</returns>
         public static CircleF CreateFrom(IReadOnlyList<Point2> points)
         {
-            CircleF result;
-            CreateFrom(points, out result);
+            CreateFrom(points, out CircleF result);
             return result;
         }
 

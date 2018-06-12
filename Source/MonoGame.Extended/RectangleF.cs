@@ -179,8 +179,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="RectangleF" />.</returns>
         public static RectangleF CreateFrom(Point2 minimum, Point2 maximum)
         {
-            RectangleF result;
-            CreateFrom(minimum, maximum, out result);
+            CreateFrom(minimum, maximum, out RectangleF result);
             return result;
         }
 
@@ -191,9 +190,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting rectangle.</param>
         public static void CreateFrom(IReadOnlyList<Point2> points, out RectangleF result)
         {
-            Point2 minimum;
-            Point2 maximum;
-            PrimitivesHelper.CreateRectangleFromPoints(points, out minimum, out maximum);
+            PrimitivesHelper.CreateRectangleFromPoints(points, out Point2 minimum, out Point2 maximum);
             CreateFrom(minimum, maximum, out result);
         }
 
@@ -204,8 +201,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="RectangleF" />.</returns>
         public static RectangleF CreateFrom(IReadOnlyList<Point2> points)
         {
-            RectangleF result;
-            CreateFrom(points, out result);
+            CreateFrom(points, out RectangleF result);
             return result;
         }
 
@@ -261,8 +257,7 @@ namespace MonoGame.Extended
         /// </remarks>
         public static RectangleF Transform(RectangleF rectangle, ref Matrix2 transformMatrix)
         {
-            RectangleF result;
-            Transform(ref rectangle, ref transformMatrix, out result);
+            Transform(ref rectangle, ref transformMatrix, out RectangleF result);
             return result;
         }
 
@@ -294,8 +289,7 @@ namespace MonoGame.Extended
         /// </returns>
         public static RectangleF Union(RectangleF first, RectangleF second)
         {
-            RectangleF result;
-            Union(ref first, ref second, out result);
+            Union(ref first, ref second, out RectangleF result);
             return result;
         }
 
@@ -309,8 +303,7 @@ namespace MonoGame.Extended
         /// </returns>
         public RectangleF Union(RectangleF rectangle)
         {
-            RectangleF result;
-            Union(ref this, ref rectangle, out result);
+            Union(ref this, ref rectangle, out RectangleF result);
             return result;
         }
 
@@ -352,8 +345,7 @@ namespace MonoGame.Extended
         public static RectangleF Intersection(RectangleF first,
             RectangleF second)
         {
-            RectangleF result;
-            Intersection(ref first, ref second, out result);
+            Intersection(ref first, ref second, out RectangleF result);
             return result;
         }
 
@@ -368,25 +360,10 @@ namespace MonoGame.Extended
         /// </returns>
         public RectangleF Intersection(RectangleF rectangle)
         {
-            RectangleF result;
-            Intersection(ref this, ref rectangle, out result);
+            Intersection(ref this, ref rectangle, out RectangleF result);
             return result;
         }
-
-        [Obsolete("RectangleF.Intersect() may be removed in the future. Use Intersection() instead.")]
-        public static RectangleF Intersect(RectangleF value1, RectangleF value2)
-        {
-            RectangleF rectangle;
-            Intersection(ref value1, ref value2, out rectangle);
-            return rectangle;
-        }
-
-        [Obsolete("RectangleF.Intersect() may be removed in the future. Use Intersection() instead.")]
-        public static void Intersect(ref RectangleF value1, ref RectangleF value2, out RectangleF result)
-        {
-            Intersection(ref value1, ref value2, out result);
-        }
-
+        
         /// <summary>
         ///     Determines whether the two specified <see cref="RectangleF" /> structures intersect.
         /// </summary>
@@ -514,8 +491,7 @@ namespace MonoGame.Extended
         /// <returns>The closest <see cref="Point2" /> on this <see cref="RectangleF" /> to the <paramref name="point" />.</returns>
         public Point2 ClosestPointTo(Point2 point)
         {
-            Point2 result;
-            PrimitivesHelper.ClosestPointToPointFromRectangle(TopLeft, BottomRight, point, out result);
+            PrimitivesHelper.ClosestPointToPointFromRectangle(TopLeft, BottomRight, point, out Point2 result);
             return result;
         }
 
@@ -540,6 +516,24 @@ namespace MonoGame.Extended
         {
             X += amount.X;
             Y += amount.Y;
+        }
+
+        public static RectangleF operator +(RectangleF a, RectangleF b)
+        {
+            return new RectangleF(
+                a.X + b.X,
+                a.Y + b.Y,
+                a.Width + b.Width,
+                a.Height + b.Height);
+        }
+
+        public static RectangleF operator -(RectangleF a, RectangleF b)
+        {
+            return new RectangleF(
+                a.X - b.X,
+                a.Y - b.Y,
+                a.Width - b.Width,
+                a.Height - b.Height);
         }
 
         /// <summary>

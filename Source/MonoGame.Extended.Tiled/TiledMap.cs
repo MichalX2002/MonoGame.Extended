@@ -77,8 +77,7 @@ namespace MonoGame.Extended.Tiled
 
         public TiledMapLayer GetLayer(string layerName)
         {
-            TiledMapLayer layer;
-            _layersByName.TryGetValue(layerName, out layer);
+            _layersByName.TryGetValue(layerName, out TiledMapLayer layer);
             return layer;
         }
 

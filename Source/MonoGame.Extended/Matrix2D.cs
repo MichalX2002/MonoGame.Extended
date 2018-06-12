@@ -126,8 +126,7 @@ namespace MonoGame.Extended
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2 Transform(Vector2 vector)
         {
-            Vector2 result;
-            Transform(vector, out result);
+            Transform(vector, out Vector2 result);
             return result;
         }
 
@@ -244,8 +243,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2D" />.</returns>
         public static Matrix2D CreateRotationZ(float radians)
         {
-            Matrix2D result;
-            CreateRotationZ(radians, out result);
+            CreateRotationZ(radians, out Matrix2D result);
             return result;
         }
 
@@ -276,8 +274,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2D" />.</returns>
         public static Matrix2D CreateScale(float scale)
         {
-            Matrix2D result;
-            CreateScale(scale, scale, out result);
+            CreateScale(scale, scale, out Matrix2D result);
             return result;
         }
 
@@ -299,8 +296,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2D" />.</returns>
         public static Matrix2D CreateScale(float xScale, float yScale)
         {
-            Matrix2D result;
-            CreateScale(xScale, yScale, out result);
+            CreateScale(xScale, yScale, out Matrix2D result);
             return result;
         }
 
@@ -329,8 +325,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2D" />.</returns>
         public static Matrix2D CreateScale(Vector2 scale)
         {
-            Matrix2D result;
-            CreateScale(ref scale, out result);
+            CreateScale(ref scale, out Matrix2D result);
             return result;
         }
 
@@ -359,8 +354,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2D" />.</returns>
         public static Matrix2D CreateTranslation(float xPosition, float yPosition)
         {
-            Matrix2D result;
-            CreateTranslation(xPosition, yPosition, out result);
+            CreateTranslation(xPosition, yPosition, out Matrix2D result);
             return result;
         }
 
@@ -389,8 +383,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2D" />.</returns>
         public static Matrix2D CreateTranslation(Vector2 position)
         {
-            Matrix2D result;
-            CreateTranslation(ref position, out result);
+            CreateTranslation(ref position, out Matrix2D result);
             return result;
         }
 
@@ -996,8 +989,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix" />.</returns>
         public Matrix ToMatrix(float depth = 0)
         {
-            Matrix result;
-            ToMatrix(ref this, depth, out result);
+            ToMatrix(ref this, depth, out Matrix result);
             return result;
         }
 
