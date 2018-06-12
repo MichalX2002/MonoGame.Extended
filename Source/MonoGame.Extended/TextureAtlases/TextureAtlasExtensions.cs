@@ -21,8 +21,8 @@ namespace MonoGame.Extended.TextureAtlases
             spriteBatch.Draw(textureRegion.Texture, position, srcRect, color, rotation, origin, scale, effects, layerDepth);
         }
 
-        public static bool IsVisible(this Rectangle sourceRect, ref Vector2 position,
-            Vector2 origin, Vector2 scale, Rectangle? clipRect, out Rectangle clipped)
+        public static bool IsVisible(this in Rectangle sourceRect, ref Vector2 position,
+            Vector2 origin, in Vector2 scale, Rectangle? clipRect, out Rectangle clipped)
         {
             /* source
             
