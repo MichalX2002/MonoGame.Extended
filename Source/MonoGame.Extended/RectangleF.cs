@@ -338,6 +338,30 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="first">The first rectangle.</param>
         /// <param name="second">The second rectangle.</param>
+        /// <param name="result">The resulting rectangle that is in common between both the <paramref name="first" /> and
+        ///     the <paramref name="second" />, if they intersect; otherwise, <see cref="Empty"/>.</param>
+        public static void Intersection(RectangleF first, RectangleF second, out RectangleF result)
+        {
+            var firstMinimum = first.TopLeft;
+            var firstMaximum = first.BottomRight;
+            var secondMinimum = second.TopLeft;
+            var secondMaximum = second.BottomRight;
+
+            var minimum = Point2.Maximum(firstMinimum, secondMinimum);
+            var maximum = Point2.Minimum(firstMaximum, secondMaximum);
+
+            if ((maximum.X < minimum.X) || (maximum.Y < minimum.Y))
+                result = new RectangleF();
+            else
+                result = CreateFrom(minimum, maximum);
+        }
+
+        /// <summary>
+        ///     Computes the <see cref="RectangleF" /> that is in common between the two specified
+        ///     <see cref="RectangleF" /> structures.
+        /// </summary>
+        /// <param name="first">The first rectangle.</param>
+        /// <param name="second">The second rectangle.</param>
         /// <returns>
         ///     A <see cref="RectangleF" /> that is in common between both the <paramref name="first" /> and
         ///     the <paramref name="second" />, if they intersect; otherwise, <see cref="Empty"/>.
@@ -363,14 +387,29 @@ namespace MonoGame.Extended
             Intersection(ref this, ref rectangle, out RectangleF result);
             return result;
         }
-        
+
+        /*
+        [Obsolete("RectangleF.Intersect() may be removed in the future. Use Intersection() instead.")]
+        public static RectangleF Intersect(RectangleF value1, RectangleF value2)
+        {
+            RectangleF rectangle;
+            Intersection(ref value1, ref value2, out rectangle);
+            return rectangle;
+        }
+
+        [Obsolete("RectangleF.Intersect() may be removed in the future. Use Intersection() instead.")]
+        public static void Intersect(ref RectangleF value1, ref RectangleF value2, out RectangleF result)
+        {
+            Intersection(ref value1, ref value2, out result);
+        }*/
+
         /// <summary>
         ///     Determines whether the two specified <see cref="RectangleF" /> structures intersect.
         /// </summary>
         /// <param name="first">The first rectangle.</param>
         /// <param name="second">The second rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(ref RectangleF first, ref RectangleF second)
         {
@@ -384,7 +423,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first rectangle.</param>
         /// <param name="second">The second rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(RectangleF first, RectangleF second)
         {
@@ -448,6 +487,28 @@ namespace MonoGame.Extended
         public bool Contains(Point2 point)
         {
             return Contains(ref this, ref point);
+        }
+
+        /// <summary>
+        ///     Determines whether this <see cref="RectangleF" /> contains the specified
+        ///     <see cref="RectangleF" />.
+        /// </summary>
+        public bool Contains(ref RectangleF value)
+        {
+            return
+                X <= value.X &&
+                value.X + value.Width <= X + Width &&
+                Y <= value.Y &&
+                value.Y + value.Height <= Y + Height;
+        }
+
+        /// <summary>
+        ///     Determines whether this <see cref="RectangleF" /> contains the specified
+        ///     <see cref="RectangleF" />.
+        /// </summary>
+        public bool Contains(RectangleF value)
+        {
+            return Contains(ref value);
         }
 
         /// <summary>

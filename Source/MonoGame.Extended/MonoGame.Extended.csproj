@@ -58,7 +58,6 @@
     <Compile Include="IRectangular.cs" />
     <Compile Include="IReferenceList.cs" />
     <Compile Include="Matrix2.cs" />
-    <Compile Include="Matrix2D.cs" />
     <Compile Include="MatrixExtensions.cs" />
     <Compile Include="OrthographicCamera.cs" />
     <Compile Include="PlainText.cs" />

@@ -182,7 +182,7 @@ namespace MonoGame.Extended.BitmapFonts
                 Index = index,
             };
 
-            Matrix2D.CreateFrom(position, rotation, scale, origin, out var transform);
+            Matrix2.CreateFrom(position, rotation, scale, origin, out var transform);
             item.Sprite.SetTransform(transform, src.Size);
             item.Sprite.SetDepth(depth);
             item.Sprite.SetTexCoords(item.Texture.Texel, src);

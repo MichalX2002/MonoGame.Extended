@@ -240,7 +240,7 @@ namespace MonoGame.Extended
 
                 ref BatchedSprite sprite = ref output[index];
                 sprite.SetTexCoords(textureTexel, sourceRect);
-                sprite.SetTransform(Matrix2D.CreateFrom(point1, angle, scale), sourceRect.Size);
+                sprite.SetTransform(Matrix2.CreateFrom(point1, angle, scale), sourceRect.Size);
                 sprite.SetColor(color);
             }
 

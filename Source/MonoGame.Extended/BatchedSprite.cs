@@ -83,7 +83,7 @@ namespace MonoGame.Extended
             BR.Color = color;
         }
 
-        public void SetTransform(in Matrix2D matrix, in Point sourceSize)
+        public void SetTransform(in Matrix2 matrix, in Point sourceSize)
         {
             Transform(matrix, 0, 0, ref TL.Position);
             Transform(matrix, sourceSize.X, 0, ref TR.Position);
@@ -91,7 +91,7 @@ namespace MonoGame.Extended
             Transform(matrix, sourceSize.X, sourceSize.Y, ref BR.Position);
         }
 
-        public static Matrix2D GetMatrixFromRect(
+        public static Matrix2 GetMatrixFromRect(
             in RectangleF destination, Vector2 origin, float rotation, in Point sourceSize)
         {
             origin.X *= destination.Width / (float)sourceSize.X;
@@ -102,10 +102,10 @@ namespace MonoGame.Extended
                 destination.Width / sourceSize.X,
                 destination.Height / sourceSize.Y);
 
-            return Matrix2D.CreateFrom(pos, rotation, size, origin);
+            return Matrix2.CreateFrom(pos, rotation, size, origin);
         }
         
-        private void Transform(in Matrix2D matrix, float x, float y, ref Vector3 output)
+        private void Transform(in Matrix2 matrix, float x, float y, ref Vector3 output)
         {
             output.X = x * matrix.M11 + y * matrix.M21 + matrix.M31;
             output.Y = x * matrix.M12 + y * matrix.M22 + matrix.M32;
