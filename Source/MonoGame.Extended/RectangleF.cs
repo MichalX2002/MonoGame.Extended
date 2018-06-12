@@ -457,7 +457,11 @@ namespace MonoGame.Extended
         /// </returns>
         public static bool Contains(ref RectangleF rectangle, ref Point2 point)
         {
-            return rectangle.X <= point.X && point.X < rectangle.X + rectangle.Width && rectangle.Y <= point.Y && point.Y < rectangle.Y + rectangle.Height;
+            return 
+                rectangle.X < point.X && 
+                point.X <= rectangle.X + rectangle.Width && 
+                rectangle.Y < point.Y && 
+                point.Y <= rectangle.Y + rectangle.Height;
         }
 
         /// <summary>
@@ -496,9 +500,9 @@ namespace MonoGame.Extended
         public bool Contains(ref RectangleF value)
         {
             return
-                X <= value.X &&
+                X < value.X &&
                 value.X + value.Width <= X + Width &&
-                Y <= value.Y &&
+                Y < value.Y &&
                 value.Y + value.Height <= Y + Height;
         }
 
