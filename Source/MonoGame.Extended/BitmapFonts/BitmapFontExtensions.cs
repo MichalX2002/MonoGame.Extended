@@ -12,8 +12,8 @@ namespace MonoGame.Extended.BitmapFonts
     public static class BitmapFontExtensions
     {
         private delegate T GetPositionDelegate<T>(
-            Glyph glyph, Vector2 position, Rectangle sourceRect, Color color,
-            float rotation, Vector2 origin, Vector2 scale, float depth);
+            in Glyph glyph, int index, in Vector2 position, in Rectangle sourceRect, in Color color,
+            float rotation, in Vector2 origin, in Vector2 scale, float depth);
         
         private static void ThrowOnArgs(SpriteEffects effect)
         {
@@ -91,7 +91,7 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, length = sprites.Count; i < length; i++)
             {
                 ref CharDrawSprite s = ref sprites.GetReferenceAt(i);
-                batch.Draw(s.Texture, ref s.Sprite);
+                batch.Draw(s.Texture, s.Sprite);
             }
         }
 
@@ -100,7 +100,7 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, length = sprites.Count; i < length; i++)
             {
                 ref CharDrawSprite s = ref sprites.GetReferenceAt(i);
-                batch.Draw(s.Texture, ref s.Sprite, depth);
+                batch.Draw(s.Texture, s.Sprite, depth);
             }
         }
 
@@ -174,13 +174,14 @@ namespace MonoGame.Extended.BitmapFonts
             GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
         }
 
-        private static CharDrawSprite GetSprite(Glyph glyph, 
-            Vector2 position, Rectangle src, Color color, float rotation, Vector2 origin, Vector2 scale, float depth)
+        private static CharDrawSprite GetSprite(in Glyph glyph, int index, in Vector2 position,
+            in Rectangle src, in Color color, float rotation, in Vector2 origin, in Vector2 scale, float depth)
         {
             var item = new CharDrawSprite
             {
                 Char = glyph.Character,
-                Texture = glyph.FontRegion.TextureRegion.Texture
+                Texture = glyph.FontRegion.TextureRegion.Texture,
+                Index = index,
             };
 
             Matrix2D.CreateFrom(position, rotation, scale, origin, out var transform);
@@ -192,28 +193,18 @@ namespace MonoGame.Extended.BitmapFonts
             return item;
         }
 
-        private static CharDrawPosition GetPos(Glyph glyph,
-            Vector2 position, Rectangle src, Color color, float rotation, Vector2 origin, Vector2 scale, float depth)
+        private static CharDrawPosition GetPos(in Glyph glyph, int index, in Vector2 position,
+            in Rectangle src, in Color color, float rotation, in Vector2 origin, in Vector2 scale, float depth)
         {
-            return new CharDrawPosition
-            {
-                Char = glyph.Character,
-                Texture = glyph.FontRegion.TextureRegion.Texture,
-
-                Position = position,
-                SourceRectangle = src,
-                Color = color,
-                Rotation = rotation,
-                Origin = origin,
-                Scale = scale,
-                Depth = depth
-            };
+            return new CharDrawPosition(glyph.Character, glyph.FontRegion.TextureRegion.Texture,
+                index, src, position, color, rotation, origin, scale, depth);
         }
 
         private static void GetBasis<T>(ref BitmapFont.GlyphEnumerator glyphs, IList<T> output,
             Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale,
             float depth, Rectangle? clipRect, GetPositionDelegate<T> onItem)
         {
+            int index = 0;
             while (glyphs.MoveNext())
             {
                 ref Glyph glyph = ref glyphs.CurrentGlyph;
@@ -229,7 +220,8 @@ namespace MonoGame.Extended.BitmapFonts
                 if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect) == false)
                     continue;
 
-                output.Add(onItem.Invoke(glyph, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                output.Add(onItem.Invoke(
+                    glyph, index++, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
             }
         }
 
