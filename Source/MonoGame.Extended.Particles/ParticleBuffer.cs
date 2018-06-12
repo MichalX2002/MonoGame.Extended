@@ -17,6 +17,9 @@ namespace MonoGame.Extended.Particles
 
         public unsafe ParticleBuffer(int size)
         {
+            if (size <= 0)
+                throw new ArgumentOutOfRangeException(nameof(size));
+
             Size = size;
             // add one extra spot in memory for margin between head and tail
             // so the iterator can see that it's at the end
@@ -52,7 +55,7 @@ namespace MonoGame.Extended.Particles
                 Marshal.FreeHGlobal(_nativePointer);
                 _disposed = true;
 
-                GC.RemoveMemoryPressure(Particle.SizeInBytes * Size);
+                GC.RemoveMemoryPressure(SizeInBytes);
             }
 
             GC.SuppressFinalize(this);
