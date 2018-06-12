@@ -55,6 +55,15 @@ namespace MonoGame.Extended
             X = x;
             Y = y;
         }
+        
+        /// <summary>
+        /// Returns the <see cref="Vector2"/> representation of this instance.
+        /// </summary>
+        /// <returns><see cref="Vector2"/></returns>
+        public Vector2 ToVector2()
+        {
+            return new Vector2(X, Y);
+        }
 
         /// <summary>
         ///     Compares two <see cref="Point2" /> structures. The result specifies
