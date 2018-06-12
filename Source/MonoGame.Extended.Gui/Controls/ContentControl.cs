@@ -25,9 +25,7 @@ namespace MonoGame.Extended.Gui.Controls
         {
             get
             {
-                var control = Content as Control;
-
-                if (control != null)
+                if (Content is Control control)
                     yield return control;
             }
         }
@@ -42,9 +40,8 @@ namespace MonoGame.Extended.Gui.Controls
 
         public override void Update(IGuiContext context, float deltaSeconds)
         {
-            var control = _content as Control;
 
-            if (control != null)
+            if (_content is Control control)
             {
                 if (_contentChanged)
                 {
@@ -61,9 +58,8 @@ namespace MonoGame.Extended.Gui.Controls
         {
             base.Draw(context, renderer, deltaSeconds);
 
-            var control = Content as Control;
 
-            if (control != null)
+            if (Content is Control control)
             {
                 control.Draw(context, renderer, deltaSeconds);
             }
@@ -79,9 +75,8 @@ namespace MonoGame.Extended.Gui.Controls
 
         public override Size GetContentSize(IGuiContext context)
         {
-            var control = Content as Control;
 
-            if (control != null)
+            if (Content is Control control)
                 return control.CalculateActualSize(context);
 
             var text = Content?.ToString();

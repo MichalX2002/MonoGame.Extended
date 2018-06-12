@@ -65,22 +65,20 @@ namespace MonoGame.Extended.Tiled
             _layers.Add(layer);
             _layersByName.Add(layer.Name, layer);
 
-            var imageLayer = layer as TiledMapImageLayer;
-            if (imageLayer != null)
+            if (layer is TiledMapImageLayer imageLayer)
                 _imageLayers.Add(imageLayer);
 
-            var tileLayer = layer as TiledMapTileLayer;
-            if (tileLayer != null)
+            if (layer is TiledMapTileLayer tileLayer)
                 _tileLayers.Add(tileLayer);
 
-            var objectLayer = layer as TiledMapObjectLayer;
-            if (objectLayer != null)
+            if (layer is TiledMapObjectLayer objectLayer)
                 _objectLayers.Add(objectLayer);
         }
 
         public TiledMapLayer GetLayer(string layerName)
         {
-            _layersByName.TryGetValue(layerName, out TiledMapLayer layer);
+            TiledMapLayer layer;
+            _layersByName.TryGetValue(layerName, out layer);
             return layer;
         }
 

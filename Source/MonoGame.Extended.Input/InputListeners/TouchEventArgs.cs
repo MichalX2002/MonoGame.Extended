@@ -23,9 +23,8 @@ namespace MonoGame.Extended.Input.InputListeners
 
         public override bool Equals(object other)
         {
-            var args = other as TouchEventArgs;
 
-            if (args == null)
+            if (!(other is TouchEventArgs args))
                 return false;
 
             return ReferenceEquals(this, args) || RawTouchLocation.Id.Equals(args.RawTouchLocation.Id);

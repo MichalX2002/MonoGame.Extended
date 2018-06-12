@@ -423,8 +423,7 @@ namespace MonoGame.Extended.Graphics
 
             public void SetState(Effect effect)
             {
-                var textureEffect = effect as ITextureEffect;
-                if (textureEffect != null)
+                if (effect is ITextureEffect textureEffect)
                     textureEffect.Texture = Texture;
             }
 

@@ -209,9 +209,7 @@ namespace MonoGame.Extended.Entities
                     return;
 
                 var processingSystem = _dependencyResolver.Resolve<ProcessingSystem>(typeInfo.AsType());
-                var entityProcessingSystem = processingSystem as EntityProcessingSystem;
-
-                if (entityProcessingSystem != null)
+                if (processingSystem is EntityProcessingSystem entityProcessingSystem)
                     entityProcessingSystem.Aspect = new Aspect(andMask, orMask, norMask);
 
                 _systemManager.AddSystem(processingSystem, systemAttribute.GameLoopType, systemAttribute.Layer, SystemExecutionType.Synchronous);

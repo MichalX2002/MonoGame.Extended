@@ -121,8 +121,7 @@ namespace MonoGame.Extended.Tiled.Renderers
             _worldMatrix.Translation = new Vector3(layer.Offset.X, layer.Offset.Y, depth);
 
             var effect1 = effect ?? _defaultEffect;
-            var tiledMapEffect = effect1 as ITiledMapEffect;
-            if (tiledMapEffect == null)
+            if (!(effect1 is ITiledMapEffect tiledMapEffect))
                 return;
 
             // model-to-world transform

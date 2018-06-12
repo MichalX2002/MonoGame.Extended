@@ -297,8 +297,7 @@ namespace MonoGame.Extended.Graphics
                                    Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width,
                                        GraphicsDevice.Viewport.Height, 0, 0f, -1f);
 
-            var matrixChainEffect = _currentEffect as IMatrixChainEffect;
-            if (matrixChainEffect != null)
+            if (_currentEffect is IMatrixChainEffect matrixChainEffect)
             {
                 matrixChainEffect.World = Matrix.Identity;
                 matrixChainEffect.SetView(ref viewMatrix);
@@ -306,8 +305,7 @@ namespace MonoGame.Extended.Graphics
             }
             else
             {
-                var effectMatrices = _currentEffect as IEffectMatrices;
-                if (effectMatrices == null)
+                if (!(_currentEffect is IEffectMatrices effectMatrices))
                     return;
                 effectMatrices.World = Matrix.Identity;
                 effectMatrices.View = viewMatrix;

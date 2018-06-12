@@ -3,7 +3,6 @@ using System.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input;
-using MonoGame.Extended.Input.InputListeners;
 using MonoGame.Extended.NuclexGui.Controls;
 using MonoGame.Extended.NuclexGui.Input;
 using MonoGame.Extended.NuclexGui.Support;
@@ -606,8 +605,7 @@ namespace MonoGame.Extended.NuclexGui
         /// <returns>True if the specified control can obtain the input focus</returns>
         private static bool CanControlGetFocus(GuiControl control)
         {
-            var focusableControl = control as IFocusable;
-            if (focusableControl != null)
+            if (control is IFocusable focusableControl)
                 return focusableControl.CanGetFocus;
             return false;
         }

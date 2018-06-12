@@ -55,7 +55,6 @@
     <Compile Include="BitVector.cs" />
     <Compile Include="DefaultDependencyResolver.cs" />
     <Compile Include="DependencyResolver.cs" />
-    <Compile Include="EntityComponentAttribute.cs" />
     <Compile Include="EntityComponentPool.cs" />
     <Compile Include="EntityComponentPoolAttribute.cs" />
     <Compile Include="EntityComponentDelegate.cs" />
@@ -66,13 +65,12 @@
     <Compile Include="EntityTemplateAttribute.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityComponentSystem.cs" />
+    <Compile Include="PoolableComponent.cs" />
+    <Compile Include="ProcessingSystem.cs" />
     <Compile Include="SystemManager.cs" />
     <Compile Include="EntityTemplate.cs" />
-    <Compile Include="EntityComponent.cs" />
     <Compile Include="EntityComponentType.cs" />
-    <Compile Include="TransformComponent2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EntitySystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.7.0.479, Culture=neutral, processorArchitecture=MSIL">

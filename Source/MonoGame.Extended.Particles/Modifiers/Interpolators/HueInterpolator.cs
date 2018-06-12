@@ -1,6 +1,4 @@
-﻿using MonoGame.Extended;
-
-namespace MonoGame.Extended.Particles.Modifiers.Interpolators
+﻿namespace MonoGame.Extended.Particles.Modifiers.Interpolators
 {
     public class HueInterpolator : Interpolator<float>
     {

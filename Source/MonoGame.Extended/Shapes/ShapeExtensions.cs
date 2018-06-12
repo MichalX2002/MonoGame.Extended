@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
@@ -173,7 +172,7 @@ namespace MonoGame.Extended
             var distance = Vector2.Distance(point1, point2);
 
             // calculate the angle between the two vectors
-            var angle = (float) Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
+            var angle = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
 
             DrawLine(spriteBatch, point1, distance, angle, color, thickness);
         }
@@ -214,7 +213,7 @@ namespace MonoGame.Extended
             var offset = new Vector2(0.5f) - new Vector2(size * 0.5f);
             spriteBatch.Draw(texture, position + offset, null, color, 0, Vector2.Zero, scale, 0, 0);
         }
-        
+
         public static void DrawCircle(this SpriteBatch batch,
             Vector2 center, float radius, int sides, Color color, float thickness, BatchedSprite[] output)
         {

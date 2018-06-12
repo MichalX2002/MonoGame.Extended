@@ -79,7 +79,7 @@ namespace MonoGame.Extended.Input.InputListeners
         ///     will fire when any controller changes in connectivity status.
         ///     <para>
         ///         This functionality requires that you have one actively updating
-        ///         <see cref="InputListener" />.
+        ///         <see cref="InputListenerManager" />.
         ///     </para>
         /// </summary>
         public static bool CheckControllerConnections { get; set; }

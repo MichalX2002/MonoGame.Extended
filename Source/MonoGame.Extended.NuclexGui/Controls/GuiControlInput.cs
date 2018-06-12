@@ -185,8 +185,7 @@ namespace MonoGame.Extended.NuclexGui.Controls
             // If this control can take the input focus, make it the focused control
             if (_screen != null)
             {
-                var focusable = this as IFocusable;
-                if ((focusable != null) && focusable.CanGetFocus)
+                if ((this is IFocusable focusable) && focusable.CanGetFocus)
                     _screen.FocusedControl = this;
             }
 

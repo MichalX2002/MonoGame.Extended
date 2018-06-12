@@ -18,8 +18,9 @@ namespace MonoGame.Extended.Gui.Serialization
                 if (value == "Center" || string.Equals(value, "Centre", StringComparison.OrdinalIgnoreCase))
                     return HorizontalAlignment.Centre;
 
+                HorizontalAlignment alignment;
 
-                if (Enum.TryParse(value, true, out HorizontalAlignment alignment))
+                if (Enum.TryParse(value, true, out alignment))
                     return alignment;
             }
 
@@ -30,8 +31,9 @@ namespace MonoGame.Extended.Gui.Serialization
                 if (value == "Center" || string.Equals(value, "Centre", StringComparison.OrdinalIgnoreCase))
                     return VerticalAlignment.Centre;
 
+                VerticalAlignment alignment;
 
-                if (Enum.TryParse(value, true, out VerticalAlignment alignment))
+                if (Enum.TryParse(value, true, out alignment))
                     return alignment;
             }
 

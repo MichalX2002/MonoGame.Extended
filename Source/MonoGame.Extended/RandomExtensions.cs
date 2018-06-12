@@ -12,12 +12,12 @@ namespace MonoGame.Extended
 
         public static float NextSingle(this Random random, float min, float max)
         {
-            return (max - min) * NextSingle(random) + min;
+            return (max - min)*NextSingle(random) + min;
         }
 
         public static float NextSingle(this Random random, float max)
         {
-            return max * NextSingle(random);
+            return max*NextSingle(random);
         }
 
         public static float NextSingle(this Random random)

@@ -16,7 +16,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
         public string LayerName { get; }
         public ReadOnlyCollection<VertexPositionTexture> Vertices { get; }
         public ReadOnlyCollection<ushort> Indices { get; }
-        public Size2 ImageSize { get; }
+        public Size ImageSize { get; }
         public string TextureAssetName { get; }
 
         public TiledMapLayerModelContent(string layerName, TiledMapImageContent image)
@@ -26,7 +26,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             Vertices = new ReadOnlyCollection<VertexPositionTexture>(_vertices);
             _indices = new List<ushort>();
             Indices = new ReadOnlyCollection<ushort>(_indices);
-            ImageSize = new Size2(image.Width, image.Height);
+            ImageSize = new Size(image.Width, image.Height);
             TextureAssetName = Path.ChangeExtension(image.Source, null);
         }
 

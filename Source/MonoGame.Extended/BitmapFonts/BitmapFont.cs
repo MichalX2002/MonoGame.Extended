@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
-using TextAlign = MonoGame.Extended.BitmapFonts.TextAlignMode;
 
 namespace MonoGame.Extended.BitmapFonts
 {

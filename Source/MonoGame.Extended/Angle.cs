@@ -161,8 +161,7 @@ namespace MonoGame.Extended
 
         public override bool Equals(object obj)
         {
-            if (obj is null)
-                return false;
+            if (ReferenceEquals(null, obj)) return false;
             return obj is Angle && Equals((Angle) obj);
         }
 

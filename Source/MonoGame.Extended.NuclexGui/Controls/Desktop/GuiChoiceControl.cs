@@ -52,8 +52,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
                 var siblings = Parent.Children;
                 for (var index = 0; index < siblings.Count; ++index)
                 {
-                    var control = siblings[index] as GuiChoiceControl;
-                    if ((control != null) && (control != this) && control.Selected)
+                    if ((siblings[index] is GuiChoiceControl control) && (control != this) && control.Selected)
                     {
                         control.Selected = false;
                         control.OnChanged();

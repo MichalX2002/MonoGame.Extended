@@ -16,14 +16,12 @@ namespace MonoGame.Extended.Tiled.Renderers
 
         private IEnumerable<TiledMapLayerModel> CreateLayerModels(TiledMap map, TiledMapLayer layer)
         {
-            var tileLayer = layer as TiledMapTileLayer;
 
-            if (tileLayer != null)
+            if (layer is TiledMapTileLayer tileLayer)
                 return CreateTileLayerModels(map, tileLayer);
 
-            var imageLayer = layer as TiledMapImageLayer;
 
-            if (imageLayer != null)
+            if (layer is TiledMapImageLayer imageLayer)
                 return CreateImageLayerModels(imageLayer);
 
             return new List<TiledMapLayerModel>();
@@ -57,9 +55,8 @@ namespace MonoGame.Extended.Tiled.Renderers
 
                     // animated tiles
                     var tilesetTile = tileset.Tiles.FirstOrDefault(x => x.LocalTileIdentifier == localTileIdentifier);
-                    var animatedTilesetTile = tilesetTile as TiledMapTilesetAnimatedTile;
 
-                    if (animatedTilesetTile != null)
+                    if (tilesetTile is TiledMapTilesetAnimatedTile animatedTilesetTile)
                     {
                         animatedLayerBuilder.AddSprite(texture, position, sourceRectangle, flipFlags);
                         animatedLayerBuilder.AnimatedTilesetTiles.Add(animatedTilesetTile);

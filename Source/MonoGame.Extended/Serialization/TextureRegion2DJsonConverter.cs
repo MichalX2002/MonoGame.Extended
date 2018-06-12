@@ -21,8 +21,7 @@ namespace MonoGame.Extended.Serialization
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var regionName = reader.Value as string;
-            return regionName == null ? null : _textureRegionService.GetTextureRegion(regionName);
+            return !(reader.Value is string regionName) ? null : _textureRegionService.GetTextureRegion(regionName);
         }
 
         public override bool CanConvert(Type objectType)

@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using MonoGame.Extended.Input.InputListeners;
-using Microsoft.Xna.Framework.Input;
-
-namespace MonoGame.Extended.Gui.Controls
+﻿namespace MonoGame.Extended.Gui.Controls
 {
     //public class Form : StackPanel
     //{

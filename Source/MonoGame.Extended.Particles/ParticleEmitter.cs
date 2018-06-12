@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Particles.Modifiers;
 using MonoGame.Extended.Particles.Profiles;
@@ -9,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace MonoGame.Extended.Particles
 {
-	public unsafe class ParticleEmitter : IDisposable
+    public unsafe class ParticleEmitter : IDisposable
 	{
 		// Creates a not-so-random number.
 		private readonly FastRandom _random = new FastRandom();

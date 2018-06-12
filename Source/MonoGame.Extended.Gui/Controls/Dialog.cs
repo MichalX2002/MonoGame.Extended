@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace MonoGame.Extended.Gui.Controls
+﻿namespace MonoGame.Extended.Gui.Controls
 {
     //public class Dialog : LayoutControl
     //{

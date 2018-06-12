@@ -77,7 +77,8 @@ namespace MonoGame.Extended
         /// <returns>An <see cref="CircleF" />.</returns>
         public static CircleF CreateFrom(Point2 minimum, Point2 maximum)
         {
-            CreateFrom(minimum, maximum, out CircleF result);
+            CircleF result;
+            CreateFrom(minimum, maximum, out result);
             return result;
         }
 
@@ -117,7 +118,8 @@ namespace MonoGame.Extended
         /// <returns>An <see cref="CircleF" />.</returns>
         public static CircleF CreateFrom(IReadOnlyList<Point2> points)
         {
-            CreateFrom(points, out CircleF result);
+            CircleF result;
+            CreateFrom(points, out result);
             return result;
         }
 
@@ -127,7 +129,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first circle.</param>
         /// <param name="second">The second circle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(ref CircleF first, ref CircleF second)
         {
@@ -146,7 +148,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first circle.</param>
         /// <param name="second">The second circle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(CircleF first, CircleF second)
         {
@@ -185,7 +187,7 @@ namespace MonoGame.Extended
         /// <param name="circle">The circle.</param>
         /// <param name="rectangle">The rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="circle" /> intersects with the <paramref name="rectangle" />; otherwise, <c>false</c>
+        ///     <c>true</c> if the <paramref name="circle" /> intersects with the <see cref="rectangle" />; otherwise, <c>false</c>
         ///     .
         /// </returns>
         public static bool Intersects(ref CircleF circle, ref BoundingRectangle rectangle)
@@ -204,7 +206,7 @@ namespace MonoGame.Extended
         /// <param name="circle">The circle.</param>
         /// <param name="rectangle">The rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="circle" /> intersects with the <paramref name="rectangle" />; otherwise, <c>false</c>
+        ///     <c>true</c> if the <paramref name="circle" /> intersects with the <see cref="rectangle" />; otherwise, <c>false</c>
         ///     .
         /// </returns>
         public static bool Intersects(CircleF circle, BoundingRectangle rectangle)
@@ -309,13 +311,11 @@ namespace MonoGame.Extended
             return Center + Radius * direction;
         }
 
-        /*
         [Obsolete("Circle.GetPointAlongEdge() may be removed in the future. Use BoundaryPointAt() instead.")]
         public Point2 GetPointAlongEdge(float angle)
         {
             return Center + new Vector2(Radius * (float) Math.Cos(angle), Radius * (float) Math.Sin(angle));
         }
-        */
 
         /// <summary>
         ///     Compares two <see cref="CircleF" /> structures. The result specifies whether the values of the

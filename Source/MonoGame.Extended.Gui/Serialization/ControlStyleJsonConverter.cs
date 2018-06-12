@@ -41,8 +41,7 @@ namespace MonoGame.Extended.Gui.Serialization
         {
             var dictionary = serializer.Deserialize<Dictionary<string, object>>(reader);
             var name = dictionary.GetValueOrDefault(_nameProperty) as string;
-            var typeName = dictionary.GetValueOrDefault(_typeProperty) as string;
-            var targetType =  typeName != null ? _controlTypes[typeName] : typeof(Control);
+            var targetType = dictionary.GetValueOrDefault(_typeProperty) is string typeName ? _controlTypes[typeName] : typeof(Control);
             var properties = targetType
                 .GetRuntimeProperties()
                 .ToDictionary(p => p.Name);
@@ -53,7 +52,8 @@ namespace MonoGame.Extended.Gui.Serialization
                 var propertyName = keyValuePair.Key;
                 var rawValue = keyValuePair.Value;
 
-                var value = properties.TryGetValue(propertyName, out PropertyInfo propertyInfo)
+                PropertyInfo propertyInfo;
+                var value = properties.TryGetValue(propertyName, out propertyInfo)
                     ? DeserializeValueAs(serializer, rawValue, propertyInfo.PropertyType)
                     : DeserializeValueAs(serializer, rawValue, typeof(object));
 

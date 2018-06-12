@@ -79,7 +79,8 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="BoundingRectangle" />.</returns>
         public static BoundingRectangle CreateFrom(Point2 minimum, Point2 maximum)
         {
-            CreateFrom(minimum, maximum, out BoundingRectangle result);
+            BoundingRectangle result;
+            CreateFrom(minimum, maximum, out result);
             return result;
         }
 
@@ -90,7 +91,9 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting bounding rectangle.</param>
         public static void CreateFrom(IReadOnlyList<Point2> points, out BoundingRectangle result)
         {
-            PrimitivesHelper.CreateRectangleFromPoints(points, out Point2 minimum, out Point2 maximum);
+            Point2 minimum;
+            Point2 maximum;
+            PrimitivesHelper.CreateRectangleFromPoints(points, out minimum, out maximum);
             CreateFrom(minimum, maximum, out result);
         }
 
@@ -101,7 +104,8 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="BoundingRectangle" />.</returns>
         public static BoundingRectangle CreateFrom(IReadOnlyList<Point2> points)
         {
-            CreateFrom(points, out BoundingRectangle result);
+            BoundingRectangle result;
+            CreateFrom(points, out result);
             return result;
         }
 
@@ -153,7 +157,8 @@ namespace MonoGame.Extended
         public static BoundingRectangle Transform(BoundingRectangle boundingRectangle,
             ref Matrix2 transformMatrix)
         {
-            Transform(ref boundingRectangle, ref transformMatrix, out BoundingRectangle result);
+            BoundingRectangle result;
+            Transform(ref boundingRectangle, ref transformMatrix, out result);
             return result;
         }
 
@@ -192,7 +197,8 @@ namespace MonoGame.Extended
         /// </returns>
         public static BoundingRectangle Union(BoundingRectangle first, BoundingRectangle second)
         {
-            Union(ref first, ref second, out BoundingRectangle result);
+            BoundingRectangle result;
+            Union(ref first, ref second, out result);
             return result;
         }
 
@@ -249,7 +255,8 @@ namespace MonoGame.Extended
         public static BoundingRectangle Intersection(BoundingRectangle first,
             BoundingRectangle second)
         {
-            Intersection(ref first, ref second, out BoundingRectangle result);
+            BoundingRectangle result;
+            Intersection(ref first, ref second, out result);
             return result;
         }
 
@@ -264,7 +271,8 @@ namespace MonoGame.Extended
         /// </returns>
         public BoundingRectangle Intersection(BoundingRectangle boundingRectangle)
         {
-            Intersection(ref this, ref boundingRectangle, out BoundingRectangle result);
+            BoundingRectangle result;
+            Intersection(ref this, ref boundingRectangle, out result);
             return result;
         }
 
@@ -274,7 +282,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first bounding rectangle.</param>
         /// <param name="second">The second bounding rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(ref BoundingRectangle first, ref BoundingRectangle second)
         {
@@ -291,7 +299,7 @@ namespace MonoGame.Extended
         /// <param name="first">The first bounding rectangle.</param>
         /// <param name="second">The second bounding rectangle.</param>
         /// <returns>
-        ///     <c>true</c> if the <paramref name="first" /> intersects with the <paramref name="second" />; otherwise, <c>false</c>.
+        ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
         /// </returns>
         public static bool Intersects(BoundingRectangle first, BoundingRectangle second)
         {
@@ -405,7 +413,8 @@ namespace MonoGame.Extended
         /// <returns>The closest <see cref="Point2" /> on this <see cref="BoundingRectangle" /> to the <paramref name="point" />.</returns>
         public Point2 ClosestPointTo(Point2 point)
         {
-            PrimitivesHelper.ClosestPointToPointFromRectangle(Center - HalfExtents, Center + HalfExtents, point, out Point2 result);
+            Point2 result;
+            PrimitivesHelper.ClosestPointToPointFromRectangle(Center - HalfExtents, Center + HalfExtents, point, out result);
             return result;
         }
 

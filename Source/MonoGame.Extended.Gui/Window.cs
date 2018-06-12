@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using MonoGame.Extended.Gui.Controls;
-
-namespace MonoGame.Extended.Gui
+﻿namespace MonoGame.Extended.Gui
 {
     //public class Window : Element<Screen>
     //{

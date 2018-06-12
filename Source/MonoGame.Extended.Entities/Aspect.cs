@@ -34,7 +34,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Linq.Expressions;
 
 namespace MonoGame.Extended.Entities
 {
