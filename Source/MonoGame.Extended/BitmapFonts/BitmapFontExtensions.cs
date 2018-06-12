@@ -150,28 +150,28 @@ namespace MonoGame.Extended.BitmapFonts
             Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             var glyphs = font.GetGlyphs(text, position);
-            GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
+            GetBasis(glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
         }
 
         public static void GetGlyphSprites(this BitmapFont font, IList<CharDrawSprite> output, StringBuilder text,
             Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             var glyphs = font.GetGlyphs(text, position);
-            GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
+            GetBasis(glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
         }
 
         public static void GetGlyphPositions(this BitmapFont font, IList<CharDrawPosition> output, string text,
             Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             var glyphs = font.GetGlyphs(text, position);
-            GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
+            GetBasis(glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
         }
 
         public static void GetGlyphPositions(this BitmapFont font, IList<CharDrawPosition> output, StringBuilder text,
             Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             var glyphs = font.GetGlyphs(text, position);
-            GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
+            GetBasis(glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
         }
 
         private static CharDrawSprite GetSprite(in Glyph glyph, int index, in Vector2 position,
@@ -200,14 +200,14 @@ namespace MonoGame.Extended.BitmapFonts
                 index, src, position, color, rotation, origin, scale, depth);
         }
 
-        private static void GetBasis<T>(ref BitmapFont.GlyphEnumerator glyphs, IList<T> output,
+        private static void GetBasis<T>(in BitmapFont.GlyphEnumerator glyphs, IList<T> output,
             Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale,
             float depth, Rectangle? clipRect, GetPositionDelegate<T> onItem)
         {
             int index = 0;
             while (glyphs.MoveNext())
             {
-                ref Glyph glyph = ref glyphs.CurrentGlyph;
+                ref readonly Glyph glyph = ref glyphs.CurrentGlyph;
 
                 if (glyph.FontRegion == null)
                     continue;
