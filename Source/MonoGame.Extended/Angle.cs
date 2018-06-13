@@ -122,11 +122,12 @@ namespace MonoGame.Extended
         public void WrapPositive()
         {
             Radians %= _tau;
-            if (Radians < 0d) Radians += _tau;
+            if (Radians < 0d)
+                Radians += _tau;
             Radians = Radians;
         }
 
-        public static Angle FromVector(Vector2 vector)
+        public static Angle FromVector(in Vector2 vector)
         {
             return new Angle((float) Math.Atan2(-vector.Y, vector.X));
         }
@@ -138,7 +139,7 @@ namespace MonoGame.Extended
             return new Vector2(length*(float) Math.Cos(Radians), -length*(float) Math.Sin(Radians));
         }
 
-        public static bool IsBetween(Angle value, Angle min, Angle end)
+        public static bool IsBetween(in Angle value, in Angle min, in Angle end)
         {
             return end < min
                 ? (value >= min) || (value <= end)
@@ -161,8 +162,9 @@ namespace MonoGame.Extended
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is Angle && Equals((Angle) obj);
+            if (obj is Angle angle)
+                return Equals(angle);
+            return false;
         }
 
         public override int GetHashCode()
@@ -171,7 +173,7 @@ namespace MonoGame.Extended
             return Radians.GetHashCode();
         }
 
-        public static implicit operator float(Angle angle)
+        public static implicit operator float(in Angle angle)
         {
             return angle.Radians;
         }
@@ -181,37 +183,37 @@ namespace MonoGame.Extended
             return new Angle(angle);
         }
 
-        public static Angle operator -(Angle angle)
+        public static Angle operator -(in Angle angle)
         {
             return new Angle(-angle.Radians);
         }
 
-        public static bool operator ==(Angle a, Angle b)
+        public static bool operator ==(in Angle a, in Angle b)
         {
             return a.Equals(a);
         }
 
-        public static bool operator !=(Angle a, Angle b)
+        public static bool operator !=(in Angle a, in Angle b)
         {
             return !a.Equals(a);
         }
 
-        public static Angle operator -(Angle left, Angle right)
+        public static Angle operator -(in Angle left, in Angle right)
         {
             return new Angle(left.Radians - right.Radians);
         }
 
-        public static Angle operator *(Angle left, float right)
+        public static Angle operator *(in Angle left, float right)
         {
             return new Angle(left.Radians*right);
         }
 
-        public static Angle operator *(float left, Angle right)
+        public static Angle operator *(float left, in Angle right)
         {
             return new Angle(right.Radians*left);
         }
 
-        public static Angle operator +(Angle left, Angle right)
+        public static Angle operator +(in Angle left, in Angle right)
         {
             return new Angle(left.Radians + right.Radians);
         }

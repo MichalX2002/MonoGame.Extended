@@ -20,7 +20,6 @@ namespace MonoGame.Extended.Gui.Controls
             get
             {
                 var control = Template;
-
                 if (control != null)
                     yield return control;
             }
@@ -35,9 +34,8 @@ namespace MonoGame.Extended.Gui.Controls
         public override Size GetContentSize(IGuiContext context)
         {
             var control = Template;
-
             if (control != null)
-                return Template.CalculateActualSize(context);
+                return control.CalculateActualSize(context);
 
             return Size.Empty;
         }

@@ -118,7 +118,8 @@ namespace MonoGame.Extended.Gui
                 if (Parent != null)
                     offset = Parent.BoundingRectangle.Location;
 
-                return new Rectangle(offset + Position - ActualSize * Origin, ActualSize);
+                Point sizePoint = (Point)ActualSize;
+                return new Rectangle(offset + Position - sizePoint * Origin, sizePoint);
             }
         }
     }

@@ -52,28 +52,28 @@ namespace MonoGame.Extended.BitmapFonts
             return _characterMap.TryGetValue(character, out region);
         }
 
-        public Size2 MeasureString(string text, int offset, int length)
+        public SizeF MeasureString(string text, int offset, int length)
         {
             if (string.IsNullOrEmpty(text))
-                return Size2.Empty;
+                return SizeF.Empty;
 
             return GetStringRectangle(text, Point2.Zero).Size;
         }
 
-        public Size2 MeasureString(StringBuilder text, int offset, int length)
+        public SizeF MeasureString(StringBuilder text, int offset, int length)
         {
             if (text == null || text.Length == 0)
-                return Size2.Empty;
+                return SizeF.Empty;
 
             return GetStringRectangle(text, Point2.Zero).Size;
         }
 
-        public Size2 MeasureString(string text)
+        public SizeF MeasureString(string text)
         {
             return MeasureString(text, 0, text.Length);
         }
 
-        public Size2 MeasureString(StringBuilder text)
+        public SizeF MeasureString(StringBuilder text)
         {
             return MeasureString(text, 0, text.Length);
         }

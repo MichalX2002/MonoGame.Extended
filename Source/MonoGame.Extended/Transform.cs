@@ -165,13 +165,13 @@ namespace MonoGame.Extended
                 return;
 
             RecalculateLocalMatrixIfNecessary();
-            RecalculateWorldMatrix(ref _localMatrix, out _worldMatrix);
+            RecalculateWorldMatrix(_localMatrix, out _worldMatrix);
 
             _flags &= ~TransformFlags.WorldMatrixIsDirty;
             TranformUpdated?.Invoke();
         }
 
-        protected internal abstract void RecalculateWorldMatrix(ref TMatrix localMatrix, out TMatrix matrix);
+        protected internal abstract void RecalculateWorldMatrix(in TMatrix localMatrix, out TMatrix matrix);
 
         private void RecalculateLocalMatrixIfNecessary()
         {
@@ -295,12 +295,12 @@ namespace MonoGame.Extended
             }
         }
 
-        protected internal override void RecalculateWorldMatrix(ref Matrix2 localMatrix, out Matrix2 matrix)
+        protected internal override void RecalculateWorldMatrix(in Matrix2 localMatrix, out Matrix2 matrix)
         {
             if (Parent != null)
             {
                 Parent.GetWorldMatrix(out matrix);
-                Matrix2.Multiply(ref localMatrix, ref matrix, out matrix);
+                Matrix2.Multiply(localMatrix, matrix, out matrix);
             }
             else
             {

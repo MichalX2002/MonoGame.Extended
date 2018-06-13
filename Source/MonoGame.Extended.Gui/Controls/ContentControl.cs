@@ -81,7 +81,8 @@ namespace MonoGame.Extended.Gui.Controls
 
             var text = Content?.ToString();
             var font = Font ?? context.DefaultFont;
-            return (Size)font.MeasureString(text ?? string.Empty);
+            var size = font.MeasureString(text ?? string.Empty);
+            return new Size((int)size.Width, (int)size.Height);
         }
     }
 

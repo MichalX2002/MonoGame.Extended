@@ -68,9 +68,9 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <see cref="Width" /> <see cref="Height" /> and <see cref="Depth" />
         ///     fields of the two <see cref="Point3" /> structures are equal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator ==(Size3 first, Size3 second)
+        public static bool operator ==(in Size3 first, in Size3 second)
         {
-            return first.Equals(ref second);
+            return first.Equals(in second);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace MonoGame.Extended
         /// </returns>
         public bool Equals(Size3 size)
         {
-            return Equals(ref size);
+            return Equals(in size);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Point3" /> is equal to the <paramref name="size" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Equals(ref Size3 size)
+        public bool Equals(in Size3 size)
         {
             // ReSharper disable CompareOfFloatsByEqualityOperator
             return (Width == size.Width) && (Height == size.Height) && (Depth == size.Depth);
@@ -110,8 +110,8 @@ namespace MonoGame.Extended
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (obj is Size3)
-                return Equals((Size3) obj);
+            if (obj is Size3 size)
+                return Equals(size);
             return false;
         }
 
@@ -126,7 +126,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <see cref="Width" /> <see cref="Height" /> or <see cref="Depth" />
         ///     fields of the two <see cref="Size3" /> structures are unequal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator !=(Size3 first, Size3 second)
+        public static bool operator !=(in Size3 first, in Size3 second)
         {
             return !(first == second);
         }
@@ -141,7 +141,7 @@ namespace MonoGame.Extended
         ///     The <see cref="Size3" /> representing the vector addition of two <see cref="Size3" /> structures as if they
         ///     were <see cref="Vector3" /> structures.
         /// </returns>
-        public static Size3 operator +(Size3 first, Size3 second)
+        public static Size3 operator +(in Size3 first, in Size3 second)
         {
             return Add(first, second);
         }
@@ -154,13 +154,14 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Size3" /> representing the vector addition of two <see cref="Size3" /> structures.
         /// </returns>
-        public static Size3 Add(Size3 first, Size3 second)
+        public static Size3 Add(in Size3 first, in Size3 second)
         {
-            Size3 size;
-            size.Width = first.Width + second.Width;
-            size.Height = first.Height + second.Height;
-            size.Depth = first.Depth + second.Depth;
-            return size;
+            return new Size3
+            {
+                Width = first.Width + second.Width,
+                Height = first.Height + second.Height,
+                Depth = first.Depth + second.Depth
+            };
         }
 
         /// <summary>
@@ -171,12 +172,12 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Size3" /> representing the vector subtraction of two <see cref="Size3" /> structures.
         /// </returns>
-        public static Size3 operator -(Size3 first, Size3 second)
+        public static Size3 operator -(in Size3 first, in Size3 second)
         {
             return Subtract(first, second);
         }
 
-        public static Size3 operator /(Size3 size, float value)
+        public static Size3 operator /(in Size3 size, float value)
         {
             return new Size3(size.Width / value, size.Height / value, size.Depth / value);
         }
@@ -194,13 +195,14 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Size3" /> representing the vector subtraction of two <see cref="Size3" /> structures.
         /// </returns>
-        public static Size3 Subtract(Size3 first, Size3 second)
+        public static Size3 Subtract(in Size3 first, in Size3 second)
         {
-            Size3 size;
-            size.Width = first.Width - second.Width;
-            size.Height = first.Height - second.Height;
-            size.Depth = first.Depth - second.Depth;
-            return size;
+            return new Size3
+            {
+                Width = first.Width - second.Width,
+                Height = first.Height - second.Height,
+                Depth = first.Depth - second.Depth
+            };
         }
 
         /// <summary>

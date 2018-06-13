@@ -7,7 +7,7 @@ namespace MonoGame.Extended.Serialization
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var sizeF = (Size2) value;
+            var sizeF = (SizeF) value;
             writer.WriteValue($"{sizeF.Width} {sizeF.Height}");
         }
 
@@ -17,17 +17,17 @@ namespace MonoGame.Extended.Serialization
             var values = reader.ReadAsMultiDimensional<float>();
 
             if(values.Length == 2)
-                return new Size2(values[0], values[1]);
+                return new SizeF(values[0], values[1]);
 
             if (values.Length == 1)
-                return new Size2(values[0], values[1]);
+                return new SizeF(values[0], values[1]);
 
             throw new InvalidOperationException("Invalid size");
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(Size2);
+            return objectType == typeof(SizeF);
         }
     }
 }

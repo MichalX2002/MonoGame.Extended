@@ -16,6 +16,6 @@
         ///     <c>false</c>.
         /// </returns>
         /// <param name="other">A value or object to compare with this value or object.</param>
-        bool Equals(ref T other);
+        bool Equals(in T other);
     }
 }

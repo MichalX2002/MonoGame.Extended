@@ -19,7 +19,7 @@ namespace MonoGame.Extended.Gui.Controls
 
         public override Size GetContentSize(IGuiContext context)
         {
-            return new Size();
+            return Size.Empty;
         }
     }
 }

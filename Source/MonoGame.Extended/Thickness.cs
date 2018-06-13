@@ -39,13 +39,20 @@ namespace MonoGame.Extended
 
         public override bool Equals(object obj)
         {
-            if (obj is Thickness)
-            {
-                var other = (Thickness)obj;
-                return Equals(other);
-            }
+            if (obj is Thickness other)
+                return Equals(in other);
 
             return base.Equals(obj);
+        }
+
+        public bool Equals(Thickness other)
+        {
+            return Equals(in other);
+        }
+
+        public bool Equals(in Thickness other)
+        {
+            return Left == other.Left && Right == other.Right && Top == other.Top && Bottom == other.Bottom;
         }
 
         public override int GetHashCode()
@@ -58,11 +65,6 @@ namespace MonoGame.Extended
                 hashCode = (hashCode * 397) ^ Bottom;
                 return hashCode;
             }
-        }
-
-        public bool Equals(Thickness other)
-        {
-            return Left == other.Left && Right == other.Right && Top == other.Top && Bottom == other.Bottom;
         }
 
         public static Thickness FromValues(int[] values)

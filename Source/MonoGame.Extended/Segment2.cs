@@ -51,7 +51,7 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The closest <see cref="Point2" /> on this <see cref="Segment2" /> to the <paramref name="point" />.</returns>
-        public Point2 ClosestPointTo(Point2 point)
+        public Point2 ClosestPointTo(in Point2 point)
         {
             // Computes the parameterized position: d(t) = Start + t * (End – Start)
 
@@ -80,7 +80,7 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The squared distance from this <see cref="Segment2" /> to a specified <see cref="Point2" />.</returns>
-        public float SquaredDistanceTo(Point2 point)
+        public float SquaredDistanceTo(in Point2 point)
         {
             var startToEnd = End - Start;
             var startToPoint = point - Start;
@@ -102,7 +102,7 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The distance from this <see cref="Segment2" /> to a specified <see cref="Point2" />.</returns>
-        public float DistanceTo(Point2 point)
+        public float DistanceTo(in Point2 point)
         {
             return (float) Math.Sqrt(SquaredDistanceTo(point));
         }
@@ -119,27 +119,25 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Segment2" /> intersects with <paramref name="rectangle" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Intersects(RectangleF rectangle, out Point2 intersectionPoint)
+        public bool Intersects(in RectangleF rectangle, out Point2 intersectionPoint)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.3; Basic Primitive Tests - Intersecting Lines, Rays, and (Directed Segments). pg 179-181
 
-            var minimumPoint = rectangle.TopLeft;
-            var maximumPoint = rectangle.BottomRight;
-            var minimumDistance = float.MinValue;
-            var maximumDistance = float.MaxValue;
+            Point2 minimumPoint = rectangle.TopLeft;
+            Point2 maximumPoint = rectangle.BottomRight;
+            float minimumDistance = float.MinValue;
+            float maximumDistance = float.MaxValue;
 
             var direction = End - Start;
-            if (
-                !PrimitivesHelper.IntersectsSlab(Start.X, direction.X, minimumPoint.X, maximumPoint.X, ref minimumDistance,
-                    ref maximumDistance))
+            if (!PrimitivesHelper.IntersectsSlab(
+                Start.X, direction.X, minimumPoint.X, maximumPoint.X, ref minimumDistance, ref maximumDistance))
             {
                 intersectionPoint = Point2.NaN;
                 return false;
             }
 
-            if (
-                !PrimitivesHelper.IntersectsSlab(Start.Y, direction.Y, minimumPoint.Y, maximumPoint.Y, ref minimumDistance,
-                    ref maximumDistance))
+            if (!PrimitivesHelper.IntersectsSlab(
+                    Start.Y, direction.Y, minimumPoint.Y, maximumPoint.Y, ref minimumDistance, ref maximumDistance))
             {
                 intersectionPoint = Point2.NaN;
                 return false;
@@ -171,7 +169,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Segment2" /> intersects with <paramref name="boundingRectangle" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Intersects(BoundingRectangle boundingRectangle, out Point2 intersectionPoint)
+        public bool Intersects(in BoundingRectangle boundingRectangle, out Point2 intersectionPoint)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.3; Basic Primitive Tests - Intersecting Lines, Rays, and (Directed Segments). pg 179-181
 
@@ -181,17 +179,15 @@ namespace MonoGame.Extended
             var maximumDistance = float.MaxValue;
 
             var direction = End - Start;
-            if (
-                !PrimitivesHelper.IntersectsSlab(Start.X, direction.X, minimumPoint.X, maximumPoint.X, ref minimumDistance,
-                    ref maximumDistance))
+            if (!PrimitivesHelper.IntersectsSlab(
+                Start.X, direction.X, minimumPoint.X, maximumPoint.X, ref minimumDistance, ref maximumDistance))
             {
                 intersectionPoint = Point2.NaN;
                 return false;
             }
 
-            if (
-                !PrimitivesHelper.IntersectsSlab(Start.Y, direction.Y, minimumPoint.Y, maximumPoint.Y, ref minimumDistance,
-                    ref maximumDistance))
+            if (!PrimitivesHelper.IntersectsSlab(
+                Start.Y, direction.Y, minimumPoint.Y, maximumPoint.Y, ref minimumDistance, ref maximumDistance))
             {
                 intersectionPoint = Point2.NaN;
                 return false;
@@ -224,9 +220,9 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Segment2" />
         ///     structures are equal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator ==(Segment2 first, Segment2 second)
+        public static bool operator ==(in Segment2 first, in Segment2 second)
         {
-            return first.Equals(ref second);
+            return first.Equals(second);
         }
 
         /// <summary>
@@ -238,7 +234,7 @@ namespace MonoGame.Extended
         /// </returns>
         public bool Equals(Segment2 segment)
         {
-            return Equals(ref segment);
+            return Equals(in segment);
         }
 
         /// <summary>
@@ -249,7 +245,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Segment2" /> is equal to the <paramref name="segment" /> parameter; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Equals(ref Segment2 segment)
+        public bool Equals(in Segment2 segment)
         {
             return (Start == segment.Start) && (End == segment.End);
         }
@@ -263,8 +259,8 @@ namespace MonoGame.Extended
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (obj is Segment2)
-                return Equals((Segment2) obj);
+            if (obj is Segment2 segment)
+                return Equals(segment);
             return false;
         }
 
@@ -281,7 +277,7 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Segment2" />
         ///     structures are unequal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator !=(Segment2 first, Segment2 second)
+        public static bool operator !=(in Segment2 first, in Segment2 second)
         {
             return !(first == second);
         }
@@ -297,7 +293,7 @@ namespace MonoGame.Extended
         {
             unchecked
             {
-                return (Start.GetHashCode()*397) ^ End.GetHashCode();
+                return (Start.GetHashCode() * 397) ^ End.GetHashCode();
             }
         }
 

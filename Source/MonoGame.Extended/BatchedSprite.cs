@@ -94,8 +94,8 @@ namespace MonoGame.Extended
         public static Matrix2 GetMatrixFromRect(
             in RectangleF destination, Vector2 origin, float rotation, in Point sourceSize)
         {
-            origin.X *= destination.Width / (float)sourceSize.X;
-            origin.Y *= destination.Height / (float)sourceSize.Y;
+            origin.X *= destination.Width / sourceSize.X;
+            origin.Y *= destination.Height / sourceSize.Y;
 
             Vector2 pos = new Vector2(destination.X, destination.Y);
             Vector2 size = new Vector2(

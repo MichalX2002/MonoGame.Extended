@@ -144,9 +144,9 @@ namespace MonoGame.Extended.Gui.Controls
         {
             var text = GetItemName(item);
             var font = Font ?? context.DefaultFont;
-            var textSize = (Size)font.MeasureString(text ?? string.Empty);
-            var itemWidth = textSize.Width + ItemPadding.Width;
-            var itemHeight = textSize.Height + ItemPadding.Height;
+            var textSize = font.MeasureString(text ?? string.Empty);
+            var itemWidth = (int)textSize.Width + ItemPadding.Width;
+            var itemHeight = (int)textSize.Height + ItemPadding.Height;
             return new Size(itemWidth, itemHeight);
         }
 

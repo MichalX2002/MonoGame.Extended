@@ -67,7 +67,6 @@
     <Compile Include="PrimitivesHelper.cs" />
     <Compile Include="RandomExtensions.cs" />
     <Compile Include="Ray2.cs" />
-    <Compile Include="Ray2D.cs" />
     <Compile Include="RectangleExtensions.cs" />
     <Compile Include="RectangleF.cs" />
     <Compile Include="Screens\GameScreen.cs" />
@@ -76,7 +75,6 @@
     <Compile Include="Screens\Transitions\FadeTransition.cs" />
     <Compile Include="Screens\Transitions\Transition.cs" />
     <Compile Include="Segment2.cs" />
-    <Compile Include="Segment2D.cs" />
     <Compile Include="Serialization\BaseTypeJsonConverter.cs" />
     <Compile Include="Serialization\HslColorJsonConverter.cs" />
     <Compile Include="Serialization\JsonReaderExtensions.cs" />
@@ -85,7 +83,7 @@
     <Compile Include="Serialization\NinePatchRegion2DJsonConverter.cs" />
     <Compile Include="Serialization\ThicknessJsonConverter.cs" />
     <Compile Include="Size.cs" />
-    <Compile Include="Size2.cs" />
+    <Compile Include="SizeF.cs" />
     <Compile Include="Size3.cs" />
     <Compile Include="Sprites\ISpriteBatchDrawable.cs" />
     <Compile Include="Serialization\ContentManagerJsonConverter.cs" />

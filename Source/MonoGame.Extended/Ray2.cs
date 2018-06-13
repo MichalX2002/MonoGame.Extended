@@ -54,7 +54,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Ray2" /> intersects with <paramref name="boundingRectangle" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Intersects(BoundingRectangle boundingRectangle, out float rayNearDistance, out float rayFarDistance)
+        public bool Intersects(in BoundingRectangle boundingRectangle, out float rayNearDistance, out float rayFarDistance)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.3; Basic Primitive Tests - Intersecting Lines, Rays, and (Directed Segments). pg 179-181
 
@@ -104,9 +104,9 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Ray2" />
         ///     structures are equal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator ==(Ray2 first, Ray2 second)
+        public static bool operator ==(in Ray2 first, in Ray2 second)
         {
-            return first.Equals(ref second);
+            return first.Equals(in second);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace MonoGame.Extended
         /// </returns>
         public bool Equals(Ray2 ray)
         {
-            return Equals(ref ray);
+            return Equals(in ray);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Ray2" /> is equal to the <paramref name="ray" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Equals(ref Ray2 ray)
+        public bool Equals(in Ray2 ray)
         {
             // ReSharper disable CompareOfFloatsByEqualityOperator
             return (ray.Position == Position) && (ray.Direction == Direction);
@@ -146,8 +146,8 @@ namespace MonoGame.Extended
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (obj is Ray2)
-                return Equals((Ray2) obj);
+            if (obj is Ray2 ray)
+                return Equals(in ray);
             return false;
         }
 
@@ -163,7 +163,7 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Ray2" />
         ///     structures are unequal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator !=(Ray2 first, Ray2 second)
+        public static bool operator !=(in Ray2 first, in Ray2 second)
         {
             return !(first == second);
         }
@@ -179,7 +179,8 @@ namespace MonoGame.Extended
         {
             unchecked
             {
-                return (Position.GetHashCode()*397) ^ Direction.GetHashCode();
+                int hash = 3 + Position.GetHashCode();
+                return hash * 7 + Direction.GetHashCode();
             }
         }
 

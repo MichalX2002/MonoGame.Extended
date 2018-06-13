@@ -42,8 +42,8 @@ namespace MonoGame.Extended.Gui.Controls
 
         public override Size GetContentSize(IGuiContext context)
         {
-            var width = 0;
-            var height = 0;
+            int width = 0;
+            int height = 0;
 
             foreach (var item in Items)
             {
