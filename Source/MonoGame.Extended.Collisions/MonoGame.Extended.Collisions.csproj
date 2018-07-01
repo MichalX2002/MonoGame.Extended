@@ -45,7 +45,9 @@
     <Compile Include="CollisionWorldExtensions.cs" />
     <Compile Include="IActorTarget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuadTree\CollisionComponenet.cs" />
+    <Compile Include="QuadTree\CollisionComponent.cs" />
+    <Compile Include="QuadTree\CollisionEventArgs.cs" />
+    <Compile Include="QuadTree\ICollisionActor.cs" />
     <Compile Include="QuadTree\QuadTree.cs" />
     <Compile Include="QuadTree\QuadTreeData.cs" />
   </ItemGroup>
