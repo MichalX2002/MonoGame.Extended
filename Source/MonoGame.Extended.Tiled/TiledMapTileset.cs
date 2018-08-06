@@ -6,10 +6,9 @@ namespace MonoGame.Extended.Tiled
 {
     public class TiledMapTileset
     {
-        public TiledMapTileset(Texture2D texture, int firstGlobalIdentifier, int tileWidth, int tileHeight, int tileCount, int spacing, int margin, int columns)
+        public TiledMapTileset(Texture2D texture, int tileWidth, int tileHeight, int tileCount, int spacing, int margin, int columns)
         {
             Texture = texture;
-            FirstGlobalIdentifier = firstGlobalIdentifier;
             TileWidth = tileWidth;
             TileHeight = tileHeight;
             TileCount = tileCount;
@@ -22,7 +21,7 @@ namespace MonoGame.Extended.Tiled
 
         public string Name => Texture.Name;
         public Texture2D Texture { get; }
-        public int FirstGlobalIdentifier { get; }
+        //public int FirstGlobalIdentifier { get; internal set; }
         public int TileWidth { get; }
         public int TileHeight { get; }
         public int Spacing { get; }
@@ -45,9 +44,9 @@ namespace MonoGame.Extended.Tiled
         //    //return animatedTile;
         //}
 
-        public bool ContainsGlobalIdentifier(int globalIdentifier)
-        {
-            return globalIdentifier >= FirstGlobalIdentifier && globalIdentifier < FirstGlobalIdentifier + TileCount;
-        }
+        //public bool ContainsGlobalIdentifier(int globalIdentifier)
+        //{
+        //    return globalIdentifier >= FirstGlobalIdentifier && globalIdentifier < FirstGlobalIdentifier + TileCount;
+        //}
     }
 }
