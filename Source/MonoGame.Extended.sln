@@ -58,9 +58,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Binaries", "Binaries", "{19940B30-9A6B-45BB-AAFA-AE8F42C12431}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MonoGame", "MonoGame", "{9974F023-34E4-49C3-AE58-8BE100BB1B99}"
-	ProjectSection(SolutionItems) = preProject
-		Binaries\MonoGame\MonoGame.Imaging.dll = Binaries\MonoGame\MonoGame.Imaging.dll
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DesktopGL", "DesktopGL", "{D3C4EB17-5001-4B1C-9F14-F4EF7AA7E757}"
 	ProjectSection(SolutionItems) = preProject
