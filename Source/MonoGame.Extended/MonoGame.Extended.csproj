@@ -47,10 +47,14 @@
     <Compile Include="CircleF.cs" />
     <Compile Include="Collections\Bag.cs" />
     <Compile Include="Collections\DictionaryExtensions.cs" />
+    <Compile Include="Collections\EmptyCollection.cs" />
+    <Compile Include="Collections\EmptyDictionary.cs" />
+    <Compile Include="Collections\EmptyDictionaryEnumerator.cs" />
+    <Compile Include="Collections\EmptyEnumerator.cs" />
     <Compile Include="Collections\KeyedCollection.cs" />
+    <Compile Include="Collections\Pool.cs" />
     <Compile Include="ColorExtensions.cs" />
     <Compile Include="EllipseF.cs" />
-    <Compile Include="Entities\EntityComponentAttribute.cs" />
     <Compile Include="FastRandom.cs" />
     <Compile Include="FloatHelper.cs" />
     <Compile Include="GameComponentCollectionExtensions.cs" />
@@ -95,7 +99,6 @@
     <Compile Include="BitmapFonts\BitmapFontExtensions.cs" />
     <Compile Include="BitmapFonts\BitmapFontReader.cs" />
     <Compile Include="BitmapFonts\BitmapFontRegion.cs" />
-    <Compile Include="Collections\BitVector32.cs" />
     <Compile Include="Collections\Deque.cs" />
     <Compile Include="Collections\ListExtensions.cs" />
     <Compile Include="Collections\ObjectPool.cs" />

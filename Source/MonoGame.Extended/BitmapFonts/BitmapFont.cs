@@ -15,17 +15,19 @@ namespace MonoGame.Extended.BitmapFonts
             public BitmapFontRegion FontRegion;
         }
 
-        private readonly Dictionary<int, BitmapFontRegion> _characterMap;
+        private readonly IReadOnlyDictionary<int, BitmapFontRegion> _characterMap;
 
         public BitmapFont(string name, IEnumerable<BitmapFontRegion> regions, int lineHeight) :
             this(name, lineHeight)
         {
-            _characterMap = new Dictionary<int, BitmapFontRegion>();
+            int count = regions is ICollection collection ? collection.Count : 0;
+            var temp = new Dictionary<int, BitmapFontRegion>(count);
             foreach (var region in regions)
-                _characterMap.Add(region.Character, region);
+                temp.Add(region.Character, region);
+            _characterMap = temp;
         }
 
-        public BitmapFont(string name, Dictionary<int, BitmapFontRegion> regions, int lineHeight) :
+        public BitmapFont(string name, IReadOnlyDictionary<int, BitmapFontRegion> regions, int lineHeight) :
             this(name, lineHeight)
         {
             _characterMap = regions;

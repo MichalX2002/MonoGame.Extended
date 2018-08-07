@@ -34,9 +34,12 @@ namespace MonoGame.Extended.Collections
 
         public ObjectPool(Func<T> instantiationFunc, int capacity = 16, ObjectPoolIsFullPolicy isFullPolicy = ObjectPoolIsFullPolicy.ReturnNull)
         {
+            if (instantiationFunc == null)
+                throw new ArgumentNullException(nameof(instantiationFunc));
+
             _returnToPoolDelegate = Return;
 
-            _instantiationFunction = instantiationFunc ?? throw new ArgumentNullException(nameof(instantiationFunc));
+            _instantiationFunction = instantiationFunc;
             _freeItems = new Deque<T>(capacity);
             IsFullPolicy = isFullPolicy;      
         }
@@ -58,8 +61,7 @@ namespace MonoGame.Extended.Collections
 
         public T New()
         {
-
-            if (!_freeItems.RemoveFromFront(out T poolable))
+            if (!_freeItems.RemoveFromFront(out var poolable))
             {
                 if (TotalCount <= Capacity)
                 {

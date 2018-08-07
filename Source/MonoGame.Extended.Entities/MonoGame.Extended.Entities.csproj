@@ -50,27 +50,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AspectAttribute.cs" />
     <Compile Include="Aspect.cs" />
-    <Compile Include="BitVector.cs" />
-    <Compile Include="DefaultDependencyResolver.cs" />
-    <Compile Include="DependencyResolver.cs" />
-    <Compile Include="EntityComponentPool.cs" />
-    <Compile Include="EntityComponentPoolAttribute.cs" />
-    <Compile Include="EntityComponentDelegate.cs" />
-    <Compile Include="EntityDelegate.cs" />
-    <Compile Include="EntityManager.cs" />
-    <Compile Include="EntityProcessingSystem.cs" />
-    <Compile Include="EntitySystemAttribute.cs" />
-    <Compile Include="EntityTemplateAttribute.cs" />
+    <Compile Include="AspectBuilder.cs" />
+    <Compile Include="BitArrayExtensions.cs" />
+    <Compile Include="ComponentManager.cs" />
+    <Compile Include="ComponentMapper.cs" />
+    <Compile Include="ComponentType.cs" />
     <Compile Include="Entity.cs" />
-    <Compile Include="EntityComponentSystem.cs" />
-    <Compile Include="PoolableComponent.cs" />
-    <Compile Include="ProcessingSystem.cs" />
-    <Compile Include="SystemManager.cs" />
-    <Compile Include="EntityTemplate.cs" />
-    <Compile Include="EntityComponentType.cs" />
+    <Compile Include="EntityManager.cs" />
+    <Compile Include="EntitySubscription.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Systems\DrawSystem.cs" />
+    <Compile Include="Systems\EntityDrawSystem.cs" />
+    <Compile Include="Systems\EntityProcessingSystem.cs" />
+    <Compile Include="Systems\EntitySystem.cs" />
+    <Compile Include="Systems\EntityUpdateSystem.cs" />
+    <Compile Include="Systems\ISystem.cs" />
+    <Compile Include="Systems\UpdateSystem.cs" />
+    <Compile Include="World.cs" />
+    <Compile Include="WorldBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.7.0.479, Culture=neutral, processorArchitecture=MSIL">

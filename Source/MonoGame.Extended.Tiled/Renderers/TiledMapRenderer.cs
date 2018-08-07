@@ -22,7 +22,7 @@ namespace MonoGame.Extended.Tiled.Renderers
             _defaultEffect = new TiledMapEffect(graphicsDevice);
             _mapModelBuilder = new TiledMapModelBuilder(graphicsDevice);
 
-            if(map != null)
+            if (map != null)
                 LoadMap(map);
         }
 
@@ -40,7 +40,7 @@ namespace MonoGame.Extended.Tiled.Renderers
 
         public void Update(GameTime gameTime)
         {
-            if(_mapModel == null)
+            if (_mapModel == null)
                 return;
 
             for (var tilesetIndex = 0; tilesetIndex < _mapModel.Tilesets.Count; tilesetIndex++)
@@ -49,8 +49,8 @@ namespace MonoGame.Extended.Tiled.Renderers
                     animatedTilesetTile.Update(gameTime);
             }
 
-            for(var layerIndex = 0; layerIndex < _mapModel.LayersOfLayerModels.Length; layerIndex++)
-                UpdateAnimatedLayerModels(_mapModel.LayersOfLayerModels[layerIndex].OfType<TiledMapAnimatedLayerModel>());
+            foreach (var layer in _mapModel.LayersOfLayerModels)
+                UpdateAnimatedLayerModels(layer.Value.OfType<TiledMapAnimatedLayerModel>());
         }
 
         private static unsafe void UpdateAnimatedLayerModels(IEnumerable<TiledMapAnimatedLayerModel> animatedLayerModels)
@@ -97,6 +97,14 @@ namespace MonoGame.Extended.Tiled.Renderers
                 Draw(index, ref viewMatrix, ref projectionMatrix, effect, depth);
         }
 
+        public void Draw(TiledMapLayer layer, Matrix? viewMatrix = null, Matrix? projectionMatrix = null, Effect effect = null, float depth = 0.0f)
+        {
+            var viewMatrix1 = viewMatrix ?? Matrix.Identity;
+            var projectionMatrix1 = projectionMatrix ?? Matrix.CreateOrthographicOffCenter(0, _graphicsDevice.Viewport.Width, _graphicsDevice.Viewport.Height, 0, 0, -1);
+
+            Draw(layer, ref viewMatrix1, ref projectionMatrix1, effect, depth);
+        }
+
         public void Draw(int layerIndex, Matrix? viewMatrix = null, Matrix? projectionMatrix = null, Effect effect = null, float depth = 0.0f)
         {
             var viewMatrix1 = viewMatrix ?? Matrix.Identity;
@@ -107,10 +115,15 @@ namespace MonoGame.Extended.Tiled.Renderers
 
         public void Draw(int layerIndex, ref Matrix viewMatrix, ref Matrix projectionMatrix, Effect effect = null, float depth = 0.0f)
         {
+            var layer = _mapModel.Layers[layerIndex];
+
+            Draw(layer, ref viewMatrix, ref projectionMatrix, effect, depth);
+        }
+
+        public void Draw(TiledMapLayer layer, ref Matrix viewMatrix, ref Matrix projectionMatrix, Effect effect = null, float depth = 0.0f)
+        {
             if (_mapModel == null)
                 return;
-
-            var layer = _mapModel.Layers[layerIndex];
 
             if (!layer.IsVisible)
                 return;
@@ -118,37 +131,53 @@ namespace MonoGame.Extended.Tiled.Renderers
             if (layer is TiledMapObjectLayer)
                 return;
 
-            _worldMatrix.Translation = new Vector3(layer.Offset.X, layer.Offset.Y, depth);
+            Draw(layer, Vector2.Zero, ref viewMatrix, ref projectionMatrix, effect, depth);
+        }
 
-            var effect1 = effect ?? _defaultEffect;
-            if (!(effect1 is ITiledMapEffect tiledMapEffect))
-                return;
+        private void Draw(TiledMapLayer layer, Vector2 parentOffset, ref Matrix viewMatrix, ref Matrix projectionMatrix, Effect effect, float depth)
+        {
+            var offset = parentOffset + layer.Offset;
 
-            // model-to-world transform
-            tiledMapEffect.World = _worldMatrix;
-            tiledMapEffect.View = viewMatrix;
-            tiledMapEffect.Projection = projectionMatrix;
-
-            foreach (var layerModel in _mapModel.LayersOfLayerModels[layerIndex])
+            if (layer is TiledMapGroupLayer groupLayer)
             {
-                // desired alpha
-                tiledMapEffect.Alpha = layer.Opacity;
+                foreach (var subLayer in groupLayer.Layers)
+                    Draw(subLayer, offset, ref viewMatrix, ref projectionMatrix, effect, depth);
+            }
+            else
+            {
+                _worldMatrix.Translation = new Vector3(offset, depth);
 
-                // desired texture
-                tiledMapEffect.Texture = layerModel.Texture;
+                var effect1 = effect ?? _defaultEffect;
+                var tiledMapEffect = effect1 as ITiledMapEffect;
+                if (tiledMapEffect == null)
+                    return;
 
-                // bind the vertex and index buffer
-                _graphicsDevice.SetVertexBuffer(layerModel.VertexBuffer);
-                _graphicsDevice.Indices = layerModel.IndexBuffer;
+                // model-to-world transform
+                tiledMapEffect.World = _worldMatrix;
+                tiledMapEffect.View = viewMatrix;
+                tiledMapEffect.Projection = projectionMatrix;
 
-                // for each pass in our effect
-                foreach (var pass in effect1.CurrentTechnique.Passes)
+                foreach (var layerModel in _mapModel.LayersOfLayerModels[layer])
                 {
-                    // apply the pass, effectively choosing which vertex shader and fragment (pixel) shader to use
-                    pass.Apply();
+                    // desired alpha
+                    tiledMapEffect.Alpha = layer.Opacity;
 
-                    // draw the geometry from the vertex buffer / index buffer
-                    _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, layerModel.TriangleCount);
+                    // desired texture
+                    tiledMapEffect.Texture = layerModel.Texture;
+
+                    // bind the vertex and index buffer
+                    _graphicsDevice.SetVertexBuffer(layerModel.VertexBuffer);
+                    _graphicsDevice.Indices = layerModel.IndexBuffer;
+
+                    // for each pass in our effect
+                    foreach (var pass in effect1.CurrentTechnique.Passes)
+                    {
+                        // apply the pass, effectively choosing which vertex shader and fragment (pixel) shader to use
+                        pass.Apply();
+
+                        // draw the geometry from the vertex buffer / index buffer
+                        _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, layerModel.TriangleCount);
+                    }
                 }
             }
         }

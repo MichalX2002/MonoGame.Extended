@@ -54,38 +54,38 @@ namespace MonoGame.Extended.Tiled
 
             for (var i = 0; i < tilesetCount; i++)
             {
-				var firstGlobalIdentifier = reader.ReadInt32();
+                var firstGlobalIdentifier = reader.ReadInt32();
                 var tileset = ReadTileset(reader, map);
                 map.AddTileset(tileset, firstGlobalIdentifier);
             }
         }
-        
+
         private static TiledMapTileset ReadTileset(ContentReader reader, TiledMap map)
         {
-			TiledMapTileset tileset;
-			var external = reader.ReadBoolean();
-			if (external)
-				tileset = reader.ReadExternalReference<TiledMapTileset>();
-			else
-				tileset = TiledMapTilesetReader.ReadTileset(reader);
+            TiledMapTileset tileset;
+            var external = reader.ReadBoolean();
+            if (external)
+                tileset = reader.ReadExternalReference<TiledMapTileset>();
+            else
+                tileset = TiledMapTilesetReader.ReadTileset(reader);
 
-			return tileset;
+            return tileset;
         }
 
         private static void ReadLayers(ContentReader reader, TiledMap map)
-		{
-			foreach (var layer in ReadGroup(reader, map))
-				map.AddLayer(layer);
-		}
-		private static List<TiledMapLayer> ReadGroup(ContentReader reader, TiledMap map)
+        {
+            foreach (var layer in ReadGroup(reader, map))
+                map.AddLayer(layer);
+        }
+        private static List<TiledMapLayer> ReadGroup(ContentReader reader, TiledMap map)
         {
             var layerCount = reader.ReadInt32();
-			var value = new List<TiledMapLayer>(layerCount);
+            var value = new List<TiledMapLayer>(layerCount);
 
             for (var i = 0; i < layerCount; i++)
                 value.Add(ReadLayer(reader, map));
 
-			return value;
+            return value;
         }
 
         private static TiledMapLayer ReadLayer(ContentReader reader, TiledMap map)
@@ -114,9 +114,9 @@ namespace MonoGame.Extended.Tiled
                 case TiledMapLayerType.ObjectLayer:
                     layer = ReadObjectLayer(reader, name, offset, opacity, isVisible, map);
                     break;
-				case TiledMapLayerType.GroupLayer:
-					layer = new TiledMapGroupLayer(name, ReadGroup(reader, map), offset, opacity, isVisible);
-					break;
+                case TiledMapLayerType.GroupLayer:
+                    layer = new TiledMapGroupLayer(name, ReadGroup(reader, map), offset, opacity, isVisible);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

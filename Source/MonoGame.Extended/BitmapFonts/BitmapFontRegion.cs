@@ -1,14 +1,13 @@
 using System;
 using MonoGame.Extended.TextureAtlases;
 using System.Collections.Generic;
+using MonoGame.Extended.Collections;
 
 namespace MonoGame.Extended.BitmapFonts
 {
     public class BitmapFontRegion
     {
-        private static readonly Dictionary<int, int> _empty;
-
-        private Dictionary<int, int> _kernings;
+        private IReadOnlyDictionary<int, int> _kernings;
 
         public int Character { get; }
         public TextureRegion2D TextureRegion { get; }
@@ -18,20 +17,15 @@ namespace MonoGame.Extended.BitmapFonts
         public int Width => TextureRegion.Width;
         public int Height => TextureRegion.Height;
 
-        public Dictionary<int, int> Kernings
+        public IReadOnlyDictionary<int, int> Kernings
         {
             get
             {
                 if (_kernings == null)
-                    return _empty;
+                    return EmptyDictionary<int, int>.ReadOnlyInstance;
                 return _kernings;
             }
             internal set => _kernings = value;
-        }
-
-        static BitmapFontRegion()
-        {
-            _empty = new Dictionary<int, int>(0);
         }
 
         public BitmapFontRegion(
