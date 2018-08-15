@@ -36,7 +36,7 @@ namespace MonoGame.Extended.Content.Pipeline.Text
                 using (var reader = new StreamReader(input.Data))
                     processed = reader.ReadToEnd();
 
-            return new ProcessedTextData(processed);
+            return new ProcessedTextData(input.Type, processed);
         }
 
         private string MinifyJsonSource(Stream source)
