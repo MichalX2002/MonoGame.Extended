@@ -6,7 +6,7 @@ namespace MonoGame.Extended.Content.Pipeline.Text
     [ContentImporter(
         TXT, XML, JSON, LUA, INI, JS, XAML, CSS, HTML,
         DefaultProcessor = nameof(TextDataProcessor),
-        DisplayName = "Plain Text Importer - MonoGame.Extended"
+        DisplayName = "Text Data Importer - MonoGame.Extended"
     )]
     public class TextDataImporter : ContentImporter<TextDataFile>
     {
