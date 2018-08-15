@@ -4,16 +4,17 @@ using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 namespace MonoGame.Extended.Content.Pipeline.Text
 {
     [ContentTypeWriter]
-    public class PlainTextWriter : ContentTypeWriter<ProcessedPlainText>
+    public class TextDataWriter : ContentTypeWriter<ProcessedTextData>
     {
-        protected override void Write(ContentWriter output, ProcessedPlainText value)
+        protected override void Write(ContentWriter output, ProcessedTextData value)
         {
+            output.Write((byte)value.Type);
             output.Write(value.Value);
         }
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "MonoGame.Extended.PlainTextReader, MonoGame.Extended";
+            return "MonoGame.Extended.TextDataReader, MonoGame.Extended";
         }
 
         /*

@@ -64,8 +64,8 @@
     <Compile Include="Matrix2.cs" />
     <Compile Include="MatrixExtensions.cs" />
     <Compile Include="OrthographicCamera.cs" />
-    <Compile Include="PlainText.cs" />
-    <Compile Include="PlainTextReader.cs" />
+    <Compile Include="Content\TextData.cs" />
+    <Compile Include="Content\TextDataReader.cs" />
     <Compile Include="Point2.cs" />
     <Compile Include="Point3.cs" />
     <Compile Include="PrimitivesHelper.cs" />
@@ -126,6 +126,7 @@
     <Compile Include="Range.cs" />
     <Compile Include="Shapes\ShapeExtensions.cs" />
     <Compile Include="Shapes\Polygon.cs" />
+    <Compile Include="Content\TextDataType.cs" />
     <Compile Include="TextureAtlases\NinePatchRegion2D.cs" />
     <Compile Include="Sprites\SpriteExtensions.cs" />
     <Compile Include="TextureAtlases\TextureAtlas.cs" />

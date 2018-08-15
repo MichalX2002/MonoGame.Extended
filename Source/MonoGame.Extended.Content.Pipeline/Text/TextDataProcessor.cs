@@ -5,8 +5,8 @@ using System.IO;
 
 namespace MonoGame.Extended.Content.Pipeline.Text
 {
-    [ContentProcessor(DisplayName = "Plain Text Processor - MonoGame.Extended")]
-    public class PlainTextProcessor : ContentProcessor<PlainTextFile, ProcessedPlainText>
+    [ContentProcessor(DisplayName = "Text Data Processor - MonoGame.Extended")]
+    public class TextDataProcessor : ContentProcessor<TextDataFile, ProcessedTextData>
     {
         [DefaultValue(true)]
         public bool MinifyJson { get; set; } = true;
@@ -14,40 +14,34 @@ namespace MonoGame.Extended.Content.Pipeline.Text
         [DefaultValue(true)]
         public bool MinifyXml { get; set; } = true;
 
-        public override ProcessedPlainText Process(
-            PlainTextFile input, ContentProcessorContext context)
+        public override ProcessedTextData Process(
+            TextDataFile input, ContentProcessorContext context)
         {
-            string ReadTextFromInput()
-            {
-                using (var reader = new StreamReader(input.Data))
-                    return reader.ReadToEnd();
-            }
-
             string processed = null;
-
             switch (input.Type)
             {
-                case PlainTextType.Json:
+                case TextDataType.Json:
                     if (MinifyJson)
-                        processed = MinifyJsonSource(ReadTextFromInput());
+                        processed = MinifyJsonSource(input.Data);
                     break;
 
-                case PlainTextType.Xml:
+                case TextDataType.Xaml:
+                case TextDataType.Xml:
                     if (MinifyXml)
                         processed = MinifyXmlSource(input.Data);
                     break;
-
-                default:
-                    processed = ReadTextFromInput();
-                    break;
             }
 
-            return new ProcessedPlainText(processed);
+            if(processed == null)
+                using (var reader = new StreamReader(input.Data))
+                    processed = reader.ReadToEnd();
+
+            return new ProcessedTextData(processed);
         }
 
-        private string MinifyJsonSource(string source)
+        private string MinifyJsonSource(Stream source)
         {
-            using (var textReader = new StringReader(source))
+            using (var textReader = new StreamReader(source))
             using (var jsonReader = new JsonTextReader(textReader))
             using (var textWriter = new StringWriter())
             using (var jsonWriter = new JsonTextWriter(textWriter))

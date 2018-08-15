@@ -1,12 +1,14 @@
 ﻿
 namespace MonoGame.Extended
 {
-    public class PlainText
+    public class TextData
     {
+        public TextDataType Type { get; }
         public string Value { get; }
 
-        public PlainText(string value)
+        public TextData(TextDataType type, string value)
         {
+            Type = type;
             Value = value;
         }
 
