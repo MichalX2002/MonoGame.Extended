@@ -34,8 +34,7 @@ namespace MonoGame.Extended.Animations.SpriteSheets
 
         public SpriteSheetAnimation Create(string name)
         {
-
-            if (_animationDataDictionary.TryGetValue(name, out SpriteSheetAnimationData data))
+            if (_animationDataDictionary.TryGetValue(name, out var data))
             {
                 var keyFrames = data.FrameIndicies
                     .Select(i => Frames[i])
