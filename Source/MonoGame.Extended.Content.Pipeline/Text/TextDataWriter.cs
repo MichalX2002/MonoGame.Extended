@@ -20,7 +20,7 @@ namespace MonoGame.Extended.Content.Pipeline.Text
         /*
         public override string GetRuntimeType(TargetPlatform targetPlatform)
         {
-            return "MonoGame.Extended.PlainText";
+            return "MonoGame.Extended.TextData";
         }
         */
 
