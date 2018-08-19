@@ -21,8 +21,9 @@ namespace MonoGame.Extended.TextureAtlases
             spriteBatch.Draw(textureRegion.Texture, position, srcRect, color, rotation, origin, scale, effects, layerDepth);
         }
 
-        public static bool IsVisible(this in Rectangle sourceRect, ref Vector2 position,
-            Vector2 origin, in Vector2 scale, Rectangle? clipRect, out Rectangle clipped)
+        public static bool IsVisible(
+            this Rectangle sourceRect, ref Vector2 position,
+            Vector2 origin, Vector2 scale, Rectangle? clipRect, out Rectangle clipped)
         {
             /* source
             
@@ -61,7 +62,8 @@ namespace MonoGame.Extended.TextureAtlases
             return true;
         }
 
-        public static void Draw(this SpriteBatch spriteBatch, TextureRegion2D textureRegion, Rectangle destinationRectangle, Color color, Rectangle? clippingRectangle = null)
+        public static void Draw(
+            this SpriteBatch spriteBatch, TextureRegion2D textureRegion, Rectangle destinationRectangle, Color color, Rectangle? clippingRectangle = null)
         {
             if (textureRegion is NinePatchRegion2D ninePatchRegion)
                 Draw(spriteBatch, ninePatchRegion, destinationRectangle, color, clippingRectangle);
@@ -69,7 +71,8 @@ namespace MonoGame.Extended.TextureAtlases
                 Draw(spriteBatch, textureRegion.Texture, textureRegion.Bounds, destinationRectangle, color, clippingRectangle);
         }
         
-        public static void Draw(this SpriteBatch spriteBatch, NinePatchRegion2D ninePatchRegion, Rectangle destinationRectangle, Color color, Rectangle? clippingRectangle = null)
+        public static void Draw(
+            this SpriteBatch spriteBatch, NinePatchRegion2D ninePatchRegion, Rectangle destinationRectangle, Color color, Rectangle? clippingRectangle = null)
         {
             var destinationPatches = ninePatchRegion.CreatePatches(destinationRectangle);
             var sourcePatches = ninePatchRegion.SourcePatches;
@@ -93,7 +96,8 @@ namespace MonoGame.Extended.TextureAtlases
             }
         }
 
-        public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, Rectangle destinationRectangle, Color color, Rectangle? clippingRectangle)
+        public static void Draw(
+            this SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, Rectangle destinationRectangle, Color color, Rectangle? clippingRectangle)
         {
             if (clippingRectangle.HasValue)
             {

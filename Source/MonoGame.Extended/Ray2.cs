@@ -9,9 +9,8 @@ namespace MonoGame.Extended
     ///     A two dimensional ray defined by a starting <see cref="Point2" /> and a direction <see cref="Vector2" />.
     /// </summary>
     /// <seealso cref="IEquatable{T}" />
-    /// <seealso cref="IEquatableByRef{Ray2}" />
     [DebuggerDisplay("{DebugDisplayString,nq}")]
-    public struct Ray2 : IEquatable<Ray2>, IEquatableByRef<Ray2>
+    public struct Ray2 : IEquatable<Ray2>
     {
         /// <summary>
         ///     The starting <see cref="Point2" /> of this <see cref="Ray2" />.
@@ -54,7 +53,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Ray2" /> intersects with <paramref name="boundingRectangle" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Intersects(in BoundingRectangle boundingRectangle, out float rayNearDistance, out float rayFarDistance)
+        public bool Intersects(BoundingRectangle boundingRectangle, out float rayNearDistance, out float rayFarDistance)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.3; Basic Primitive Tests - Intersecting Lines, Rays, and (Directed Segments). pg 179-181
 
@@ -104,24 +103,11 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Ray2" />
         ///     structures are equal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator ==(in Ray2 first, in Ray2 second)
+        public static bool operator ==(Ray2 first, Ray2 second)
         {
-            return first.Equals(in second);
+            return first.Equals(second);
         }
-
-        /// <summary>
-        ///     Indicates whether this <see cref="Ray2" /> is equal to another <see cref="Ray2" />.
-        /// </summary>
-        /// <param name="ray">The ray.</param>
-        /// <returns>
-        ///     <c>true</c> if this <see cref="Ray2" /> is equal to the <paramref name="ray" /> parameter; otherwise,
-        ///     <c>false</c>.
-        /// </returns>
-        public bool Equals(Ray2 ray)
-        {
-            return Equals(in ray);
-        }
-
+        
         /// <summary>
         ///     Indicates whether this <see cref="Ray2" /> is equal to another <see cref="Ray2" />.
         /// </summary>
@@ -130,7 +116,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Ray2" /> is equal to the <paramref name="ray" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Equals(in Ray2 ray)
+        public bool Equals(Ray2 ray)
         {
             // ReSharper disable CompareOfFloatsByEqualityOperator
             return (ray.Position == Position) && (ray.Direction == Direction);
@@ -147,7 +133,7 @@ namespace MonoGame.Extended
         public override bool Equals(object obj)
         {
             if (obj is Ray2 ray)
-                return Equals(in ray);
+                return Equals(ray);
             return false;
         }
 
@@ -163,7 +149,7 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Ray2" />
         ///     structures are unequal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator !=(in Ray2 first, in Ray2 second)
+        public static bool operator !=(Ray2 first, Ray2 second)
         {
             return !(first == second);
         }

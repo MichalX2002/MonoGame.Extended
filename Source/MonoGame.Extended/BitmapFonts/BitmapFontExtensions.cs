@@ -11,8 +11,8 @@ namespace MonoGame.Extended.BitmapFonts
     public static class BitmapFontExtensions
     {
         private delegate T GetPositionDelegate<T>(
-            in Glyph glyph, int index, in Vector2 position, in Rectangle sourceRect, in Color color,
-            float rotation, in Vector2 origin, in Vector2 scale, float depth);
+            Glyph glyph, int index, Vector2 position, Rectangle sourceRect, Color color,
+            float rotation, Vector2 origin, Vector2 scale, float depth);
         
         private static void ThrowOnArgs(SpriteEffects effect)
         {
@@ -84,121 +84,127 @@ namespace MonoGame.Extended.BitmapFonts
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<CharDrawSprite> sprites)
+        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphBatchedSprite> sprites)
         {
             for (int i = 0, length = sprites.Count; i < length; i++)
             {
-                ref CharDrawSprite s = ref sprites.GetReferenceAt(i);
+                ref GlyphBatchedSprite s = ref sprites.GetReferenceAt(i);
                 batch.Draw(s.Texture, s.Sprite);
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<CharDrawSprite> sprites, float depth)
+        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphBatchedSprite> sprites, float depth)
         {
             for (int i = 0, length = sprites.Count; i < length; i++)
             {
-                ref CharDrawSprite s = ref sprites.GetReferenceAt(i);
+                ref GlyphBatchedSprite s = ref sprites.GetReferenceAt(i);
                 batch.Draw(s.Texture, s.Sprite, depth);
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<CharDrawPosition> positions)
+        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphSprite> positions)
         {
             for (int i = 0, length = positions.Count; i < length; i++)
             {
-                ref CharDrawPosition p = ref positions.GetReferenceAt(i);
+                ref GlyphSprite p = ref positions.GetReferenceAt(i);
                 batch.Draw(p.Texture, p.Position, p.SourceRectangle,
                     p.Color, p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth);
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<CharDrawPosition> positions, float depth)
+        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphSprite> positions, float depth)
         {
             for (int i = 0, length = positions.Count; i < length; i++)
             {
-                ref CharDrawPosition p = ref positions.GetReferenceAt(i);
+                ref GlyphSprite p = ref positions.GetReferenceAt(i);
                 batch.Draw(p.Texture, p.Position, p.SourceRectangle,
                     p.Color, p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth + depth);
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<CharDrawPosition> positions,
-            Vector2 position, float depth)
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphSprite> positions, Vector2 position, float depth)
         {
             for (int i = 0, length = positions.Count; i < length; i++)
             {
-                ref CharDrawPosition p = ref positions.GetReferenceAt(i);
+                ref GlyphSprite p = ref positions.GetReferenceAt(i);
                 batch.Draw(p.Texture, p.Position + position, p.SourceRectangle,
                     p.Color, p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth + depth);
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<CharDrawPosition> positions,
-            Vector2 position, Vector2 scale, float depth)
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphSprite> positions, Vector2 position, Vector2 scale, float depth)
         {
             for (int i = 0, length = positions.Count; i < length; i++)
             {
-                ref CharDrawPosition p = ref positions.GetReferenceAt(i);
+                ref GlyphSprite p = ref positions.GetReferenceAt(i);
                 batch.Draw(p.Texture, p.Position + position, p.SourceRectangle,
                     p.Color, p.Rotation, p.Origin, p.Scale + scale, SpriteEffects.None, p.Depth + depth);
             }
         }
 
-        public static void GetGlyphSprites(this BitmapFont font, IList<CharDrawSprite> output, string text,
-            Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+        public static void GetGlyphSprites(
+            this BitmapFont font, IList<GlyphBatchedSprite> output, string text, Vector2 position,
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             var glyphs = font.GetGlyphs(text, position);
-            GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
+            GetBaseSprites(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
         }
 
-        public static void GetGlyphSprites(this BitmapFont font, IList<CharDrawSprite> output, StringBuilder text,
-            Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+        public static void GetGlyphSprites(
+            this BitmapFont font, IList<GlyphBatchedSprite> output, StringBuilder text, Vector2 position,
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             var glyphs = font.GetGlyphs(text, position);
-            GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
+            GetBaseSprites(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
         }
 
-        public static void GetGlyphPositions(this BitmapFont font, IList<CharDrawPosition> output, string text,
-            Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+        public static void GetGlyphPositions(
+            this BitmapFont font, IList<GlyphSprite> output, string text, Vector2 position,
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             var glyphs = font.GetGlyphs(text, position);
-            GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
+            GetBaseSprites(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
         }
 
-        public static void GetGlyphPositions(this BitmapFont font, IList<CharDrawPosition> output, StringBuilder text,
-            Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+        public static void GetGlyphPositions(
+            this BitmapFont font, IList<GlyphSprite> output, StringBuilder text, Vector2 position,
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             var glyphs = font.GetGlyphs(text, position);
-            GetBasis(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
+            GetBaseSprites(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
         }
 
-        private static CharDrawSprite GetSprite(in Glyph glyph, int index, in Vector2 position,
-            in Rectangle src, in Color color, float rotation, in Vector2 origin, in Vector2 scale, float depth)
+        private static GlyphBatchedSprite GetSprite(
+            Glyph glyph, int index, Vector2 position, Rectangle src, Color color,
+            float rotation, Vector2 origin, Vector2 scale, float depth)
         {
-            var item = new CharDrawSprite
+            var item = new GlyphBatchedSprite
             {
                 Char = glyph.Character,
                 Texture = glyph.FontRegion.TextureRegion.Texture,
                 Index = index,
             };
-
-            Matrix2.CreateFrom(position, rotation, scale, origin, out var transform);
-            item.Sprite.SetTransform(transform, src.Size);
-            item.Sprite.SetDepth(depth);
+            
+            item.Sprite.SetTransform(position, rotation, scale, origin, src.Size);
             item.Sprite.SetTexCoords(item.Texture.Texel, src);
+            item.Sprite.SetDepth(depth);
             item.Sprite.SetColor(color);
-
             return item;
         }
 
-        private static CharDrawPosition GetPos(in Glyph glyph, int index, in Vector2 position,
-            in Rectangle src, in Color color, float rotation, in Vector2 origin, in Vector2 scale, float depth)
+        private static GlyphSprite GetPos(
+            Glyph glyph, int index, Vector2 position, Rectangle src, Color color,
+            float rotation, Vector2 origin, Vector2 scale, float depth)
         {
-            return new CharDrawPosition(glyph.Character, glyph.FontRegion.TextureRegion.Texture,
+            return new GlyphSprite(
+                glyph.Character, glyph.FontRegion.TextureRegion.Texture,
                 index, src, position, color, rotation, origin, scale, depth);
         }
 
-        private static void GetBasis<T>(ref BitmapFont.GlyphEnumerator glyphs, IList<T> output,
+        private static void GetBaseSprites<T>(
+            ref BitmapFont.GlyphEnumerator glyphs, IList<T> output,
             Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale,
             float depth, Rectangle? clipRect, GetPositionDelegate<T> onItem)
         {
@@ -214,8 +220,11 @@ namespace MonoGame.Extended.BitmapFonts
 
                     if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
                     {
-                        output.Add(onItem.Invoke(
-                            glyph, index++, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                        T item = onItem.Invoke(
+                            glyph, index, newPos, srcRect, color, rotation, glyphOrigin, scale, depth);
+                        index++;
+
+                        output.Add(item);
                     }
                 }
             }

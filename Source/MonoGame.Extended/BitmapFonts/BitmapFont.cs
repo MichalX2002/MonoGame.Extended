@@ -216,7 +216,7 @@ namespace MonoGame.Extended.BitmapFonts
             }
         }
 
-        public class StringGlyphEnumerable : IEnumerable<Glyph>
+        public struct StringGlyphEnumerable : IEnumerable<Glyph>
         {
             public GlyphEnumerator Glyphs;
 
@@ -228,7 +228,6 @@ namespace MonoGame.Extended.BitmapFonts
             }
             
             IEnumerator<Glyph> IEnumerable<Glyph>.GetEnumerator() => Glyphs;
-
             IEnumerator IEnumerable.GetEnumerator() => throw new InvalidOperationException();
         }
 

@@ -8,8 +8,7 @@ namespace MonoGame.Extended
     ///     point.
     /// </summary>
     /// <seealso cref="IEquatable{T}" />
-    /// <seealso cref="IEquatableByRef{Segment2}" />
-    public struct Segment2 : IEquatable<Segment2>, IEquatableByRef<Segment2>
+    public struct Segment2 : IEquatable<Segment2>
     {
         /// <summary>
         ///     The starting <see cref="Point2" /> of this <see cref="Segment2" />.
@@ -51,7 +50,7 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The closest <see cref="Point2" /> on this <see cref="Segment2" /> to the <paramref name="point" />.</returns>
-        public Point2 ClosestPointTo(in Point2 point)
+        public Point2 ClosestPointTo(Point2 point)
         {
             // Computes the parameterized position: d(t) = Start + t * (End – Start)
 
@@ -80,7 +79,7 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The squared distance from this <see cref="Segment2" /> to a specified <see cref="Point2" />.</returns>
-        public float SquaredDistanceTo(in Point2 point)
+        public float SquaredDistanceTo(Point2 point)
         {
             var startToEnd = End - Start;
             var startToPoint = point - Start;
@@ -102,7 +101,7 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The distance from this <see cref="Segment2" /> to a specified <see cref="Point2" />.</returns>
-        public float DistanceTo(in Point2 point)
+        public float DistanceTo(Point2 point)
         {
             return (float) Math.Sqrt(SquaredDistanceTo(point));
         }
@@ -119,7 +118,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Segment2" /> intersects with <paramref name="rectangle" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Intersects(in RectangleF rectangle, out Point2 intersectionPoint)
+        public bool Intersects(RectangleF rectangle, out Point2 intersectionPoint)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.3; Basic Primitive Tests - Intersecting Lines, Rays, and (Directed Segments). pg 179-181
 
@@ -169,7 +168,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Segment2" /> intersects with <paramref name="boundingRectangle" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Intersects(in BoundingRectangle boundingRectangle, out Point2 intersectionPoint)
+        public bool Intersects(BoundingRectangle boundingRectangle, out Point2 intersectionPoint)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.3; Basic Primitive Tests - Intersecting Lines, Rays, and (Directed Segments). pg 179-181
 
@@ -220,23 +219,11 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Segment2" />
         ///     structures are equal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator ==(in Segment2 first, in Segment2 second)
+        public static bool operator ==(Segment2 first, Segment2 second)
         {
             return first.Equals(second);
         }
-
-        /// <summary>
-        ///     Indicates whether this <see cref="Segment2" /> is equal to another <see cref="Segment2" />.
-        /// </summary>
-        /// <param name="segment">The segment.</param>
-        /// <returns>
-        ///     <c>true</c> if this <see cref="Segment2" /> is equal to the <paramref name="segment" />; otherwise, <c>false</c>.
-        /// </returns>
-        public bool Equals(Segment2 segment)
-        {
-            return Equals(in segment);
-        }
-
+        
         /// <summary>
         ///     Indicates whether this <see cref="Segment2" /> is equal to another <see cref="Segment2" />.
         /// </summary>
@@ -245,7 +232,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Segment2" /> is equal to the <paramref name="segment" /> parameter; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Equals(in Segment2 segment)
+        public bool Equals(Segment2 segment)
         {
             return (Start == segment.Start) && (End == segment.End);
         }
@@ -277,7 +264,7 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Segment2" />
         ///     structures are unequal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator !=(in Segment2 first, in Segment2 second)
+        public static bool operator !=(Segment2 first, Segment2 second)
         {
             return !(first == second);
         }

@@ -23,19 +23,19 @@ namespace MonoGame.Extended
             return _texture;
         }
         
-        public static void Draw(this SpriteBatch batch, Texture2D texture, in BatchedSprite sprite, float depth)
+        public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite sprite, float depth)
         {
             batch.Draw(texture, sprite.TL, sprite.TR, sprite.BL, sprite.BR, depth);
         }
     
-        public static void Draw(this SpriteBatch batch, Texture2D texture, in BatchedSprite sprite)
+        public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite sprite)
         {
             batch.Draw(texture, sprite.TL, sprite.TR, sprite.BL, sprite.BR);
         }
 
         public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites)
         {
-            for (int i = 0, length = sprites.Length; i < length; i++)
+            for (int i = 0; i < sprites.Length; i++)
             {
                 batch.Draw(texture, sprites[i]);
             }
@@ -43,7 +43,7 @@ namespace MonoGame.Extended
 
         public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites, float depth)
         {
-            for (int i = 0, length = sprites.Length; i < length; i++)
+            for (int i = 0; i < sprites.Length; i++)
             {
                 batch.Draw(texture, sprites[i], depth);
             }
@@ -58,8 +58,8 @@ namespace MonoGame.Extended
         public VertexPositionColorTexture BR;
 
         public BatchedSprite(
-            in VertexPositionColorTexture vertexTL, in VertexPositionColorTexture vertexTR,
-            in VertexPositionColorTexture vertexBL, in VertexPositionColorTexture vertexBR)
+            VertexPositionColorTexture vertexTL, VertexPositionColorTexture vertexTR,
+            VertexPositionColorTexture vertexBL, VertexPositionColorTexture vertexBR)
         {
             TL = vertexTL;
             TR = vertexTR;
@@ -75,7 +75,7 @@ namespace MonoGame.Extended
             BR.Position.Z = depth;
         }
         
-        public void SetColor(in Color color)
+        public void SetColor(Color color)
         {
             TL.Color = color;
             TR.Color = color;
@@ -83,7 +83,7 @@ namespace MonoGame.Extended
             BR.Color = color;
         }
 
-        public void SetTransform(in Matrix2 matrix, in Point sourceSize)
+        public void SetTransform(Matrix2 matrix, Vector2 sourceSize)
         {
             Transform(matrix, 0, 0, ref TL.Position);
             Transform(matrix, sourceSize.X, 0, ref TR.Position);
@@ -91,21 +91,25 @@ namespace MonoGame.Extended
             Transform(matrix, sourceSize.X, sourceSize.Y, ref BR.Position);
         }
 
-        public static Matrix2 GetMatrixFromRect(
-            in RectangleF destination, Vector2 origin, float rotation, in Point sourceSize)
+        public void SetTransform(Matrix2 matrix, Point sourceSize)
         {
-            origin.X *= destination.Width / sourceSize.X;
-            origin.Y *= destination.Height / sourceSize.Y;
-
-            Vector2 pos = new Vector2(destination.X, destination.Y);
-            Vector2 size = new Vector2(
-                destination.Width / sourceSize.X,
-                destination.Height / sourceSize.Y);
-
-            return Matrix2.CreateFrom(pos, rotation, size, origin);
+            SetTransform(matrix, sourceSize.ToVector2());
         }
-        
-        private void Transform(in Matrix2 matrix, float x, float y, ref Vector3 output)
+
+        public void SetTransform(
+            Vector2 position, float rotation, Vector2 scale, Vector2 origin, Vector2 sourceSize)
+        {
+            var matrix = Matrix2.CreateFrom(position, rotation, scale, origin);
+            SetTransform(matrix, sourceSize);
+        }
+
+        public void SetTransform(
+            Vector2 position, float rotation, Vector2 scale, Vector2 origin, Point sourceSize)
+        {
+            SetTransform(position, rotation, scale, origin, sourceSize.ToVector2());
+        }
+
+        private void Transform(Matrix2 matrix, float x, float y, ref Vector3 output)
         {
             output.X = x * matrix.M11 + y * matrix.M21 + matrix.M31;
             output.Y = x * matrix.M12 + y * matrix.M22 + matrix.M32;
@@ -116,7 +120,7 @@ namespace MonoGame.Extended
             SetTexCoords(region.Texture.Texel, region.Bounds);
         }
 
-        public void SetTexCoords(in Vector2 textureTexel, in RectangleF sourceRect)
+        public void SetTexCoords(Vector2 textureTexel, RectangleF sourceRect)
         {
             SourceRectToTexCoords(textureTexel, sourceRect,
                 ref TL.TextureCoordinate, ref TR.TextureCoordinate,
@@ -140,8 +144,28 @@ namespace MonoGame.Extended
         }
         */
 
+        public static Matrix2 GetMatrixFromRect(
+            RectangleF destination, Vector2 origin, float rotation, Point sourceSize)
+        {
+            return GetMatrixFromRect(destination, origin, rotation, sourceSize.ToVector2());
+        }
+
+        public static Matrix2 GetMatrixFromRect(
+            RectangleF destination, Vector2 origin, float rotation, Vector2 sourceSize)
+        {
+            origin.X *= destination.Width / sourceSize.X;
+            origin.Y *= destination.Height / sourceSize.Y;
+
+            Vector2 pos = new Vector2(destination.X, destination.Y);
+            Vector2 scale = new Vector2(
+                destination.Width / sourceSize.X,
+                destination.Height / sourceSize.Y);
+
+            return Matrix2.CreateFrom(pos, rotation, scale, origin);
+        }
+
         public static void SourceRectToTexCoords(
-            in Vector2 textureTexel, in RectangleF sourceRect,
+            Vector2 textureTexel, RectangleF sourceRect,
             ref Vector2 tl, ref Vector2 tr, ref Vector2 bl, ref Vector2 br)
         {
             float x = sourceRect.X * textureTexel.X;

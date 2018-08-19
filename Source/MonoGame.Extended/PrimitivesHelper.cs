@@ -60,7 +60,7 @@ namespace MonoGame.Extended
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void TransformRectangle(ref Point2 center, ref Vector2 halfExtents, in Matrix2 transformMatrix)
+        internal static void TransformRectangle(ref Point2 center, ref Vector2 halfExtents, Matrix2 transformMatrix)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 4.2; Bounding Volumes - Axis-aligned Bounding Boxes (AABBs). pg 86-87
 
@@ -72,7 +72,7 @@ namespace MonoGame.Extended
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static float SquaredDistanceToPointFromRectangle(in Point2 minimum, in Point2 maximum, in Point2 point)
+        internal static float SquaredDistanceToPointFromRectangle(Point2 minimum, Point2 maximum, Point2 point)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.1.3.1; Basic Primitive Tests - Closest-point Computations - Distance of Point to AABB.  pg 130-131
             var squaredDistance = 0.0f;
@@ -106,7 +106,7 @@ namespace MonoGame.Extended
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void ClosestPointToPointFromRectangle(in Point2 minimum, in Point2 maximum, in Point2 point, out Point2 result)
+        internal static void ClosestPointToPointFromRectangle(Point2 minimum, Point2 maximum, Point2 point, out Point2 result)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.1.2; Basic Primitive Tests - Closest-point Computations. pg 130-131
            

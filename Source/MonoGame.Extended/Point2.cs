@@ -23,7 +23,7 @@ namespace MonoGame.Extended
     /// <seealso cref="IEquatable{T}" />
     /// <seealso cref="IEquatableByRef{Point2}" />
     [DebuggerDisplay("{DebugDisplayString,nq}")]
-    public struct Point2 : IEquatable<Point2>, IEquatableByRef<Point2>
+    public struct Point2 : IEquatable<Point2>
     {
         /// <summary>
         ///     Returns a <see cref="Point2" /> with <see cref="X" /> and <see cref="Y" /> equal to <c>0.0f</c>.
@@ -78,22 +78,9 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Point2" />
         ///     structures are equal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator ==(in Point2 first, in Point2 second)
+        public static bool operator ==(Point2 first, Point2 second)
         {
-            return first.Equals(in second);
-        }
-
-        /// <summary>
-        ///     Indicates whether this <see cref="Point2" /> is equal to another <see cref="Point2" />.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <returns>
-        ///     <c>true</c> if this <see cref="Point2" /> is equal to the <paramref name="point" />; otherwise,
-        ///     <c>false</c>.
-        /// </returns>
-        public bool Equals(Point2 point)
-        {
-            return Equals(in point);
+            return first.Equals(second);
         }
 
         /// <summary>
@@ -104,7 +91,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Point2" /> is equal to the <paramref name="point" /> parameter; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Equals(in Point2 point)
+        public bool Equals(Point2 point)
         {
             // ReSharper disable CompareOfFloatsByEqualityOperator
             return (point.X == X) && (point.Y == Y);
@@ -121,7 +108,7 @@ namespace MonoGame.Extended
         public override bool Equals(object obj)
         {
             if (obj is Point2 point)
-                return Equals(in point);
+                return Equals(point);
             return false;
         }
 
@@ -138,7 +125,7 @@ namespace MonoGame.Extended
         ///     fields of the two <see cref="Point2" />
         ///     structures are unequal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator !=(in Point2 first, in Point2 second)
+        public static bool operator !=(Point2 first, Point2 second)
         {
             return !(first == second);
         }
@@ -152,7 +139,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Point2" /> representing the addition of a <see cref="Point2" /> and a <see cref="Vector2" />.
         /// </returns>
-        public static Point2 operator +(in Point2 point, in Vector2 vector)
+        public static Point2 operator +(Point2 point, Vector2 vector)
         {
             return Add(point, vector);
         }
@@ -166,7 +153,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Point2" /> representing the addition of a <see cref="Point2" /> and a <see cref="Vector2" />.
         /// </returns>
-        public static Point2 Add(in Point2 point, in Vector2 vector)
+        public static Point2 Add(Point2 point, Vector2 vector)
         {
             return new Point2
             {
@@ -184,7 +171,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Point2" /> representing the substraction of a <see cref="Point2" /> and a <see cref="Vector2" />.
         /// </returns>
-        public static Point2 operator -(in Point2 point, in Vector2 vector)
+        public static Point2 operator -(Point2 point, Vector2 vector)
         {
             return Subtract(point, vector);
         }
@@ -198,7 +185,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Point2" /> representing the substraction of a <see cref="Point2" /> and a <see cref="Vector2" />.
         /// </returns>
-        public static Point2 Subtract(in Point2 point, in Vector2 vector)
+        public static Point2 Subtract(Point2 point, Vector2 vector)
         {
             return new Point2
             {
@@ -215,7 +202,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Vector2" /> representing the displacement of two <see cref="Point2" /> structures.
         /// </returns>
-        public static Vector2 operator -(in Point2 point1, in Point2 point2)
+        public static Vector2 operator -(Point2 point1, Point2 point2)
         {
             return Displacement(point1, point2);
         }
@@ -228,7 +215,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Vector2" /> representing the displacement of two <see cref="Point2" /> structures.
         /// </returns>
-        public static Vector2 Displacement(in Point2 point2, in Point2 point1)
+        public static Vector2 Displacement(Point2 point2, Point2 point1)
         {
             return new Vector2
             {
@@ -245,7 +232,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The result of the operator.
         /// </returns>
-        public static Point2 operator +(in Point2 point, in SizeF size)
+        public static Point2 operator +(Point2 point, SizeF size)
         {
             return Add(point, size);
         }
@@ -258,7 +245,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The result of the operator.
         /// </returns>
-        public static Point2 Add(in Point2 point, in SizeF size)
+        public static Point2 Add(Point2 point, SizeF size)
         {
             return new Point2(point.X + size.Width, point.Y + size.Height);
         }
@@ -271,7 +258,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The result of the operator.
         /// </returns>
-        public static Point2 operator -(in Point2 point, in SizeF size)
+        public static Point2 operator -(Point2 point, SizeF size)
         {
             return Subtract(point, size);
         }
@@ -284,7 +271,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The result of the operator.
         /// </returns>
-        public static Point2 Subtract(in Point2 point, in SizeF size)
+        public static Point2 Subtract(Point2 point, SizeF size)
         {
             return new Point2(point.X - size.Width, point.Y - size.Height);
         }
@@ -316,7 +303,7 @@ namespace MonoGame.Extended
         ///     The the <see cref="Point2" /> that contains the minimal coordinate values from two <see cref="Point2" />
         ///     structures.
         /// </returns>
-        public static Point2 Minimum(in Point2 first, in Point2 second)
+        public static Point2 Minimum(Point2 first, Point2 second)
         {
             return new Point2(first.X < second.X ? first.X : second.X,
                 first.Y < second.Y ? first.Y : second.Y);
@@ -333,7 +320,7 @@ namespace MonoGame.Extended
         ///     The the <see cref="Point2" /> that contains the maximal coordinate values from two <see cref="Point2" />
         ///     structures.
         /// </returns>
-        public static Point2 Maximum(in Point2 first, in Point2 second)
+        public static Point2 Maximum(Point2 first, Point2 second)
         {
             return new Point2(first.X > second.X ? first.X : second.X,
                 first.Y > second.Y ? first.Y : second.Y);
@@ -346,7 +333,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="Vector2" />.
         /// </returns>
-        public static implicit operator Vector2(in Point2 point)
+        public static implicit operator Vector2(Point2 point)
         {
             return new Vector2(point.X, point.Y);
         }
@@ -358,7 +345,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="Point2" />.
         /// </returns>
-        public static implicit operator Point2(in Vector2 vector)
+        public static implicit operator Point2(Vector2 vector)
         {
             return new Point2(vector.X, vector.Y);
         }
@@ -371,7 +358,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="Point2" />.
         /// </returns>
-        public static implicit operator Point2(in Point point)
+        public static implicit operator Point2(Point point)
         {
             return new Point2(point.X, point.Y);
         }

@@ -40,8 +40,8 @@
   <ItemGroup>
     <Compile Include="Angle.cs" />
     <Compile Include="BatchedSprite.cs" />
-    <Compile Include="BitmapFonts\CharDrawPosition.cs" />
-    <Compile Include="BitmapFonts\CharDrawSprite.cs" />
+    <Compile Include="BitmapFonts\GlyphSprite.cs" />
+    <Compile Include="BitmapFonts\GlyphBatchedSprite.cs" />
     <Compile Include="BitmapFonts\TextAlignMode.cs" />
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="CircleF.cs" />
@@ -105,7 +105,6 @@
     <Compile Include="ColorHelper.cs" />
     <Compile Include="Collections\IObservableCollection.cs" />
     <Compile Include="Collections\ItemEventArgs.cs" />
-    <Compile Include="IEquatableByRef.cs" />
     <Compile Include="SimpleDrawableGameComponent.cs" />
     <Compile Include="SimpleGameComponent.cs" />
     <Compile Include="Collections\ObservableCollection.cs" />

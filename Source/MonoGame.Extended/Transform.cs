@@ -170,7 +170,7 @@ namespace MonoGame.Extended
             TranformUpdated?.Invoke();
         }
 
-        protected internal abstract void RecalculateWorldMatrix(in TMatrix localMatrix, out TMatrix matrix);
+        protected internal abstract void RecalculateWorldMatrix(TMatrix localMatrix, out TMatrix matrix);
 
         private void RecalculateLocalMatrixIfNecessary()
         {
@@ -298,7 +298,7 @@ namespace MonoGame.Extended
             }
         }
 
-        protected internal override void RecalculateWorldMatrix(in Matrix2 localMatrix, out Matrix2 matrix)
+        protected internal override void RecalculateWorldMatrix(Matrix2 localMatrix, out Matrix2 matrix)
         {
             if (Parent != null)
             {

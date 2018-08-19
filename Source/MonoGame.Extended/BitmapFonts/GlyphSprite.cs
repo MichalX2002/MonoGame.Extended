@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGame.Extended.BitmapFonts
 {
-    public struct CharDrawPosition
+    public struct GlyphSprite
     {
         public int Char;
         public Texture2D Texture;
@@ -16,8 +16,9 @@ namespace MonoGame.Extended.BitmapFonts
         public Vector2 Scale;
         public float Depth;
 
-        public CharDrawPosition(int character, Texture2D texture, int index, in Rectangle srcRect,
-            in Vector2 position, in Color color, float rotation, in Vector2 origin, in Vector2 scale, float layerDepth)
+        public GlyphSprite(
+            int character, Texture2D texture, int index, Rectangle srcRect, Vector2 position,
+            Color color, float rotation, Vector2 origin, Vector2 scale, float layerDepth)
         {
             Char = character;
             Texture = texture;

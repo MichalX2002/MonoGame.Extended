@@ -13,8 +13,7 @@ namespace MonoGame.Extended
     ///     </para>
     /// </remarks>
     /// <seealso cref="IEquatable{T}" />
-    /// <seealso cref="IEquatableByRef{Size2}" />
-    public struct Size : IEquatable<Size>, IEquatableByRef<Size>
+    public struct Size : IEquatable<Size>
     {
         /// <summary>
         ///     Returns a <see cref="Size" /> with <see cref="Width" /> and <see cref="Height" /> equal to <c>0.0f</c>.
@@ -58,24 +57,11 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <see cref="Width" /> and <see cref="Height" />
         ///     fields of the two <see cref="Size" /> structures are equal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator ==(in Size first, in Size second)
+        public static bool operator ==(Size first, Size second)
         {
-            return first.Equals(in second);
+            return first.Equals(second);
         }
-
-        /// <summary>
-        ///     Indicates whether this <see cref="Size" /> is equal to another <see cref="Size" />.
-        /// </summary>
-        /// <param name="size">The size.</param>
-        /// <returns>
-        ///     <c>true</c> if this <see cref="Size" /> is equal to the <paramref name="size" /> parameter; otherwise,
-        ///     <c>false</c>.
-        /// </returns>
-        public bool Equals(Size size)
-        {
-            return Equals(in size);
-        }
-
+        
         /// <summary>
         ///     Indicates whether this <see cref="Size" /> is equal to another <see cref="Size" />.
         /// </summary>
@@ -84,7 +70,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="Size" /> is equal to the <paramref name="size" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Equals(in Size size)
+        public bool Equals(Size size)
         {
             // ReSharper disable CompareOfFloatsByEqualityOperator
             return (Width == size.Width) && (Height == size.Height);
@@ -116,7 +102,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <see cref="Width" /> or <see cref="Height" />
         ///     fields of the two <see cref="Size" /> structures are unequal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator !=(in Size first, in Size second)
+        public static bool operator !=(Size first, Size second)
         {
             return !(first == second);
         }
@@ -132,7 +118,7 @@ namespace MonoGame.Extended
         ///     The <see cref="Size" /> representing the vector addition of two <see cref="Size" /> structures as if they
         ///     were <see cref="Vector2" /> structures.
         /// </returns>
-        public static Size operator +(in Size first, in Size second)
+        public static Size operator +(Size first, Size second)
         {
             return Add(first, second);
         }
@@ -145,7 +131,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Size" /> representing the vector addition of two <see cref="Size" /> structures.
         /// </returns>
-        public static Size Add(in Size first, in Size second)
+        public static Size Add(Size first, Size second)
         {
             return new Size
             {
@@ -162,17 +148,17 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Size" /> representing the vector subtraction of two <see cref="Size" /> structures.
         /// </returns>
-        public static Size operator -(in Size first, in Size second)
+        public static Size operator -(Size first, Size second)
         {
             return Subtract(first, second);
         }
 
-        public static Size operator /(in Size size, int value)
+        public static Size operator /(Size size, int value)
         {
             return new Size(size.Width / value, size.Height / value);
         }
 
-        public static Size operator *(in Size size, int value)
+        public static Size operator *(Size size, int value)
         {
             return new Size(size.Width * value, size.Height * value);
         }
@@ -185,7 +171,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The <see cref="Size" /> representing the vector subtraction of two <see cref="Size" /> structures.
         /// </returns>
-        public static Size Subtract(in Size first, in Size second)
+        public static Size Subtract(Size first, Size second)
         {
             return new Size
             {
@@ -217,7 +203,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="Size" />.
         /// </returns>
-        public static implicit operator Size(in Point point)
+        public static implicit operator Size(Point point)
         {
             return new Size(point.X, point.Y);
         }
@@ -229,7 +215,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="Point2" />.
         /// </returns>
-        public static implicit operator Point2(in Size size)
+        public static implicit operator Point2(Size size)
         {
             return new Point2(size.Width, size.Height);
         }
@@ -241,7 +227,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="Vector2" />.
         /// </returns>
-        public static implicit operator Vector2(in Size size)
+        public static implicit operator Vector2(Size size)
         {
             return new Vector2(size.Width, size.Height);
         }
@@ -265,7 +251,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="Point" />.
         /// </returns>
-        public static explicit operator Point(in Size size)
+        public static explicit operator Point(Size size)
         {
             return new Point(size.Width, size.Height);
         }

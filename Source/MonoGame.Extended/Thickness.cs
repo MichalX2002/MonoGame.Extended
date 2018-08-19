@@ -40,17 +40,12 @@ namespace MonoGame.Extended
         public override bool Equals(object obj)
         {
             if (obj is Thickness other)
-                return Equals(in other);
+                return Equals(other);
 
             return base.Equals(obj);
         }
 
         public bool Equals(Thickness other)
-        {
-            return Equals(in other);
-        }
-
-        public bool Equals(in Thickness other)
         {
             return Left == other.Left && Right == other.Right && Top == other.Top && Bottom == other.Bottom;
         }

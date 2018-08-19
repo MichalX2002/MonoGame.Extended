@@ -18,9 +18,8 @@ namespace MonoGame.Extended
     ///     </para>
     /// </remarks>
     /// <seealso cref="IEquatable{T}" />
-    /// <seealso cref="IEquatableByRef{T}" />
     [DataContract]
-    public struct CircleF : IEquatable<CircleF>, IEquatableByRef<CircleF>, IShapeF
+    public struct CircleF : IEquatable<CircleF>, IShapeF
     {
         /// <summary>
         ///     The centre position of this <see cref="CircleF" />.
@@ -70,7 +69,7 @@ namespace MonoGame.Extended
         /// <param name="minimum">The minimum point.</param>
         /// <param name="maximum">The maximum point.</param>
         /// <param name="result">The resulting circle.</param>
-        public static void CreateFrom(in Point2 minimum, in Point2 maximum, out CircleF result)
+        public static void CreateFrom(Point2 minimum, Point2 maximum, out CircleF result)
         {
             result.Center = new Point2((maximum.X + minimum.X) * 0.5f, (maximum.Y + minimum.Y) * 0.5f);
             var distanceVector = maximum - minimum;
@@ -84,7 +83,7 @@ namespace MonoGame.Extended
         /// <param name="minimum">The minimum point.</param>
         /// <param name="maximum">The maximum point.</param>
         /// <returns>An <see cref="CircleF" />.</returns>
-        public static CircleF CreateFrom(in Point2 minimum, in Point2 maximum)
+        public static CircleF CreateFrom(Point2 minimum, Point2 maximum)
         {
             CreateFrom(minimum, maximum, out CircleF result);
             return result;
@@ -138,7 +137,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     <c>true</c> if the <paramref name="first" /> intersects with the <see cref="second" />; otherwise, <c>false</c>.
         /// </returns>
-        public static bool Intersects(in CircleF first, in CircleF second)
+        public static bool Intersects(CircleF first, CircleF second)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 4.3; Bounding Volumes - Spheres. pg 88
 
@@ -157,7 +156,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <paramref name="circle" /> intersects with this <see cref="CircleF" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Intersects(in CircleF circle)
+        public bool Intersects(CircleF circle)
         {
             return Intersects(this, circle);
         }
@@ -171,7 +170,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <paramref name="circle" /> intersects with the <see cref="rectangle" />; otherwise, <c>false</c>
         ///     .
         /// </returns>
-        public static bool Intersects(in CircleF circle, in BoundingRectangle rectangle)
+        public static bool Intersects(CircleF circle, BoundingRectangle rectangle)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.25; Basic Primitives Test - Testing Sphere Against AABB. pg 165-166
 
@@ -189,7 +188,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <paramref name="rectangle" /> intersects with this <see cref="CircleF" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Intersects(in BoundingRectangle rectangle)
+        public bool Intersects(BoundingRectangle rectangle)
         {
             return Intersects(this, rectangle);
         }
@@ -204,7 +203,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <paramref name="circle" /> contains the <paramref name="point" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public static bool Contains(in CircleF circle, in Point2 point)
+        public static bool Contains(CircleF circle, Point2 point)
         {
             var dx = circle.Center.X - point.X;
             var dy = circle.Center.Y - point.Y;
@@ -221,7 +220,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="BoundingRectangle" /> contains the <paramref name="point" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Contains(in Point2 point)
+        public bool Contains(Point2 point)
         {
             return Contains(this, point);
         }
@@ -232,7 +231,7 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The closest <see cref="Point2" /> on this <see cref="CircleF" /> to the <paramref name="point" />.</returns>
-        public Point2 ClosestPointTo(in Point2 point)
+        public Point2 ClosestPointTo(Point2 point)
         {
             var distanceVector = point - Center;
             var lengthSquared = distanceVector.Dot(distanceVector);
@@ -264,9 +263,9 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <see cref="Center" /> and <see cref="Radius" /> fields of the two
         ///     <see cref="BoundingRectangle" /> structures are equal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator ==(in CircleF first, in CircleF second)
+        public static bool operator ==(CircleF first, CircleF second)
         {
-            return first.Equals(in second);
+            return first.Equals(second);
         }
 
         /// <summary>
@@ -280,23 +279,11 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <see cref="Center" /> and <see cref="Radius" /> fields of the two
         ///     <see cref="CircleF" /> structures are unequal; otherwise, <c>false</c>.
         /// </returns>
-        public static bool operator !=(in CircleF first, in CircleF second)
+        public static bool operator !=(CircleF first, CircleF second)
         {
             return !(first == second);
         }
-
-        /// <summary>
-        ///     Indicates whether this <see cref="CircleF" /> is equal to another <see cref="CircleF" />.
-        /// </summary>
-        /// <param name="circle">The circle.</param>
-        /// <returns>
-        ///     <c>true</c> if this <see cref="CircleF" /> is equal to the <paramref name="circle" />; otherwise, <c>false</c>.
-        /// </returns>
-        public bool Equals(CircleF circle)
-        {
-            return Equals(in circle);
-        }
-
+        
         /// <summary>
         ///     Indicates whether this <see cref="CircleF" /> is equal to another <see cref="CircleF" />.
         /// </summary>
@@ -305,7 +292,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if this <see cref="CircleF" /> is equal to the <paramref name="circle" />;
         ///     otherwise,<c>false</c>.
         /// </returns>
-        public bool Equals(in CircleF circle)
+        public bool Equals(CircleF circle)
         {
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             return circle.Center == Center && circle.Radius == Radius;
@@ -321,7 +308,7 @@ namespace MonoGame.Extended
         public override bool Equals(object obj)
         {
             if (obj is CircleF circle)
-                return circle.Equals(in circle);
+                return circle.Equals(circle);
             return false;
         }
 
@@ -348,7 +335,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="Rectangle" />.
         /// </returns>
-        public static implicit operator Rectangle(in CircleF circle)
+        public static implicit operator Rectangle(CircleF circle)
         {
             var diameter = (int) circle.Diameter;
             return new Rectangle((int) (circle.Center.X - circle.Radius), (int) (circle.Center.Y - circle.Radius),
@@ -373,7 +360,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="CircleF" />.
         /// </returns>
-        public static implicit operator CircleF(in Rectangle rectangle)
+        public static implicit operator CircleF(Rectangle rectangle)
         {
             var halfWidth = rectangle.Width / 2;
             var halfHeight = rectangle.Height / 2;
@@ -388,7 +375,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="RectangleF" />.
         /// </returns>
-        public static implicit operator RectangleF(in CircleF circle)
+        public static implicit operator RectangleF(CircleF circle)
         {
             var diameter = circle.Diameter;
             return new RectangleF(circle.Center.X - circle.Radius, circle.Center.Y - circle.Radius, diameter, diameter);
@@ -412,7 +399,7 @@ namespace MonoGame.Extended
         /// <returns>
         ///     The resulting <see cref="CircleF" />.
         /// </returns>
-        public static implicit operator CircleF(in RectangleF rectangle)
+        public static implicit operator CircleF(RectangleF rectangle)
         {
             var halfWidth = rectangle.Width * 0.5f;
             var halfHeight = rectangle.Height * 0.5f;
