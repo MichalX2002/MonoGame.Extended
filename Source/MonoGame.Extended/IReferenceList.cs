@@ -5,5 +5,6 @@ namespace MonoGame.Extended
     public interface IReferenceList<T> : IList<T>
     {
         ref T GetReferenceAt(int index);
+        void AddRef(in T item);
     }
 }

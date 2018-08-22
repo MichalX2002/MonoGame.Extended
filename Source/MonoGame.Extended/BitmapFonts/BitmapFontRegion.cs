@@ -7,8 +7,6 @@ namespace MonoGame.Extended.BitmapFonts
 {
     public class BitmapFontRegion
     {
-        private IReadOnlyDictionary<int, int> _kernings;
-
         public int Character { get; }
         public TextureRegion2D TextureRegion { get; }
         public int XOffset { get; }
@@ -17,16 +15,7 @@ namespace MonoGame.Extended.BitmapFonts
         public int Width => TextureRegion.Width;
         public int Height => TextureRegion.Height;
 
-        public IReadOnlyDictionary<int, int> Kernings
-        {
-            get
-            {
-                if (_kernings == null)
-                    return EmptyDictionary<int, int>.ReadOnlyInstance;
-                return _kernings;
-            }
-            internal set => _kernings = value;
-        }
+        public IReadOnlyDictionary<int, int> Kernings { get; internal set; }
 
         public BitmapFontRegion(
             TextureRegion2D textureRegion, int character, int xOffset, int yOffset, int xAdvance)
@@ -36,6 +25,7 @@ namespace MonoGame.Extended.BitmapFonts
             XOffset = xOffset;
             YOffset = yOffset;
             XAdvance = xAdvance;
+            Kernings = EmptyDictionary<int, int>.Instance;
         }
 
 

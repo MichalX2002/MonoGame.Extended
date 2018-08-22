@@ -4,27 +4,20 @@ using System.Collections.Generic;
 
 namespace MonoGame.Extended.Collections
 {
-    public struct EmptyCollection<T> : ICollection<T>, ICollection, IReadOnlyCollection<T>
+    public class EmptyCollection<T> : ICollection<T>, ICollection, IReadOnlyCollection<T>
     {
         public static readonly EmptyCollection<T> Instance;
-        public static readonly EmptyCollection<T> ReadOnlyInstance;
 
         public int Count => 0;
-        public bool IsReadOnly { get; }
+        public bool IsReadOnly => true;
         public object SyncRoot => null;
         public bool IsSynchronized => true;
 
         static EmptyCollection()
         {
-            Instance = new EmptyCollection<T>(false);
-            ReadOnlyInstance = new EmptyCollection<T>(true);
+            Instance = new EmptyCollection<T>();
         }
 
-        public EmptyCollection(bool isReadOnly)
-        {
-            IsReadOnly = isReadOnly;
-        }
-        
         public void Add(T item)
         {
         }
@@ -53,12 +46,12 @@ namespace MonoGame.Extended.Collections
 
         public IEnumerator<T> GetEnumerator()
         {
-            return new EmptyEnumerator<T>();
+            return EmptyEnumerator<T>.Instance;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new EmptyEnumerator<T>();
+            return EmptyEnumerator<T>.Instance;
         }
     }
 }

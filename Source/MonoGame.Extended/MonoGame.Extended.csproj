@@ -162,6 +162,9 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapFonts\BitmapFont.TextIterator.cs" />
+    <Compile Include="BitmapFonts\BitmapFont.Enumerable.cs" />
+    <Compile Include="BitmapFonts\BitmapFont.ListBased.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

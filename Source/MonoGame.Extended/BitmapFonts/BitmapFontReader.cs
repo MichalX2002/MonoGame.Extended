@@ -47,14 +47,13 @@ namespace MonoGame.Extended.BitmapFonts
                 int second = reader.ReadInt32();
                 int amount = reader.ReadInt32();
 
-                // Find region
-                if (!characterMap.TryGetValue(first, out BitmapFontRegion region))
-                    continue;
-
-                region.Kernings = new Dictionary<int, int>(1)
+                if (characterMap.TryGetValue(first, out BitmapFontRegion region))
                 {
-                    { second, amount }
-                };
+                    region.Kernings = new Dictionary<int, int>(1)
+                    {
+                        { second, amount }
+                    };
+                }
             }
 
             return new BitmapFont(reader.AssetName, characterMap, lineHeight);

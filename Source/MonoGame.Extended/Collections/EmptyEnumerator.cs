@@ -1,13 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace MonoGame.Extended.Collections
 {
-    public struct EmptyEnumerator<T> : IEnumerator<T>
+    public class EmptyEnumerator<T> : IEnumerator<T>
     {
+        public static readonly EmptyEnumerator<T> Instance;
+
         public T Current => default;
         object IEnumerator.Current => null;
+
+        static EmptyEnumerator()
+        {
+            Instance = new EmptyEnumerator<T>();
+        }
 
         public bool MoveNext()
         {
