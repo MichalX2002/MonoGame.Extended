@@ -268,7 +268,7 @@ namespace MonoGame.Extended.NuclexGui.Controls
                 var childBounds = control.Bounds.ToOffset(size.X, size.Y);
 
                 // Is the mouse over this child?
-                if (childBounds.Contains(new Point2(x, y)))
+                if (childBounds.Contains(new PointF(x, y)))
                 {
                     SwitchMouseOverControl(control, x, y);
 

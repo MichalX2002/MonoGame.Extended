@@ -209,15 +209,15 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
-        ///     Performs an implicit conversion from a <see cref="Point2" /> to a <see cref="Size" />.
+        ///     Performs an implicit conversion from a <see cref="PointF" /> to a <see cref="Size" />.
         /// </summary>
         /// <param name="size">The size.</param>
         /// <returns>
-        ///     The resulting <see cref="Point2" />.
+        ///     The resulting <see cref="PointF" />.
         /// </returns>
-        public static implicit operator Point2(Size size)
+        public static implicit operator PointF(Size size)
         {
-            return new Point2(size.Width, size.Height);
+            return new PointF(size.Width, size.Height);
         }
 
         /// <summary>

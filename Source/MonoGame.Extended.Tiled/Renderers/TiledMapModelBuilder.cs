@@ -105,7 +105,7 @@ namespace MonoGame.Extended.Tiled.Renderers
                 dictionary.Add(layer, CreateLayerModels(map, layer).ToArray());
         }
 
-        private static Point2 GetTilePosition(TiledMap map, TiledMapTile mapTile)
+        private static PointF GetTilePosition(TiledMap map, TiledMapTile mapTile)
         {
             switch (map.Orientation)
             {

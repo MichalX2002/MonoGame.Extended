@@ -8,7 +8,7 @@ namespace MonoGame.Extended
     // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 4.2; Bounding Volumes - Axis-aligned Bounding Boxes (AABBs). pg 77 
 
     /// <summary>
-    ///     An axis-aligned, four sided, two dimensional box defined by a centre <see cref="Point2" /> and a radii
+    ///     An axis-aligned, four sided, two dimensional box defined by a centre <see cref="PointF" /> and a radii
     ///     <see cref="Vector2" />.
     /// </summary>
     /// <remarks>
@@ -27,7 +27,7 @@ namespace MonoGame.Extended
     public struct BoundingRectangle : IEquatable<BoundingRectangle>
     {
         /// <summary>
-        ///     The <see cref="BoundingRectangle" /> with <see cref="Center" /> <see cref="Point2.Zero"/> and
+        ///     The <see cref="BoundingRectangle" /> with <see cref="Center" /> <see cref="PointF.Zero"/> and
         ///     <see cref="HalfExtents" /> set to <see cref="Vector2.Zero"/>.
         /// </summary>
         public static readonly BoundingRectangle Empty = new BoundingRectangle();
@@ -35,7 +35,7 @@ namespace MonoGame.Extended
         /// <summary>
         ///     The centre position of this <see cref="BoundingRectangle" />.
         /// </summary>
-        public Point2 Center;
+        public PointF Center;
 
         /// <summary>
         ///     The distance from the <see cref="Center" /> point along both axes to any point on the boundary of this
@@ -45,59 +45,59 @@ namespace MonoGame.Extended
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="BoundingRectangle" /> structure from the specified centre
-        ///     <see cref="Point2" /> and the radii <see cref="SizeF" />.
+        ///     <see cref="PointF" /> and the radii <see cref="SizeF" />.
         /// </summary>
-        /// <param name="center">The centre <see cref="Point2" />.</param>
+        /// <param name="center">The centre <see cref="PointF" />.</param>
         /// <param name="halfExtents">The radii <see cref="Vector2" />.</param>
-        public BoundingRectangle(Point2 center, SizeF halfExtents)
+        public BoundingRectangle(PointF center, SizeF halfExtents)
         {
             Center = center;
             HalfExtents = halfExtents;
         }
 
         /// <summary>
-        ///     Computes the <see cref="BoundingRectangle" /> from a minimum <see cref="Point2" /> and maximum
-        ///     <see cref="Point2" />.
+        ///     Computes the <see cref="BoundingRectangle" /> from a minimum <see cref="PointF" /> and maximum
+        ///     <see cref="PointF" />.
         /// </summary>
         /// <param name="minimum">The minimum point.</param>
         /// <param name="maximum">The maximum point.</param>
         /// <param name="result">The resulting bounding rectangle.</param>
-        public static void CreateFrom(Point2 minimum, Point2 maximum, out BoundingRectangle result)
+        public static void CreateFrom(PointF minimum, PointF maximum, out BoundingRectangle result)
         {
-            result.Center = new Point2((maximum.X + minimum.X) * 0.5f, (maximum.Y + minimum.Y) * 0.5f);
+            result.Center = new PointF((maximum.X + minimum.X) * 0.5f, (maximum.Y + minimum.Y) * 0.5f);
             result.HalfExtents = new Vector2((maximum.X - minimum.X) * 0.5f, (maximum.Y - minimum.Y) * 0.5f);
         }
 
         /// <summary>
-        ///     Computes the <see cref="BoundingRectangle" /> from a minimum <see cref="Point2" /> and maximum
-        ///     <see cref="Point2" />.
+        ///     Computes the <see cref="BoundingRectangle" /> from a minimum <see cref="PointF" /> and maximum
+        ///     <see cref="PointF" />.
         /// </summary>
         /// <param name="minimum">The minimum point.</param>
         /// <param name="maximum">The maximum point.</param>
         /// <returns>The resulting <see cref="BoundingRectangle" />.</returns>
-        public static BoundingRectangle CreateFrom(Point2 minimum, Point2 maximum)
+        public static BoundingRectangle CreateFrom(PointF minimum, PointF maximum)
         {
             CreateFrom(minimum, maximum, out BoundingRectangle result);
             return result;
         }
 
         /// <summary>
-        ///     Computes the <see cref="BoundingRectangle" /> from a list of <see cref="Point2" /> structures.
+        ///     Computes the <see cref="BoundingRectangle" /> from a list of <see cref="PointF" /> structures.
         /// </summary>
         /// <param name="points">The points.</param>
         /// <param name="result">The resulting bounding rectangle.</param>
-        public static void CreateFrom(IReadOnlyList<Point2> points, out BoundingRectangle result)
+        public static void CreateFrom(IReadOnlyList<PointF> points, out BoundingRectangle result)
         {
-            PrimitivesHelper.CreateRectangleFromPoints(points, out Point2 minimum, out Point2 maximum);
+            PrimitivesHelper.CreateRectangleFromPoints(points, out PointF minimum, out PointF maximum);
             CreateFrom(minimum, maximum, out result);
         }
 
         /// <summary>
-        ///     Computes the <see cref="BoundingRectangle" /> from a list of <see cref="Point2" /> structures.
+        ///     Computes the <see cref="BoundingRectangle" /> from a list of <see cref="PointF" /> structures.
         /// </summary>
         /// <param name="points">The points.</param>
         /// <returns>The resulting <see cref="BoundingRectangle" />.</returns>
-        public static BoundingRectangle CreateFrom(IReadOnlyList<Point2> points)
+        public static BoundingRectangle CreateFrom(IReadOnlyList<PointF> points)
         {
             CreateFrom(points, out BoundingRectangle result);
             return result;
@@ -147,8 +147,8 @@ namespace MonoGame.Extended
             var secondMinimum = second.Center - second.HalfExtents;
             var secondMaximum = second.Center + second.HalfExtents;
 
-            var minimum = Point2.Minimum(firstMinimum, secondMinimum);
-            var maximum = Point2.Maximum(firstMaximum, secondMaximum);
+            var minimum = PointF.Minimum(firstMinimum, secondMinimum);
+            var maximum = PointF.Maximum(firstMaximum, secondMaximum);
 
             result = CreateFrom(minimum, maximum);
         }
@@ -199,8 +199,8 @@ namespace MonoGame.Extended
             var secondMinimum = second.Center - second.HalfExtents;
             var secondMaximum = second.Center + second.HalfExtents;
 
-            var minimum = Point2.Maximum(firstMinimum, secondMinimum);
-            var maximum = Point2.Minimum(firstMaximum, secondMaximum);
+            var minimum = PointF.Maximum(firstMinimum, secondMinimum);
+            var maximum = PointF.Minimum(firstMaximum, secondMaximum);
 
             if ((maximum.X < minimum.X) || (maximum.Y < minimum.Y))
                 result = BoundingRectangle.Empty;
@@ -272,10 +272,10 @@ namespace MonoGame.Extended
         }
         
         /// <summary>
-        ///     Updates this <see cref="BoundingRectangle" /> from a list of <see cref="Point2" /> structures.
+        ///     Updates this <see cref="BoundingRectangle" /> from a list of <see cref="PointF" /> structures.
         /// </summary>
         /// <param name="points">The points.</param>
-        public void UpdateFromPoints(IReadOnlyList<Point2> points)
+        public void UpdateFromPoints(IReadOnlyList<PointF> points)
         {
             var boundingRectangle = CreateFrom(points);
             Center = boundingRectangle.Center;
@@ -284,7 +284,7 @@ namespace MonoGame.Extended
 
         /// <summary>
         ///     Determines whether the specified <see cref="BoundingRectangle" /> contains the specified
-        ///     <see cref="Point2" />.
+        ///     <see cref="PointF" />.
         /// </summary>
         /// <param name="boundingRectangle">The bounding rectangle.</param>
         /// <param name="point">The point.</param>
@@ -292,7 +292,7 @@ namespace MonoGame.Extended
         ///     <c>true</c> if the <paramref name="boundingRectangle" /> contains the <paramref name="point" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public static bool Contains(BoundingRectangle boundingRectangle, Point2 point)
+        public static bool Contains(BoundingRectangle boundingRectangle, PointF point)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 4.2; Bounding Volumes - Axis-aligned Bounding Boxes (AABBs). pg 78
 
@@ -303,37 +303,37 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
-        ///     Determines whether this <see cref="BoundingRectangle" /> contains the specified <see cref="Point2" />.
+        ///     Determines whether this <see cref="BoundingRectangle" /> contains the specified <see cref="PointF" />.
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>
         ///     <c>true</c> if this <see cref="BoundingRectangle" /> contains the <paramref name="point" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
-        public bool Contains(Point2 point)
+        public bool Contains(PointF point)
         {
             return Contains(this, point);
         }
 
         /// <summary>
-        ///     Computes the squared distance from this <see cref="BoundingRectangle"/> to a <see cref="Point2"/>.
+        ///     Computes the squared distance from this <see cref="BoundingRectangle"/> to a <see cref="PointF"/>.
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The squared distance from this <see cref="BoundingRectangle"/> to the <paramref name="point"/>.</returns>
-        public float SquaredDistanceTo(Point2 point)
+        public float SquaredDistanceTo(PointF point)
         {
             return PrimitivesHelper.SquaredDistanceToPointFromRectangle(Center - HalfExtents, Center + HalfExtents, point);
         }
 
         /// <summary>
-        ///     Computes the closest <see cref="Point2" /> on this <see cref="BoundingRectangle" /> to a specified
-        ///     <see cref="Point2" />.
+        ///     Computes the closest <see cref="PointF" /> on this <see cref="BoundingRectangle" /> to a specified
+        ///     <see cref="PointF" />.
         /// </summary>
         /// <param name="point">The point.</param>
-        /// <returns>The closest <see cref="Point2" /> on this <see cref="BoundingRectangle" /> to the <paramref name="point" />.</returns>
-        public Point2 ClosestPointTo(Point2 point)
+        /// <returns>The closest <see cref="PointF" /> on this <see cref="BoundingRectangle" /> to the <paramref name="point" />.</returns>
+        public PointF ClosestPointTo(PointF point)
         {
-            PrimitivesHelper.ClosestPointToPointFromRectangle(Center - HalfExtents, Center + HalfExtents, point, out Point2 result);
+            PrimitivesHelper.ClosestPointToPointFromRectangle(Center - HalfExtents, Center + HalfExtents, point, out PointF result);
             return result;
         }
 
@@ -423,7 +423,7 @@ namespace MonoGame.Extended
         public static implicit operator BoundingRectangle(Rectangle rectangle)
         {
             var radii = new SizeF(rectangle.Width * 0.5f, rectangle.Height * 0.5f);
-            var centre = new Point2(rectangle.X + radii.Width, rectangle.Y + radii.Height);
+            var centre = new PointF(rectangle.X + radii.Width, rectangle.Y + radii.Height);
             return new BoundingRectangle(centre, radii);
         }
 
@@ -451,7 +451,7 @@ namespace MonoGame.Extended
         public static implicit operator BoundingRectangle(RectangleF rectangle)
         {
             var radii = new SizeF(rectangle.Width * 0.5f, rectangle.Height * 0.5f);
-            var centre = new Point2(rectangle.X + radii.Width, rectangle.Y + radii.Height);
+            var centre = new PointF(rectangle.X + radii.Width, rectangle.Y + radii.Height);
             return new BoundingRectangle(centre, radii);
         }
 

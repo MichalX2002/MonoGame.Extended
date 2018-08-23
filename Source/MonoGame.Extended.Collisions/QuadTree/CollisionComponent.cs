@@ -158,7 +158,7 @@ namespace MonoGame.Extended.Collisions
         {
             Debug.Assert(circ1.Intersects(circ2));
 
-            var displacement = Point2.Displacement(circ1.Center, circ2.Center);
+            var displacement = PointF.Displacement(circ1.Center, circ2.Center);
 
             Vector2 desiredDisplacement;
             if (displacement != Vector2.Zero)
@@ -182,7 +182,7 @@ namespace MonoGame.Extended.Collisions
 
             if (rect.Contains(circ.Center) || cToCollPoint.Equals(Vector2.Zero))
             {
-                var displacement = Point2.Displacement(circ.Center, rect.Center);
+                var displacement = PointF.Displacement(circ.Center, rect.Center);
 
                 Vector2 desiredDisplacement;
                 if (displacement != Vector2.Zero)

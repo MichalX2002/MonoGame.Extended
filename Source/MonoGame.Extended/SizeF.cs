@@ -52,13 +52,13 @@ namespace MonoGame.Extended
         /// <summary>
         ///     Compares two <see cref="SizeF" /> structures. The result specifies
         ///     whether the values of the <see cref="Width" /> and <see cref="Height" />
-        ///     fields of the two <see cref="Point2" /> structures are equal.
+        ///     fields of the two <see cref="PointF" /> structures are equal.
         /// </summary>
         /// <param name="first">The first size.</param>
         /// <param name="second">The second size.</param>
         /// <returns>
         ///     <c>true</c> if the <see cref="Width" /> and <see cref="Height" />
-        ///     fields of the two <see cref="Point2" /> structures are equal; otherwise, <c>false</c>.
+        ///     fields of the two <see cref="PointF" /> structures are equal; otherwise, <c>false</c>.
         /// </returns>
         public static bool operator ==(SizeF first, SizeF second)
         {
@@ -70,7 +70,7 @@ namespace MonoGame.Extended
         /// </summary>
         /// <param name="size">The size.</param>
         /// <returns>
-        ///     <c>true</c> if this <see cref="Point2" /> is equal to the <paramref name="size" />; otherwise,
+        ///     <c>true</c> if this <see cref="PointF" /> is equal to the <paramref name="size" />; otherwise,
         ///     <c>false</c>.
         /// </returns>
         public bool Equals(SizeF size)
@@ -188,7 +188,7 @@ namespace MonoGame.Extended
         ///     structures like a hash table.
         /// </summary>
         /// <returns>
-        ///     A hash code of this <see cref="Point2" />.
+        ///     A hash code of this <see cref="PointF" />.
         /// </returns>
         public override int GetHashCode()
         {
@@ -200,13 +200,13 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
-        ///     Performs an implicit conversion from a <see cref="Point2" /> to a <see cref="SizeF" />.
+        ///     Performs an implicit conversion from a <see cref="PointF" /> to a <see cref="SizeF" />.
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>
         ///     The resulting <see cref="SizeF" />.
         /// </returns>
-        public static implicit operator SizeF(Point2 point)
+        public static implicit operator SizeF(PointF point)
         {
             return new SizeF(point.X, point.Y);
         }
@@ -225,15 +225,15 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
-        ///     Performs an implicit conversion from a <see cref="Point2" /> to a <see cref="SizeF" />.
+        ///     Performs an implicit conversion from a <see cref="PointF" /> to a <see cref="SizeF" />.
         /// </summary>
         /// <param name="size">The size.</param>
         /// <returns>
-        ///     The resulting <see cref="Point2" />.
+        ///     The resulting <see cref="PointF" />.
         /// </returns>
-        public static implicit operator Point2(SizeF size)
+        public static implicit operator PointF(SizeF size)
         {
-            return new Point2(size.Width, size.Height);
+            return new PointF(size.Width, size.Height);
         }
 
         /// <summary>

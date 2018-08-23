@@ -11,7 +11,7 @@
         /// <summary>
         /// Gets or sets the position of the shape.
         /// </summary>
-        Point2 Position { get; set; }
+        PointF Position { get; set; }
     }
 
     /// <summary>

@@ -218,9 +218,9 @@ namespace MonoGame.Extended.Collisions
             RectangleF[] childAreas =
             {
                 RectangleF.CreateFrom(min, center),
-                RectangleF.CreateFrom(new Point2(center.X, min.Y), new Point2(max.X, center.Y)),
+                RectangleF.CreateFrom(new PointF(center.X, min.Y), new PointF(max.X, center.Y)),
                 RectangleF.CreateFrom(center, max),
-                RectangleF.CreateFrom(new Point2(min.X, center.Y), new Point2(center.X, max.Y))
+                RectangleF.CreateFrom(new PointF(min.X, center.Y), new PointF(center.X, max.Y))
             };
 
             for (var i = 0; i < childAreas.Length; ++i)

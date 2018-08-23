@@ -191,16 +191,16 @@ namespace MonoGame.Extended.Tiled
             return mapObject;
         }
 
-        private static Point2[] ReadPoints(ContentReader reader)
+        private static PointF[] ReadPoints(ContentReader reader)
         {
             var pointCount = reader.ReadInt32();
-            var points = new Point2[pointCount];
+            var points = new PointF[pointCount];
 
             for (var i = 0; i < pointCount; i++)
             {
                 var x = reader.ReadSingle();
                 var y = reader.ReadSingle();
-                points[i] = new Point2(x, y);
+                points[i] = new PointF(x, y);
             }
 
             return points;

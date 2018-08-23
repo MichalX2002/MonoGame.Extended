@@ -25,14 +25,14 @@ namespace MonoGame.Extended.Tiled
             return new Rectangle(x, y, tileWidth, tileHeight);
         }
 
-        internal static Point2 GetOrthogonalPosition(int tileX, int tileY, int tileWidth, int tileHeight)
+        internal static PointF GetOrthogonalPosition(int tileX, int tileY, int tileWidth, int tileHeight)
         {
             var x = tileX * tileWidth;
             var y = tileY * tileHeight;
             return new Vector2(x, y);
         }
 
-        internal static Point2 GetIsometricPosition(int tileX, int tileY, int tileWidth, int tileHeight)
+        internal static PointF GetIsometricPosition(int tileX, int tileY, int tileWidth, int tileHeight)
         {
             // You can think of an isometric Tiled map as a regular orthogonal map that is rotated -45 degrees
             // i.e.: the origin (0, 0) is the top tile of the diamond grid; 

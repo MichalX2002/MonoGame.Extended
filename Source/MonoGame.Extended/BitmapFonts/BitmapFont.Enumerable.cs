@@ -13,7 +13,7 @@ namespace MonoGame.Extended.BitmapFonts
             if (string.IsNullOrEmpty(text))
                 return SizeF.Empty;
 
-            return GetStringRectangle(text, offset, length, Point2.Zero).Size;
+            return GetStringRectangle(text, offset, length, PointF.Zero).Size;
         }
 
         public SizeF MeasureString(StringBuilder text, int offset, int length)
@@ -21,7 +21,7 @@ namespace MonoGame.Extended.BitmapFonts
             if (text == null || text.Length == 0)
                 return SizeF.Empty;
 
-            return GetStringRectangle(text, offset, length, Point2.Zero).Size;
+            return GetStringRectangle(text, offset, length, PointF.Zero).Size;
         }
 
         public SizeF MeasureString(string text)
@@ -35,30 +35,30 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         public RectangleF GetStringRectangle(
-            string text, int offset, int length, Point2 position)
+            string text, int offset, int length, PointF position)
         {
             var enumerable = GetGlyphs(text, offset, length, position);
             return GetStringRectangle(enumerable.Glyphs, position);
         }
 
         public RectangleF GetStringRectangle(
-            StringBuilder text, int offset, int length, Point2 position)
+            StringBuilder text, int offset, int length, PointF position)
         {
             var enumerable = GetGlyphs(text, offset, length, position);
             return GetStringRectangle(enumerable.Glyphs, position);
         }
 
-        public RectangleF GetStringRectangle(string text, Point2 position)
+        public RectangleF GetStringRectangle(string text, PointF position)
         {
             return GetStringRectangle(text, 0, text.Length, position);
         }
 
-        public RectangleF GetStringRectangle(StringBuilder text, Point2 position)
+        public RectangleF GetStringRectangle(StringBuilder text, PointF position)
         {
             return GetStringRectangle(text, 0, text.Length, position);
         }
 
-        private RectangleF GetStringRectangle(GlyphEnumerator iterator, Point2 position)
+        private RectangleF GetStringRectangle(GlyphEnumerator iterator, PointF position)
         {
             var rectangle = new RectangleF(position.X, position.Y, 0, LineHeight);
             while (iterator.MoveNext())
@@ -80,35 +80,35 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         public StringGlyphEnumerable GetGlyphs(
-            string text, int offset, int length, Point2 position)
+            string text, int offset, int length, PointF position)
         {
             return new StringGlyphEnumerable(this, text, offset, length, position);
         }
 
         public StringBuilderGlyphEnumerable GetGlyphs(
-            StringBuilder text, int offset, int length, Point2 position)
+            StringBuilder text, int offset, int length, PointF position)
         {
             return new StringBuilderGlyphEnumerable(this, text, offset, length, position);
         }
 
-        public StringGlyphEnumerable GetGlyphs(string text, Point2 position)
+        public StringGlyphEnumerable GetGlyphs(string text, PointF position)
         {
             return GetGlyphs(text, 0, text.Length, position);
         }
 
-        public StringBuilderGlyphEnumerable GetGlyphs(StringBuilder text, Point2 position)
+        public StringBuilderGlyphEnumerable GetGlyphs(StringBuilder text, PointF position)
         {
             return GetGlyphs(text, 0, text.Length, position);
         }
 
         public StringGlyphEnumerable GetGlyphs(string text)
         {
-            return GetGlyphs(text, Point2.Zero);
+            return GetGlyphs(text, PointF.Zero);
         }
 
         public StringBuilderGlyphEnumerable GetGlyphs(StringBuilder text)
         {
-            return GetGlyphs(text, Point2.Zero);
+            return GetGlyphs(text, PointF.Zero);
         }
 
         public struct StringGlyphEnumerable : IEnumerable<Glyph>
@@ -116,7 +116,7 @@ namespace MonoGame.Extended.BitmapFonts
             public GlyphEnumerator Glyphs;
 
             public StringGlyphEnumerable(BitmapFont font,
-                string text, int offset, int length, Point2 position)
+                string text, int offset, int length, PointF position)
             {
                 Glyphs = new GlyphEnumerator(
                     font, new StringTextIterator(text, offset, length), position);
@@ -131,7 +131,7 @@ namespace MonoGame.Extended.BitmapFonts
             public GlyphEnumerator Glyphs;
 
             public StringBuilderGlyphEnumerable(
-                BitmapFont font, StringBuilder text, int offset, int length, Point2 position)
+                BitmapFont font, StringBuilder text, int offset, int length, PointF position)
             {
                 Glyphs = new GlyphEnumerator(
                     font, new StringBuilderTextIterator(text, offset, length), position);
@@ -145,7 +145,7 @@ namespace MonoGame.Extended.BitmapFonts
         {
             private BitmapFont _font;
             private ITextIterator _textIterator;
-            private Point2 _position;
+            private PointF _position;
 
             private int _index;
             private Vector2 _positionDelta;
@@ -157,13 +157,13 @@ namespace MonoGame.Extended.BitmapFonts
 
             public Glyph Current => CurrentGlyph;
 
-            public GlyphEnumerator(BitmapFont font, ITextIterator text, Point2 position)
+            public GlyphEnumerator(BitmapFont font, ITextIterator text, PointF position)
             {
                 _font = font;
                 _textIterator = text;
                 _position = position;
 
-                _index = _textIterator.Length + _textIterator.Offset - 1;
+                _index = _textIterator.Offset - 1;
                 _positionDelta = Vector2.Zero;
                 CurrentGlyph = new Glyph();
                 _previousGlyph = null;
@@ -172,7 +172,7 @@ namespace MonoGame.Extended.BitmapFonts
             public bool MoveNext()
             {
                 _index++;
-                if (_index >= _textIterator.Length)
+                if (_index >= _textIterator.Offset + _textIterator.Count)
                     return false;
 
                 int character = _textIterator.GetCharacter(ref _index);
@@ -208,7 +208,7 @@ namespace MonoGame.Extended.BitmapFonts
 
             public void Reset()
             {
-                _positionDelta = new Point2();
+                _positionDelta = new PointF();
                 _index = -1;
                 _previousGlyph = null;
             }

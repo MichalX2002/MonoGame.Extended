@@ -8,7 +8,8 @@ namespace MonoGame.Extended.BitmapFonts
         public interface ITextIterator
         {
             int Offset { get; }
-            int Length { get; }
+            int Count { get; }
+            int ValueLength { get; }
 
             int GetCharacter(ref int index);
         }
@@ -18,13 +19,14 @@ namespace MonoGame.Extended.BitmapFonts
             private readonly StringBuilder _text;
 
             public int Offset { get; }
-            public int Length { get; }
+            public int Count { get; }
+            public int ValueLength => _text.Length;
 
             public StringBuilderTextIterator(StringBuilder text, int offset, int length)
             {
                 _text = text ?? throw new ArgumentNullException(nameof(text));
                 Offset = offset;
-                Length = length;
+                Count = length;
             }
 
             public int GetCharacter(ref int index)
@@ -40,15 +42,14 @@ namespace MonoGame.Extended.BitmapFonts
             private readonly string _text;
 
             public int Offset { get; }
-            public int Length { get; }
+            public int Count { get; }
+            public int ValueLength => _text.Length;
 
             public StringTextIterator(string text, int offset, int length)
             {
-                if(offset + length)
-
                 _text = text ?? throw new ArgumentNullException(nameof(text));
                 Offset = offset;
-                Length = length;
+                Count = length;
             }
 
             public int GetCharacter(ref int index)
