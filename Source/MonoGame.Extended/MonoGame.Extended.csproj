@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="Angle.cs" />
     <Compile Include="BatchedSprite.cs" />
+    <Compile Include="BitmapFonts\BitmapFontExtensions.Enumerable.cs" />
+    <Compile Include="BitmapFonts\BitmapFontExtensions.ListBased.cs" />
     <Compile Include="BitmapFonts\GlyphSprite.cs" />
     <Compile Include="BitmapFonts\GlyphBatchedSprite.cs" />
     <Compile Include="BitmapFonts\TextAlignMode.cs" />

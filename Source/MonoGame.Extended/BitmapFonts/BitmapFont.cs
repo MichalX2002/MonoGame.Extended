@@ -46,6 +46,11 @@ namespace MonoGame.Extended.BitmapFonts
             return _characterMap.TryGetValue(character, out region);
         }
 
+        public override string ToString()
+        {
+            return $"BitmapFont: {Name}";
+        }
+
         public readonly struct Glyph
         {
             public readonly int Character;
@@ -58,11 +63,6 @@ namespace MonoGame.Extended.BitmapFonts
                 Position = position;
                 FontRegion = fontRegion;
             }
-        }
-
-        public override string ToString()
-        {
-            return $"BitmapFont: {Name}";
         }
     }
 }

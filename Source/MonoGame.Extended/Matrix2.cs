@@ -48,7 +48,7 @@ namespace MonoGame.Extended
         /// <value>
         ///     The identity matrix.
         /// </value>
-        public static Matrix2 Identity { get; } = new Matrix2(1f, 0f, 0f, 1f, 0f, 0f);
+        public static readonly Matrix2 Identity = new Matrix2(1f, 0f, 0f, 1f, 0f, 0f);
 
         /// <summary>
         ///     Gets the translation.
@@ -179,29 +179,7 @@ namespace MonoGame.Extended
         public static void CreateFrom(
             Vector2 position, float rotation, Vector2? scale, Vector2? origin, out Matrix2 transformMatrix)
         {
-            transformMatrix = Identity;
-
-            if (origin.HasValue)
-            {
-                transformMatrix.M31 = -origin.Value.X;
-                transformMatrix.M32 = -origin.Value.Y;
-            }
-
-            if (scale.HasValue)
-            {
-                var scaleMatrix = CreateScale(scale.Value);
-                Multiply(transformMatrix, scaleMatrix, out transformMatrix);
-            }
-
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (rotation != 0f)
-            {
-                var rotationMatrix = CreateRotationZ(-rotation);
-                Multiply(transformMatrix, rotationMatrix, out transformMatrix);
-            }
-
-            var translationMatrix = CreateTranslation(position);
-            Multiply(transformMatrix, translationMatrix, out transformMatrix);
+            transformMatrix = CreateFrom(position, rotation, scale, origin);
         }
 
         /// <summary>
@@ -214,7 +192,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 CreateFrom(Vector2 position, float rotation, Vector2? scale = null, Vector2? origin = null)
         {
-            var transformMatrix = Identity;
+            Matrix2 transformMatrix = Identity;
 
             if (origin.HasValue)
             {
@@ -224,21 +202,15 @@ namespace MonoGame.Extended
 
             if (scale.HasValue)
             {
-                var scaleMatrix = CreateScale(scale.Value);
-                transformMatrix = Multiply(transformMatrix, scaleMatrix);
+                transformMatrix = Multiply(transformMatrix, CreateScale(scale.Value));
             }
-
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            
             if (rotation != 0f)
             {
-                var rotationMatrix = CreateRotationZ(-rotation);
-                transformMatrix = Multiply(transformMatrix, rotationMatrix);
+                transformMatrix = Multiply(transformMatrix, CreateRotationZ(-rotation));
             }
 
-            var translationMatrix = CreateTranslation(position);
-            transformMatrix = Multiply(transformMatrix, translationMatrix);
-
-            return transformMatrix;
+            return Multiply(transformMatrix, CreateTranslation(position));
         }
 
         /// <summary>
@@ -249,8 +221,10 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 CreateRotationZ(float radians)
         {
-            CreateRotationZ(radians, out Matrix2 result);
-            return result;
+            float val1 = (float)Math.Cos(radians);
+            float val2 = (float)Math.Sin(radians);
+
+            return new Matrix2(val1, val2, -val2, val1, 0, 0);
         }
 
         /// <summary>
@@ -260,18 +234,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void CreateRotationZ(float radians, out Matrix2 result)
         {
-            var val1 = (float)Math.Cos(radians);
-            var val2 = (float)Math.Sin(radians);
-
-            result = new Matrix2
-            {
-                M11 = val1,
-                M12 = val2,
-                M21 = -val2,
-                M22 = val1,
-                M31 = 0,
-                M32 = 0
-            };
+            result = CreateRotationZ(radians);
         }
 
         /// <summary>
@@ -281,8 +244,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 CreateScale(float scale)
         {
-            CreateScale(scale, scale, out Matrix2 result);
-            return result;
+            return CreateScale(scale, scale);
         }
 
         /// <summary>
@@ -303,8 +265,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 CreateScale(float xScale, float yScale)
         {
-            CreateScale(xScale, yScale, out Matrix2 result);
-            return result;
+            return new Matrix2(xScale, 0, 0, yScale, 0, 0);
         }
 
         /// <summary>
@@ -315,15 +276,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void CreateScale(float xScale, float yScale, out Matrix2 result)
         {
-            result = new Matrix2
-            {
-                M11 = xScale,
-                M12 = 0,
-                M21 = 0,
-                M22 = yScale,
-                M31 = 0,
-                M32 = 0
-            };
+            result = CreateScale(xScale, yScale);
         }
 
         /// <summary>
@@ -333,8 +286,7 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 CreateScale(Vector2 scale)
         {
-            CreateScale(scale, out Matrix2 result);
-            return result;
+            return new Matrix2(scale.X, 0, 0, scale.Y, 0, 0);
         }
 
         /// <summary>
@@ -344,15 +296,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void CreateScale(Vector2 scale, out Matrix2 result)
         {
-            result = new Matrix2
-            {
-                M11 = scale.X,
-                M12 = 0,
-                M21 = 0,
-                M22 = scale.Y,
-                M31 = 0,
-                M32 = 0
-            };
+            result = CreateScale(scale);
         }
 
         /// <summary>
@@ -363,8 +307,10 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 CreateTranslation(float xPosition, float yPosition)
         {
-            CreateTranslation(xPosition, yPosition, out Matrix2 result);
-            return result;
+            return new Matrix2(
+                1, 0,
+                0, 1,
+                xPosition, yPosition);
         }
 
         /// <summary>
@@ -375,15 +321,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void CreateTranslation(float xPosition, float yPosition, out Matrix2 result)
         {
-            result = new Matrix2
-            {
-                M11 = 1,
-                M12 = 0,
-                M21 = 0,
-                M22 = 1,
-                M31 = xPosition,
-                M32 = yPosition
-            };
+            result = CreateTranslation(xPosition, yPosition);
         }
 
         /// <summary>
@@ -393,8 +331,10 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 CreateTranslation(Vector2 position)
         {
-            CreateTranslation(position, out Matrix2 result);
-            return result;
+            return new Matrix2(
+                1, 0,
+                0, 1,
+                position.X, position.Y);
         }
 
         /// <summary>
@@ -404,15 +344,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void CreateTranslation(Vector2 position, out Matrix2 result)
         {
-            result = new Matrix2
-            {
-                M11 = 1,
-                M12 = 0,
-                M21 = 0,
-                M22 = 1,
-                M31 = position.X,
-                M32 = position.Y
-            };
+            result = CreateTranslation(position);
         }
 
         /// <summary>
@@ -432,8 +364,13 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 Add(Matrix2 matrix1, Matrix2 matrix2)
         {
-            Add(matrix1, matrix2, out Matrix2 output);
-            return output;
+            return new Matrix2(
+                matrix1.M11 + matrix2.M11,
+                matrix1.M12 + matrix2.M12,
+                matrix1.M21 + matrix2.M21,
+                matrix1.M22 + matrix2.M22,
+                matrix1.M31 + matrix2.M31,
+                matrix1.M32 + matrix2.M32);
         }
 
         /// <summary>
@@ -444,15 +381,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void Add(Matrix2 matrix1, Matrix2 matrix2, out Matrix2 result)
         {
-            result = new Matrix2
-            {
-                M11 = matrix1.M11 + matrix2.M11,
-                M12 = matrix1.M12 + matrix2.M12,
-                M21 = matrix1.M21 + matrix2.M21,
-                M22 = matrix1.M22 + matrix2.M22,
-                M31 = matrix1.M31 + matrix2.M31,
-                M32 = matrix1.M32 + matrix2.M32
-            };
+            result = Add(matrix1, matrix2);
         }
 
         /// <summary>
@@ -476,8 +405,13 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 Subtract(Matrix2 matrix1, Matrix2 matrix2)
         {
-            Subtract(matrix1, matrix2, out Matrix2 output);
-            return output;
+            return new Matrix2(
+                matrix1.M11 - matrix2.M11,
+                matrix1.M12 - matrix2.M12,
+                matrix1.M21 - matrix2.M21,
+                matrix1.M22 - matrix2.M22,
+                matrix1.M31 - matrix2.M31,
+                matrix1.M32 - matrix2.M32);
         }
 
         /// <summary>
@@ -488,15 +422,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void Subtract(Matrix2 matrix1, Matrix2 matrix2, out Matrix2 result)
         {
-            result = new Matrix2
-            {
-                M11 = matrix1.M11 - matrix2.M11,
-                M12 = matrix1.M12 - matrix2.M12,
-                M21 = matrix1.M21 - matrix2.M21,
-                M22 = matrix1.M22 - matrix2.M22,
-                M31 = matrix1.M31 - matrix2.M31,
-                M32 = matrix1.M32 - matrix2.M32
-            };
+            result = Subtract(matrix1, matrix2);
         }
 
         /// <summary>
@@ -512,6 +438,17 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
+        ///     Calculates the <see cref="Matrix2" /> multiplication of two <see cref="Matrix2" />s.
+        /// </summary>
+        /// <param name="matrix1">The first <see cref="Matrix2" />.</param>
+        /// <param name="matrix2">The second <see cref="Matrix2" />.</param>
+        /// <param name="result">The resulting <see cref="Matrix2" />.</param>
+        public static void Multiply(Matrix2 matrix1, Matrix2 matrix2, out Matrix2 result)
+        {
+            result = Multiply(matrix1, matrix2);
+        }
+
+        /// <summary>
         ///     Initializes a new instance of the <see cref="Matrix2" /> struct with the multiplication of two
         ///     <see cref="Matrix2" />
         ///     s.
@@ -521,36 +458,13 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 Multiply(Matrix2 matrix1, Matrix2 matrix2)
         {
-            Multiply(matrix1, matrix2, out Matrix2 output);
-            return output;
-        }
-
-        /// <summary>
-        ///     Calculates the <see cref="Matrix2" /> multiplication of two <see cref="Matrix2" />s.
-        /// </summary>
-        /// <param name="matrix1">The first <see cref="Matrix2" />.</param>
-        /// <param name="matrix2">The second <see cref="Matrix2" />.</param>
-        /// <param name="result">The resulting <see cref="Matrix2" />.</param>
-        public static void Multiply(Matrix2 matrix1, Matrix2 matrix2, out Matrix2 result)
-        {
-            var m11 = matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21;
-            var m12 = matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22;
-
-            var m21 = matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21;
-            var m22 = matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22;
-
-            var m31 = matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix2.M31;
-            var m32 = matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix2.M32;
-
-            result = new Matrix2
-            {
-                M11 = m11,
-                M12 = m12,
-                M21 = m21,
-                M22 = m22,
-                M31 = m31,
-                M32 = m32
-            };
+            return new Matrix2(
+                matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21,
+                matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22,
+                matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21,
+                matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22,
+                matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix2.M31,
+                matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix2.M32);
         }
 
         /// <summary>
@@ -562,8 +476,13 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 Multiply(Matrix2 matrix, float scalar)
         {
-            Multiply(matrix, scalar, out Matrix2 output);
-            return output;
+            return new Matrix2(
+                matrix.M11 * scalar,
+                matrix.M12 * scalar,
+                matrix.M21 * scalar,
+                matrix.M22 * scalar,
+                matrix.M31 * scalar,
+                matrix.M32 * scalar);
         }
 
         /// <summary>
@@ -574,15 +493,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void Multiply(Matrix2 matrix, float scalar, out Matrix2 result)
         {
-            result = new Matrix2
-            {
-                M11 = matrix.M11 * scalar,
-                M12 = matrix.M12 * scalar,
-                M21 = matrix.M21 * scalar,
-                M22 = matrix.M22 * scalar,
-                M31 = matrix.M31 * scalar,
-                M32 = matrix.M32 * scalar
-            };
+            result = Multiply(matrix, scalar);
         }
 
         /// <summary>
@@ -619,8 +530,13 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 Divide(Matrix2 matrix1, Matrix2 matrix2)
         {
-            Divide(matrix1, matrix2, out Matrix2 output);
-            return output;
+            return new Matrix2(
+                matrix1.M11 / matrix2.M11,
+                matrix1.M12 / matrix2.M12,
+                matrix1.M21 / matrix2.M21,
+                matrix1.M22 / matrix2.M22,
+                matrix1.M31 / matrix2.M31,
+                matrix1.M32 / matrix2.M32);
         }
 
         /// <summary>
@@ -631,15 +547,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void Divide(Matrix2 matrix1, Matrix2 matrix2, out Matrix2 result)
         {
-            result = new Matrix2
-            {
-                M11 = matrix1.M11 / matrix2.M11,
-                M12 = matrix1.M12 / matrix2.M12,
-                M21 = matrix1.M21 / matrix2.M21,
-                M22 = matrix1.M22 / matrix2.M22,
-                M31 = matrix1.M31 / matrix2.M31,
-                M32 = matrix1.M32 / matrix2.M32
-            };
+            result = Divide(matrix1, matrix2);
         }
 
         /// <summary>
@@ -651,8 +559,14 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 Divide(Matrix2 matrix, float scalar)
         {
-            Divide(matrix, scalar, out Matrix2 output);
-            return output;
+            float num = 1f / scalar;
+            return new Matrix2(
+                matrix.M11 * num,
+                matrix.M12 * num,
+                matrix.M21 * num,
+                matrix.M22 * num,
+                matrix.M31 * num,
+                matrix.M32 * num);
         }
 
         /// <summary>
@@ -663,16 +577,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void Divide(Matrix2 matrix, float scalar, out Matrix2 result)
         {
-            var num = 1f / scalar;
-            result = new Matrix2
-            {
-                M11 = matrix.M11 * num,
-                M12 = matrix.M12 * num,
-                M21 = matrix.M21 * num,
-                M22 = matrix.M22 * num,
-                M31 = matrix.M31 * num,
-                M32 = matrix.M32 * num
-            };
+            result = Divide(matrix, scalar);
         }
 
         /// <summary>
@@ -706,18 +611,14 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 Invert(Matrix2 matrix)
         {
-            var det = 1 / matrix.Determinant();
-
-            var m11 = matrix.M22 * det;
-            var m12 = -matrix.M12 * det;
-
-            var m21 = -matrix.M21 * det;
-            var m22 = matrix.M11 * det;
-
-            var m31 = (matrix.M32 * matrix.M21 - matrix.M31 * matrix.M22) * det;
-            var m32 = -(matrix.M32 * matrix.M11 - matrix.M31 * matrix.M12) * det;
-
-            return new Matrix2(m11, m12, m21, m22, m31, m32);
+            float det = 1 / matrix.Determinant();
+            return new Matrix2(
+                matrix.M22 * det,
+                -matrix.M12 * det,
+                -matrix.M21 * det,
+                matrix.M11 * det,
+                (matrix.M32 * matrix.M21 - matrix.M31 * matrix.M22) * det,
+                -(matrix.M32 * matrix.M11 - matrix.M31 * matrix.M12) * det);
         }
 
         /// <summary>
@@ -727,17 +628,7 @@ namespace MonoGame.Extended
         /// <param name="result">The resulting <see cref="Matrix2" />.</param>
         public static void Invert(Matrix2 matrix, out Matrix2 result)
         {
-            var det = 1 / matrix.Determinant();
-
-            result = new Matrix2
-            {
-                M11 = matrix.M22 * det,
-                M12 = -matrix.M12 * det,
-                M21 = -matrix.M21 * det,
-                M22 = matrix.M11 * det,
-                M31 = (matrix.M32 * matrix.M21 - matrix.M31 * matrix.M22) * det,
-                M32 = -(matrix.M32 * matrix.M11 - matrix.M31 * matrix.M12) * det
-            };
+            result = Invert(matrix);
         }
 
         /// <summary>
@@ -747,17 +638,13 @@ namespace MonoGame.Extended
         /// <returns>The resulting <see cref="Matrix2" />.</returns>
         public static Matrix2 operator -(Matrix2 matrix)
         {
-            return new Matrix2
-            {
-                M11 = -matrix.M11,
-                M12 = -matrix.M12,
-                
-                M21 = -matrix.M21,
-                M22 = -matrix.M22,
-
-                M31 = -matrix.M31,
-                M32 = -matrix.M32
-            };
+            return new Matrix2(
+                -matrix.M11,
+                -matrix.M12,
+                -matrix.M21,
+                -matrix.M22,
+                -matrix.M31,
+                -matrix.M32);
         }
 
         /// <summary>
@@ -844,8 +731,11 @@ namespace MonoGame.Extended
         /// </returns>
         public static implicit operator Matrix(Matrix2 matrix)
         {
-            return new Matrix(matrix.M11, matrix.M12, 0, 0, matrix.M21, matrix.M22, 0, 0, 0, 0, 1, 0, matrix.M31,
-                matrix.M32, 0, 1);
+            return new Matrix(
+                matrix.M11, matrix.M12, 0, 0,
+                matrix.M21, matrix.M22, 0, 0,
+                0, 0, 1, 0,
+                matrix.M31, matrix.M32, 0, 1);
         }
 
         /// <summary>

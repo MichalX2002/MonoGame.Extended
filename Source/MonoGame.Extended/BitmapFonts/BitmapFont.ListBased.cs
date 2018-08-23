@@ -6,7 +6,7 @@ namespace MonoGame.Extended.BitmapFonts
 {
     public partial class BitmapFont
     {
-		public SizeF GetGlyphs(ITextIterator iterator, PointF position, IReferenceList<Glyph> output)
+		public SizeF GetGlyphs(ITextIterator iterator, IReferenceList<Glyph> output)
         {
             Vector2 positionDelta = Vector2.Zero;
 			Glyph previousGlyph = default;
@@ -15,7 +15,7 @@ namespace MonoGame.Extended.BitmapFonts
             {
                 int character = iterator.GetCharacter(ref i);
                 BitmapFontRegion region = GetCharacterRegion(character);
-                Vector2 newPos = position + positionDelta;
+                Vector2 newPos = positionDelta;
 
                 if (region != null)
                 {
@@ -44,38 +44,35 @@ namespace MonoGame.Extended.BitmapFonts
                     previousGlyph = glyph;
                 }
             }
+
+            positionDelta.Y += LineHeight;
             return positionDelta;
         }
 
-		public SizeF GetGlyphs(string text, int offset, int length, Vector2 position, IReferenceList<Glyph> output)
+		public SizeF GetGlyphs(string text, int offset, int length, IReferenceList<Glyph> output)
         {
-            return GetGlyphs(new StringTextIterator(text, offset, length), position, output);
+            return GetGlyphs(new StringTextIterator(text, offset, length), output);
         }
 
-        public SizeF GetGlyphs(StringBuilder text, int offset, int length, PointF position, IReferenceList<Glyph> output)
+        public SizeF GetGlyphs(StringBuilder text, int offset, int length, IReferenceList<Glyph> output)
         {
-            return GetGlyphs(new StringBuilderTextIterator(text, offset, length), position, output);
+            return GetGlyphs(new StringBuilderTextIterator(text, offset, length), output);
         }
 
-        public SizeF GetGlyphs(string text, PointF position, IReferenceList<Glyph> output)
+        public SizeF GetGlyphs(string text, IReferenceList<Glyph> output)
         {
-            return GetGlyphs(text, 0, text.Length, position, output);
+            return GetGlyphs(text, 0, text.Length, output);
         }
 
-        public SizeF GetGlyphs(StringBuilder text, PointF position, IReferenceList<Glyph> output)
+        public SizeF GetGlyphs(StringBuilder text, IReferenceList<Glyph> output)
         {
-            return GetGlyphs(text, 0, text.Length, position, output);
+            return GetGlyphs(text, 0, text.Length, output);
         }
 
-        public RectangleF GetStringRectangle(IReferenceList<Glyph> glyphs, PointF position)
-        {
-            return GetStringRectangle(glyphs, 0, glyphs.Count, position);
-        }
-
-        public RectangleF GetStringRectangle(IReferenceList<Glyph> glyphs, int offset, int length, PointF position)
+        public SizeF MeasureString(IReferenceList<Glyph> glyphs, int offset, int length)
         {
             if (length <= 0)
-                return RectangleF.Empty;
+                return SizeF.Empty;
 
             if (offset > glyphs.Count)
                 throw new ArgumentOutOfRangeException(nameof(offset));
@@ -85,7 +82,7 @@ namespace MonoGame.Extended.BitmapFonts
                     "There's not enough glyphs for the requested amount " +
                     $"({length} were requested, {glyphs.Count - offset} are available).");
 
-            var rectangle = new RectangleF(position.X, position.Y, 0, LineHeight);
+            var size = new SizeF(0, LineHeight);
             int count = offset + length;
             for (int i = offset; i < count; i++)
             {
@@ -93,22 +90,16 @@ namespace MonoGame.Extended.BitmapFonts
                 if (glyph.FontRegion != null)
                 {
                     float right = glyph.Position.X + glyph.FontRegion.Width;
-                    if (right > rectangle.Right)
-                        rectangle.Width = right - rectangle.Left;
+                    if (right > size.Width)
+                        size.Width = right;
                 }
 
                 if (glyph.Character == '\n')
-                    rectangle.Height += LineHeight;
+                    size.Height += LineHeight;
             }
-
-            return rectangle;
+            return size;
         }
-
-        public SizeF MeasureString(IReferenceList<Glyph> glyphs, int offset, int length)
-        {
-            return GetStringRectangle(glyphs, offset, length, PointF.Zero).Size;
-        }
-
+        
         public SizeF MeasureString(IReferenceList<Glyph> glyphs)
         {
             return MeasureString(glyphs, 0, glyphs.Count);
