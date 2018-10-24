@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -31,16 +32,17 @@ namespace MonoGame.Extended
     ///     </para>
     /// </remarks>
     [DebuggerDisplay("{DebugDisplayString,nq}")]
+    [DataContract]
     public struct Matrix2 : IEquatable<Matrix2>
     {
-        public float M11; // x scale, also used for rotation
-        public float M12; // used for rotation
+        [DataMember] public float M11; // x scale, also used for rotation
+        [DataMember] public float M12; // used for rotation
 
-        public float M21; // used for rotation
-        public float M22; // y scale, also used for rotation
+        [DataMember] public float M21; // used for rotation
+        [DataMember] public float M22; // y scale, also used for rotation
 
-        public float M31; // x translation
-        public float M32; // y translation
+        [DataMember] public float M31; // x translation
+        [DataMember] public float M32; // y translation
 
         /// <summary>
         ///     Gets the identity matrix.

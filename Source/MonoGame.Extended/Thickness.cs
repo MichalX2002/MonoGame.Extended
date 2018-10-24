@@ -1,10 +1,21 @@
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace MonoGame.Extended
 {
+    [DataContract]
     public struct Thickness : IEquatable<Thickness>
     {
+        [DataMember] public int Left { get; set; }
+        [DataMember] public int Top { get; set; }
+        [DataMember] public int Right { get; set; }
+        [DataMember] public int Bottom { get; set; }
+
+        public int Width => Left + Right;
+        public int Height => Top + Bottom;
+        public Size Size => new Size(Width, Height);
+
         public Thickness(int all)
             : this(all, all, all, all)
         {
@@ -23,14 +34,6 @@ namespace MonoGame.Extended
             Right = right;
             Bottom = bottom;
         }
-
-        public int Left { get; set; }
-        public int Top { get; set; }
-        public int Right { get; set; }
-        public int Bottom { get; set; }
-        public int Width => Left + Right;
-        public int Height => Top + Bottom;
-        public Size Size => new Size(Width, Height);
 
         public static implicit operator Thickness(int value)
         {

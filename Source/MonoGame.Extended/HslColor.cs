@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace MonoGame.Extended
@@ -8,27 +9,29 @@ namespace MonoGame.Extended
     ///     An immutable data structure representing a 24bit color composed of separate hue, saturation and lightness channels.
     /// </summary>
     //[Serializable]
+    [DataContract]
     public struct HslColor : IEquatable<HslColor>, IComparable<HslColor>
     {
         /// <summary>
         ///     Gets the value of the hue channel in degrees.
         /// </summary>
-        public readonly float H;
+        [DataMember] public readonly float H;
 
         /// <summary>
         ///     Gets the value of the saturation channel.
         /// </summary>
-        public readonly float S;
+        [DataMember] public readonly float S;
 
         /// <summary>
         ///     Gets the value of the lightness channel.
         /// </summary>
-        public readonly float L;
+        [DataMember] public readonly float L;
 
         private static float NormalizeHue(float h)
         {
-            if (h < 0) return h + 360*((int) (h/360) + 1);
-            return h%360;
+            if (h < 0)
+                return h + 360 * ((int)(h / 360) + 1);
+            return h % 360;
         }
 
         /// <summary>
@@ -37,7 +40,7 @@ namespace MonoGame.Extended
         /// <param name="h">The value of the hue channel.</param>
         /// <param name="s">The value of the saturation channel.</param>
         /// <param name="l">The value of the lightness channel.</param>
-        public HslColor(float h, float s, float l) : this()
+        public HslColor(float h, float s, float l)
         {
             // normalize the hue
             H = NormalizeHue(h);

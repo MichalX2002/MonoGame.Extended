@@ -1,10 +1,12 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace MonoGame.Extended
 {
     /// <summary>
     ///     Represents a closed interval defined by a minimum and a maximum value of a give type.
     /// </summary>
+    [DataContract]
     public struct Range<T> : IEquatable<Range<T>> where T : IComparable<T>
     {
         public Range(T min, T max)
@@ -16,20 +18,19 @@ namespace MonoGame.Extended
             Max = max;
         }
 
-        public Range(T value)
-            : this(value, value)
+        public Range(T value) : this(value, value)
         {
         }
 
         /// <summary>
         ///     Gets the minium value of the <see cref="Range{T}" />.
         /// </summary>
-        public T Min { get; }
+        [DataMember] public T Min { get; }
 
         /// <summary>
         ///     Gets the maximum value of the <see cref="Range{T}" />.
         /// </summary>
-        public T Max { get; }
+        [DataMember] public T Max { get; }
 
 
         /// <summary>
