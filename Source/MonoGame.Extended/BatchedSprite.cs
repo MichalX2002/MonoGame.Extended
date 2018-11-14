@@ -18,35 +18,52 @@ namespace MonoGame.Extended
                     _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
                     _texture.SetData(new[] { Color.White });
                 }
+                return _texture;
             }
-
-            return _texture;
         }
         
         public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite sprite, float depth)
         {
-            batch.Draw(texture, sprite.TL, sprite.TR, sprite.BL, sprite.BR, depth);
+            DrawRef(batch, texture, ref sprite, depth);
         }
     
         public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite sprite)
         {
-            batch.Draw(texture, sprite.TL, sprite.TR, sprite.BL, sprite.BR);
+            DrawRef(batch, texture, ref sprite);
+        }
+
+        public static void DrawRef(this SpriteBatch batch, Texture2D texture, ref BatchedSprite sprite, float depth)
+        {
+            batch.DrawRef(texture, ref sprite.TL, ref sprite.TR, ref sprite.BL, ref sprite.BR, depth);
+        }
+
+        public static void DrawRef(this SpriteBatch batch, Texture2D texture, ref BatchedSprite sprite)
+        {
+            batch.DrawRef(texture, ref sprite.TL, ref sprite.TR, ref sprite.BL, ref sprite.BR);
         }
 
         public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites)
         {
             for (int i = 0; i < sprites.Length; i++)
-            {
-                batch.Draw(texture, sprites[i]);
-            }
+                batch.DrawRef(texture, ref sprites[i]);
         }
 
         public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites, float depth)
         {
             for (int i = 0; i < sprites.Length; i++)
-            {
-                batch.Draw(texture, sprites[i], depth);
-            }
+                batch.DrawRef(texture, ref sprites[i], depth);
+        }
+
+        public static void Draw(this SpriteBatch batch, Texture2D texture, IReferenceList<BatchedSprite> sprites)
+        {
+            for (int i = 0; i < sprites.Count; i++)
+                batch.DrawRef(texture, ref sprites.GetReferenceAt(i));
+        }
+
+        public static void Draw(this SpriteBatch batch, Texture2D texture, IReferenceList<BatchedSprite> sprites, float depth)
+        {
+            for (int i = 0; i < sprites.Count; i++)
+                batch.DrawRef(texture, ref sprites.GetReferenceAt(i), depth);
         }
     }
 

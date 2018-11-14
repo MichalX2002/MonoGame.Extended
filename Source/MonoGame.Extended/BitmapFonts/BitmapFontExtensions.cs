@@ -8,7 +8,7 @@ namespace MonoGame.Extended.BitmapFonts
     public static partial class BitmapFontExtensions
     {
         private delegate T GetSpriteDelegate<T>(
-            in Glyph glyph, int index, Vector2 position, Rectangle sourceRect, Color color,
+            ref Glyph glyph, int index, Vector2 position, Rectangle sourceRect, Color color,
             float rotation, Vector2 origin, Vector2 scale, float depth);
 
         private static void ThrowOnArgs(SpriteEffects effect)
@@ -18,7 +18,7 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         private static GlyphSprite GetPos(
-            in Glyph glyph, int index, Vector2 position, Rectangle src, Color color,
+            ref Glyph glyph, int index, Vector2 position, Rectangle src, Color color,
             float rotation, Vector2 origin, Vector2 scale, float depth)
         {
             return new GlyphSprite(
@@ -27,7 +27,7 @@ namespace MonoGame.Extended.BitmapFonts
         }
         
         private static GlyphBatchedSprite GetSprite(
-            in Glyph glyph, int index, Vector2 position, Rectangle src, Color color,
+            ref Glyph glyph, int index, Vector2 position, Rectangle src, Color color,
             float rotation, Vector2 origin, Vector2 scale, float depth)
         {
             var item = new GlyphBatchedSprite(glyph.Character, index, glyph.FontRegion.TextureRegion.Texture);

@@ -25,7 +25,7 @@ namespace MonoGame.Extended.BitmapFonts
                 }
 
                 Glyph glyph = new Glyph(character, newPos, region);
-                output.AddRef(glyph);
+                output.AddRef(ref glyph);
 
                 if (UseKernings && previousGlyph.FontRegion != null)
                 {

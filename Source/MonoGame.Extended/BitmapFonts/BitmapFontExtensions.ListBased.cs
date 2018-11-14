@@ -37,8 +37,8 @@ namespace MonoGame.Extended.BitmapFonts
 
                     if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
                     {
-                        output.AddRef(getSprite.Invoke(
-                            glyph, i, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                        output.Add(getSprite.Invoke(
+                            ref glyph, i, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
                     }
                 }
             }
@@ -49,7 +49,7 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, count = sprites.Count; i < count; i++)
             {
                 ref GlyphBatchedSprite s = ref sprites.GetReferenceAt(i);
-                batch.Draw(s.Texture, s.Sprite);
+                batch.DrawRef(s.Texture, ref s.Sprite);
             }
         }
 
@@ -58,7 +58,7 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, count = sprites.Count; i < count; i++)
             {
                 ref GlyphBatchedSprite s = ref sprites.GetReferenceAt(i);
-                batch.Draw(s.Texture, s.Sprite, depth);
+                batch.DrawRef(s.Texture, ref s.Sprite, depth);
             }
         }
 
@@ -67,8 +67,9 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, count = positions.Count; i < count; i++)
             {
                 ref GlyphSprite p = ref positions.GetReferenceAt(i);
-                batch.Draw(p.Texture, p.Position, p.SourceRectangle,
-                    p.Color, p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth);
+                batch.Draw(
+                    p.Texture, p.Position, p.SourceRectangle, p.Color, 
+                    p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth);
             }
         }
 
@@ -77,8 +78,9 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, count = positions.Count; i < count; i++)
             {
                 ref GlyphSprite p = ref positions.GetReferenceAt(i);
-                batch.Draw(p.Texture, p.Position, p.SourceRectangle,
-                    p.Color, p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth + depth);
+                batch.Draw(
+                    p.Texture, p.Position, p.SourceRectangle, p.Color, p.Rotation,
+                    p.Origin, p.Scale, SpriteEffects.None, p.Depth + depth);
             }
         }
 
@@ -88,7 +90,8 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, count = positions.Count; i < count; i++)
             {
                 ref GlyphSprite p = ref positions.GetReferenceAt(i);
-                batch.Draw(p.Texture, p.Position + position, p.SourceRectangle,
+                batch.Draw(
+                    p.Texture, p.Position + position, p.SourceRectangle,
                     p.Color, p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth + depth);
             }
         }
@@ -99,8 +102,9 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = 0, count = positions.Count; i < count; i++)
             {
                 ref GlyphSprite p = ref positions.GetReferenceAt(i);
-                batch.Draw(p.Texture, p.Position + position, p.SourceRectangle,
-                    p.Color, p.Rotation, p.Origin, p.Scale + scale, SpriteEffects.None, p.Depth + depth);
+                batch.Draw(
+                    p.Texture, p.Position + position, p.SourceRectangle, p.Color, p.Rotation,
+                    p.Origin, p.Scale + scale, SpriteEffects.None, p.Depth + depth);
             }
         }
     }

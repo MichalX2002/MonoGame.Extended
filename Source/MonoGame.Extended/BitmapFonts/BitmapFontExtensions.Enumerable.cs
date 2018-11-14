@@ -123,7 +123,7 @@ namespace MonoGame.Extended.BitmapFonts
                     if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
                     {
                         output.Add(onItem.Invoke(
-                            glyph, index, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                            ref glyph, index, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
                         index++;
                     }
                 }
