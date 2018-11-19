@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace MonoGame.Extended
@@ -10,17 +11,18 @@ namespace MonoGame.Extended
     /// </summary>
     /// <seealso cref="IEquatable{T}" />
     [DebuggerDisplay("{DebugDisplayString,nq}")]
+    [DataContract]
     public struct Ray2 : IEquatable<Ray2>
     {
         /// <summary>
         ///     The starting <see cref="PointF" /> of this <see cref="Ray2" />.
         /// </summary>
-        public PointF Position;
+        [DataMember] public PointF Position;
 
         /// <summary>
         ///     The direction <see cref="Vector2" /> of this <see cref="Ray2" />.
         /// </summary>
-        public Vector2 Direction;
+        [DataMember] public Vector2 Direction;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Ray2" /> structure from the specified position and direction.

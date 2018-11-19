@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace MonoGame.Extended
 {
-    public class EllipseF
+    [DataContract]
+    public struct EllipseF
     {
         public EllipseF(Vector2 center, float radiusX, float radiusY)
         {
@@ -12,9 +14,10 @@ namespace MonoGame.Extended
             RadiusY = radiusY;
         }
 
-        public Vector2 Center { get; set; }
-        public float RadiusX { get; set; }
-        public float RadiusY { get; set; }
+        [DataMember] public Vector2 Center { get; set; }
+        [DataMember] public float RadiusX { get; set; }
+        [DataMember] public float RadiusY { get; set; }
+
         public float Left => Center.X - RadiusX;
         public float Top => Center.Y - RadiusY;
         public float Right => Center.X + RadiusX;

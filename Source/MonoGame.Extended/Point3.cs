@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace MonoGame.Extended
@@ -19,6 +20,7 @@ namespace MonoGame.Extended
     /// </remarks>
     /// <seealso cref="IEquatable{T}" />
     [DebuggerDisplay("{DebugDisplayString,nq}")]
+    [DataContract]
     public struct Point3 : IEquatable<Point3>
     {
         /// <summary>
@@ -34,17 +36,17 @@ namespace MonoGame.Extended
         /// <summary>
         ///     The x-coordinate of this <see cref="Point3" />.
         /// </summary>
-        public float X;
+        [DataMember] public float X;
 
         /// <summary>
         ///     The y-coordinate of this <see cref="Point3" />.
         /// </summary>
-        public float Y;
+        [DataMember] public float Y;
 
         /// <summary>
         ///     The z-coordinate of this <see cref="Point3" />.
         /// </summary>
-        public float Z;
+        [DataMember] public float Z;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Point3" /> structure from the specified coordinates.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace MonoGame.Extended
 {
@@ -8,17 +9,18 @@ namespace MonoGame.Extended
     ///     point.
     /// </summary>
     /// <seealso cref="IEquatable{T}" />
+    [DataContract]
     public struct Segment2 : IEquatable<Segment2>
     {
         /// <summary>
         ///     The starting <see cref="PointF" /> of this <see cref="Segment2" />.
         /// </summary>
-        public PointF Start;
+        [DataMember] public PointF Start;
 
         /// <summary>
         ///     The ending <see cref="PointF" /> of this <see cref="Segment2" />.
         /// </summary>
-        public PointF End;
+        [DataMember] public PointF End;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Segment2" /> structure from the specified starting and ending

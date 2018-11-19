@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace MonoGame.Extended
@@ -13,6 +14,7 @@ namespace MonoGame.Extended
     ///     </para>
     /// </remarks>
     /// <seealso cref="IEquatable{T}" />
+    [DataContract]
     public struct SizeF : IEquatable<SizeF>
     {
         /// <summary>
@@ -23,12 +25,12 @@ namespace MonoGame.Extended
         /// <summary>
         ///     The horizontal component of this <see cref="SizeF" />.
         /// </summary>
-        public float Width;
+        [DataMember] public float Width;
 
         /// <summary>
         ///     The vertical component of this <see cref="SizeF" />.
         /// </summary>
-        public float Height;
+        [DataMember] public float Height;
 
         /// <summary>
         ///     Gets a value that indicates whether this <see cref="SizeF" /> is empty.
