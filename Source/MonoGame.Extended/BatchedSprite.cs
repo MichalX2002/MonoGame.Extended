@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Collections;
 using MonoGame.Extended.TextureAtlases;
+using System.Collections.Generic;
 
 namespace MonoGame.Extended
 {
@@ -42,27 +44,41 @@ namespace MonoGame.Extended
             batch.DrawRef(texture, ref sprite.TL, ref sprite.TR, ref sprite.BL, ref sprite.BR);
         }
 
-        public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites)
+        public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites, int offset, int count)
         {
-            for (int i = 0; i < sprites.Length; i++)
+            for (int i = offset; i < count; i++)
                 batch.DrawRef(texture, ref sprites[i]);
         }
 
-        public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites, float depth)
+        public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite[] sprites, int offset, int count, float depth)
         {
-            for (int i = 0; i < sprites.Length; i++)
+            for (int i = offset; i < count; i++)
                 batch.DrawRef(texture, ref sprites[i], depth);
         }
 
-        public static void Draw(this SpriteBatch batch, Texture2D texture, IReferenceList<BatchedSprite> sprites)
+        public static void Draw(this SpriteBatch batch, Texture2D texture, IList<BatchedSprite> sprites, int offset, int count)
         {
-            for (int i = 0; i < sprites.Count; i++)
+            for (int i = offset; i < count; i++)
+                batch.Draw(texture, sprites[i]);
+        }
+
+        public static void Draw(this SpriteBatch batch, Texture2D texture, IList<BatchedSprite> sprites, int offset, int count, float depth)
+        {
+            for (int i = offset; i < count; i++)
+                batch.Draw(texture, sprites[i], depth);
+        }
+
+        public static void Draw(this SpriteBatch batch, Texture2D texture, IReferenceList<BatchedSprite> sprites, int offset, int count)
+        {
+            for (int i = offset; i < count; i++)
                 batch.DrawRef(texture, ref sprites.GetReferenceAt(i));
         }
 
-        public static void Draw(this SpriteBatch batch, Texture2D texture, IReferenceList<BatchedSprite> sprites, float depth)
+        public static void Draw(
+            this SpriteBatch batch, Texture2D texture,
+            IReferenceList<BatchedSprite> sprites, int offset, int count, float depth)
         {
-            for (int i = 0; i < sprites.Count; i++)
+            for (int i = offset; i < count; i++)
                 batch.DrawRef(texture, ref sprites.GetReferenceAt(i), depth);
         }
     }

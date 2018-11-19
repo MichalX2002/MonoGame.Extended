@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MonoGame.Extended
+namespace MonoGame.Extended.Collections
 { 
     public interface IReferenceList<T> : IList<T>
     {

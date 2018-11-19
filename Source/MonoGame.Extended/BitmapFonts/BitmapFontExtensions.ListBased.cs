@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Collections;
 using MonoGame.Extended.TextureAtlases;
 using Glyph = MonoGame.Extended.BitmapFonts.BitmapFont.Glyph;
 

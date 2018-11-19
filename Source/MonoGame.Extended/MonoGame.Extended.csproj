@@ -62,7 +62,7 @@
     <Compile Include="GameComponentCollectionExtensions.cs" />
     <Compile Include="HslColor.cs" />
     <Compile Include="IRectangular.cs" />
-    <Compile Include="IReferenceList.cs" />
+    <Compile Include="Collections\IReferenceList.cs" />
     <Compile Include="Matrix2.cs" />
     <Compile Include="MatrixExtensions.cs" />
     <Compile Include="OrthographicCamera.cs" />
