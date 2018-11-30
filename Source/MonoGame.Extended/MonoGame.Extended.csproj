@@ -42,8 +42,11 @@
     <Compile Include="BatchedSprite.cs" />
     <Compile Include="BitmapFonts\BitmapFontExtensions.Enumerable.cs" />
     <Compile Include="BitmapFonts\BitmapFontExtensions.ListBased.cs" />
+    <Compile Include="BitmapFonts\CharIteratorFactory.cs" />
     <Compile Include="BitmapFonts\GlyphSprite.cs" />
     <Compile Include="BitmapFonts\GlyphBatchedSprite.cs" />
+    <Compile Include="BitmapFonts\StringBuilderCharIterator.cs" />
+    <Compile Include="BitmapFonts\StringCharIterator.cs" />
     <Compile Include="BitmapFonts\TextAlignMode.cs" />
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="CircleF.cs" />
@@ -128,6 +131,7 @@
     <Compile Include="Shapes\ShapeExtensions.cs" />
     <Compile Include="Shapes\Polygon.cs" />
     <Compile Include="Content\TextDataType.cs" />
+    <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="TextureAtlases\NinePatchRegion2D.cs" />
     <Compile Include="Sprites\SpriteExtensions.cs" />
     <Compile Include="TextureAtlases\TextureAtlas.cs" />
@@ -164,7 +168,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitmapFonts\BitmapFont.TextIterator.cs" />
+    <Compile Include="BitmapFonts\ICharIterator.cs" />
     <Compile Include="BitmapFonts\BitmapFont.Enumerable.cs" />
     <Compile Include="BitmapFonts\BitmapFont.ListBased.cs" />
     <None Include="packages.config" />

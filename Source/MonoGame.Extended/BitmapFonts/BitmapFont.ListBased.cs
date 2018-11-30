@@ -7,7 +7,7 @@ namespace MonoGame.Extended.BitmapFonts
 {
     public partial class BitmapFont
     {
-		public SizeF GetGlyphs(ITextIterator iterator, IReferenceList<Glyph> output)
+		public SizeF GetGlyphs(ICharIterator iterator, IReferenceList<Glyph> output)
         {
             Vector2 positionDelta = Vector2.Zero;
 			Glyph previousGlyph = default;
@@ -52,12 +52,12 @@ namespace MonoGame.Extended.BitmapFonts
 
 		public SizeF GetGlyphs(string text, int offset, int length, IReferenceList<Glyph> output)
         {
-            return GetGlyphs(new StringTextIterator(text, offset, length), output);
+            return GetGlyphs(new StringCharIterator(text, offset, length), output);
         }
 
         public SizeF GetGlyphs(StringBuilder text, int offset, int length, IReferenceList<Glyph> output)
         {
-            return GetGlyphs(new StringBuilderTextIterator(text, offset, length), output);
+            return GetGlyphs(new StringBuilderCharIterator(text, offset, length), output);
         }
 
         public SizeF GetGlyphs(string text, IReferenceList<Glyph> output)

@@ -118,7 +118,7 @@ namespace MonoGame.Extended.BitmapFonts
                 string text, int offset, int length, PointF position)
             {
                 Glyphs = new GlyphEnumerator(
-                    font, new StringTextIterator(text, offset, length), position);
+                    font, new StringCharIterator(text, offset, length), position);
             }
 
             IEnumerator<Glyph> IEnumerable<Glyph>.GetEnumerator() => Glyphs;
@@ -133,7 +133,7 @@ namespace MonoGame.Extended.BitmapFonts
                 BitmapFont font, StringBuilder text, int offset, int length, PointF position)
             {
                 Glyphs = new GlyphEnumerator(
-                    font, new StringBuilderTextIterator(text, offset, length), position);
+                    font, new StringBuilderCharIterator(text, offset, length), position);
             }
 
             IEnumerator<Glyph> IEnumerable<Glyph>.GetEnumerator() => Glyphs;
@@ -143,7 +143,7 @@ namespace MonoGame.Extended.BitmapFonts
         public struct GlyphEnumerator : IEnumerator<Glyph>
         {
             private BitmapFont _font;
-            private ITextIterator _textIterator;
+            private ICharIterator _textIterator;
             private PointF _position;
 
             private int _index;
@@ -156,7 +156,7 @@ namespace MonoGame.Extended.BitmapFonts
 
             public Glyph Current => CurrentGlyph;
 
-            public GlyphEnumerator(BitmapFont font, ITextIterator text, PointF position)
+            public GlyphEnumerator(BitmapFont font, ICharIterator text, PointF position)
             {
                 _font = font;
                 _textIterator = text;
