@@ -8,24 +8,23 @@ namespace MonoGame.Extended.BitmapFonts
 {
     public static partial class BitmapFontExtensions
     {
-        public static void GetGlyphSprites(
+        public static void GetGlyphBatchedSprites(
             IReferenceList<Glyph> glyphs, IReferenceList<GlyphBatchedSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
-            GetBaseSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
+            GetBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
         }
 
-        public static void GetGlyphPositions(
+        public static void GetGlyphSprites(
             IReferenceList<Glyph> glyphs, IReferenceList<GlyphSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
-            GetBaseSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
+            GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
         }
 
-        private static void GetBaseSprites<T>(
-            IReferenceList<Glyph> glyphs, IReferenceList<T> output,
-            Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale,
-            float depth, Rectangle? clipRect, GetSpriteDelegate<T> getSprite)
+        private static void GetSprites(
+            IReferenceList<Glyph> glyphs, IReferenceList<GlyphSprite> output, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             for (int i = 0, count = glyphs.Count; i < count; i++)
             {
@@ -38,75 +37,143 @@ namespace MonoGame.Extended.BitmapFonts
 
                     if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
                     {
-                        output.Add(getSprite.Invoke(
-                            ref glyph, i, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                        output.Add(new GlyphSprite
+                        {
+                            Char = glyph.Character,
+                            Texture = glyph.FontRegion.TextureRegion.Texture,
+                            Index = i,
+                            SourceRect = srcRect,
+                            Position = newPos,
+                            Color = color,
+                            Rotation = rotation,
+                            Origin = glyphOrigin,
+                            Scale = scale,
+                            Depth = depth
+                        });
                     }
                 }
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphBatchedSprite> sprites)
+        private static void GetBatchedSprites(
+            IReferenceList<Glyph> glyphs, IReferenceList<GlyphBatchedSprite> output, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
-            for (int i = 0, count = sprites.Count; i < count; i++)
+            for (int i = 0, count = glyphs.Count; i < count; i++)
+            {
+                Glyph glyph = glyphs[i];
+                if (glyph.FontRegion != null)
+                {
+                    Vector2 glyphOrigin = -glyph.Position + origin;
+                    Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
+                    Vector2 newPos = position;
+
+                    if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
+                    {
+                        output.Add(GetBatchedSprite(glyph, i, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                    }
+                }
+            }
+        }
+
+        #region DrawString GlyphBatchedSprite
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphBatchedSprite> sprites, int offset, int count)
+        {
+            for (int i = offset; i < count; i++)
             {
                 ref GlyphBatchedSprite s = ref sprites.GetReferenceAt(i);
                 batch.DrawRef(s.Texture, ref s.Sprite);
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphBatchedSprite> sprites, float depth)
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphBatchedSprite> sprites)
         {
-            for (int i = 0, count = sprites.Count; i < count; i++)
+            DrawString(batch, sprites, 0, sprites.Count);
+        }
+
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphBatchedSprite> sprites, int offset, int count, float depth)
+        {
+            for (int i = offset; i < count; i++)
             {
                 ref GlyphBatchedSprite s = ref sprites.GetReferenceAt(i);
                 batch.DrawRef(s.Texture, ref s.Sprite, depth);
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphSprite> positions)
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphBatchedSprite> sprites, float depth)
         {
-            for (int i = 0, count = positions.Count; i < count; i++)
+            DrawString(batch, sprites, 0, sprites.Count, depth);
+        }
+        #endregion
+
+        #region DrawString GlyphSprite
+        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphSprite> sprites, int offset, int count)
+        {
+            for (int i = offset; i < count; i++)
             {
-                ref GlyphSprite p = ref positions.GetReferenceAt(i);
+                ref GlyphSprite p = ref sprites.GetReferenceAt(i);
                 batch.Draw(
-                    p.Texture, p.Position, p.SourceRectangle, p.Color, 
+                    p.Texture, p.Position, p.SourceRect, p.Color,
                     p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth);
             }
         }
 
-        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphSprite> positions, float depth)
+        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphSprite> sprites)
         {
-            for (int i = 0, count = positions.Count; i < count; i++)
-            {
-                ref GlyphSprite p = ref positions.GetReferenceAt(i);
-                batch.Draw(
-                    p.Texture, p.Position, p.SourceRectangle, p.Color, p.Rotation,
-                    p.Origin, p.Scale, SpriteEffects.None, p.Depth + depth);
-            }
+            DrawString(batch, sprites, 0, sprites.Count);
         }
 
         public static void DrawString(
-            this SpriteBatch batch, IReferenceList<GlyphSprite> positions, Vector2 position, float depth)
+            this SpriteBatch batch, IReferenceList<GlyphSprite> sprites, int offset, int count, Vector2 position, float depth)
         {
-            for (int i = 0, count = positions.Count; i < count; i++)
+            for (int i = offset; i < count; i++)
             {
-                ref GlyphSprite p = ref positions.GetReferenceAt(i);
+                ref GlyphSprite p = ref sprites.GetReferenceAt(i);
                 batch.Draw(
-                    p.Texture, p.Position + position, p.SourceRectangle,
+                    p.Texture, p.Position + position, p.SourceRect,
                     p.Color, p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth + depth);
             }
         }
 
         public static void DrawString(
-            this SpriteBatch batch, IReferenceList<GlyphSprite> positions, Vector2 position, Vector2 scale, float depth)
+            this SpriteBatch batch, IReferenceList<GlyphSprite> sprites, int offset, int count, Vector2 position)
         {
-            for (int i = 0, count = positions.Count; i < count; i++)
+            DrawString(batch, sprites, offset, count, position, 0);
+        }
+
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphSprite> sprites, Vector2 position, float depth)
+        {
+            DrawString(batch, sprites, 0, sprites.Count, position, depth);
+        }
+
+        public static void DrawString(this SpriteBatch batch, IReferenceList<GlyphSprite> sprites, Vector2 position)
+        {
+            DrawString(batch, sprites, position, 0);
+        }
+        
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphSprite> sprites,
+            int offset, int count, Vector2 position, Vector2 scale, float depth)
+        {
+            for (int i = offset; i < count; i++)
             {
-                ref GlyphSprite p = ref positions.GetReferenceAt(i);
+                ref GlyphSprite p = ref sprites.GetReferenceAt(i);
                 batch.Draw(
-                    p.Texture, p.Position + position, p.SourceRectangle, p.Color, p.Rotation,
-                    p.Origin, p.Scale + scale, SpriteEffects.None, p.Depth + depth);
+                    p.Texture, p.Position + position, p.SourceRect, p.Color, p.Rotation,
+                    p.Origin, p.Scale * scale, SpriteEffects.None, p.Depth + depth);
             }
         }
+
+        public static void DrawString(
+            this SpriteBatch batch, IReferenceList<GlyphSprite> sprites, Vector2 position, Vector2 scale, float depth)
+        {
+
+        }
+        #endregion
     }
 }

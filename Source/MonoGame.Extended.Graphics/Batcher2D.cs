@@ -339,8 +339,9 @@ namespace MonoGame.Extended.Graphics
         /// <param name="depth">The depth <see cref="float" />. The default value is <code>0f</code></param>
         /// <exception cref="InvalidOperationException">The <see cref="Batcher{TDrawCallInfo}.Begin(ref Matrix, ref Matrix, BlendState, SamplerState, DepthStencilState, RasterizerState, Effect)" /> method has not been called.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="bitmapFont" /> is null or <paramref name="text" /> is null.</exception>
-        public void DrawString(BitmapFont bitmapFont, string text, ref Matrix2 transformMatrix, Color? color = null,
-            FlipFlags flags = FlipFlags.None, float depth = 0f)
+        public void DrawString(
+            BitmapFont bitmapFont, string text, ref Matrix2 transformMatrix,
+            Color? color = null, FlipFlags flags = FlipFlags.None, float depth = 0f)
         {
             EnsureHasBegun();
 
@@ -351,8 +352,9 @@ namespace MonoGame.Extended.Graphics
                 throw new ArgumentNullException(nameof(text));
 
             var glyphs = bitmapFont.GetGlyphs(text);
-            foreach (var glyph in glyphs)
+            while (glyphs.MoveNext())
             {
+                var glyph = glyphs.Current;
                 var transform1Matrix = transformMatrix;
                 transform1Matrix.M31 += glyph.Position.X;
                 transform1Matrix.M32 += glyph.Position.Y;

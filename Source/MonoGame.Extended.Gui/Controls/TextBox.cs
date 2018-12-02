@@ -117,8 +117,10 @@ namespace MonoGame.Extended.Gui.Controls
             var textInfo = GetTextInfo(context, Text, ContentRectangle, HorizontalTextAlignment, VerticalTextAlignment);
             var i = 0;
 
-            foreach (var glyph in font.GetGlyphs(textInfo.Text, textInfo.Position))
+            var glyphs = font.GetGlyphs(textInfo.Text, textInfo.Position);
+            while (glyphs.MoveNext())
             {
+                var glyph = glyphs.Current;
                 var fontRegionWidth = glyph.FontRegion?.Width ?? 0;
                 var glyphMiddle = (int)(glyph.Position.X + fontRegionWidth * 0.5f);
 

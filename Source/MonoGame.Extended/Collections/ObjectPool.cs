@@ -12,8 +12,7 @@ namespace MonoGame.Extended.Collections
         KillExisting,
     }
 
-    public class ObjectPool<T> : IEnumerable<T>
-        where T : class, IPoolable
+    public class ObjectPool<T> : IEnumerable<T> where T : class, IPoolable
     {
         private readonly ReturnToPoolDelegate _returnToPoolDelegate;
 
@@ -34,12 +33,9 @@ namespace MonoGame.Extended.Collections
 
         public ObjectPool(Func<T> instantiationFunc, int capacity = 16, ObjectPoolIsFullPolicy isFullPolicy = ObjectPoolIsFullPolicy.ReturnNull)
         {
-            if (instantiationFunc == null)
-                throw new ArgumentNullException(nameof(instantiationFunc));
-
+            _instantiationFunction = instantiationFunc ?? throw new ArgumentNullException(nameof(instantiationFunc));
             _returnToPoolDelegate = Return;
 
-            _instantiationFunction = instantiationFunc;
             _freeItems = new Deque<T>(capacity);
             IsFullPolicy = isFullPolicy;      
         }

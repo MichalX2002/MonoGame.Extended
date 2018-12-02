@@ -9,7 +9,10 @@ namespace MonoGame.Extended.BitmapFonts
     {
 		public SizeF GetGlyphs(ICharIterator iterator, IReferenceList<Glyph> output)
         {
-            Vector2 positionDelta = Vector2.Zero;
+            if (iterator.Count <= 0)
+                return SizeF.Empty;
+
+            Vector2 positionDelta = new Vector2(0, 0);
 			Glyph previousGlyph = default;
 
             for (int i = iterator.Offset; i < iterator.Offset + iterator.Count; i++)
@@ -25,14 +28,15 @@ namespace MonoGame.Extended.BitmapFonts
                     positionDelta.X += region.XAdvance + LetterSpacing;
                 }
 
-                Glyph glyph = new Glyph(character, newPos, region);
-                output.AddRef(ref glyph);
-
                 if (UseKernings && previousGlyph.FontRegion != null)
                 {
                     if (previousGlyph.FontRegion.Kernings.TryGetValue(character, out int amount))
                         positionDelta.X += amount;
                 }
+
+                // use previousGlyph to store the new Glyph
+                previousGlyph = new Glyph(character, newPos, region);
+                output.Add(previousGlyph);
 
                 if (character == '\n')
                 {
@@ -40,24 +44,22 @@ namespace MonoGame.Extended.BitmapFonts
                     positionDelta.X = 0;
                     previousGlyph = default;
                 }
-                else
-                {
-                    previousGlyph = glyph;
-                }
             }
 
             positionDelta.Y += LineHeight;
             return positionDelta;
         }
 
-		public SizeF GetGlyphs(string text, int offset, int length, IReferenceList<Glyph> output)
+		public SizeF GetGlyphs(string text, int offset, int count, IReferenceList<Glyph> output)
         {
-            return GetGlyphs(new StringCharIterator(text, offset, length), output);
+            using (var iterator = CharIteratorPool.Rent(text, offset, count))
+                return GetGlyphs(iterator, output);
         }
 
-        public SizeF GetGlyphs(StringBuilder text, int offset, int length, IReferenceList<Glyph> output)
+        public SizeF GetGlyphs(StringBuilder text, int offset, int count, IReferenceList<Glyph> output)
         {
-            return GetGlyphs(new StringBuilderCharIterator(text, offset, length), output);
+            using (var iterator = CharIteratorPool.Rent(text, offset, count))
+                return GetGlyphs(iterator, output);
         }
 
         public SizeF GetGlyphs(string text, IReferenceList<Glyph> output)
@@ -70,22 +72,22 @@ namespace MonoGame.Extended.BitmapFonts
             return GetGlyphs(text, 0, text.Length, output);
         }
 
-        public SizeF MeasureString(IReferenceList<Glyph> glyphs, int offset, int length)
+        public SizeF MeasureString(IReferenceList<Glyph> glyphs, int offset, int count)
         {
-            if (length <= 0)
+            if (count <= 0)
                 return SizeF.Empty;
 
             if (offset > glyphs.Count)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            
-            if (offset + length > glyphs.Count)
-                throw new ArgumentException(nameof(length),
+
+            if (offset + count > glyphs.Count)
+                throw new ArgumentException(nameof(count),
                     "There's not enough glyphs for the requested amount " +
-                    $"({length} were requested, {glyphs.Count - offset} are available).");
+                    $"({count} were requested, {glyphs.Count - offset} are available).");
 
             var size = new SizeF(0, LineHeight);
-            int count = offset + length;
-            for (int i = offset; i < count; i++)
+            int c = offset + count;
+            for (int i = offset; i < c; i++)
             {
                 ref Glyph glyph = ref glyphs.GetReferenceAt(i);
                 if (glyph.FontRegion != null)

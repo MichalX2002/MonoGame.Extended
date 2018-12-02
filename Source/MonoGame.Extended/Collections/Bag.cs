@@ -40,7 +40,7 @@ using System.Collections.Generic;
 
 namespace MonoGame.Extended.Collections
 {
-    public class Bag<T> : IEnumerable<T>
+    public class Bag<T> : ICollection<T>
     {
         private T[] _items;
         private readonly bool _isPrimitive;
@@ -48,6 +48,7 @@ namespace MonoGame.Extended.Collections
         public int Capacity => _items.Length;
         public bool IsEmpty => Count == 0;
         public int Count { get; private set; }
+        public bool IsReadOnly => false;
 
         public Bag(int capacity = 16)
         {
@@ -57,7 +58,7 @@ namespace MonoGame.Extended.Collections
 
         public T this[int index]
         {
-            get => index >= _items.Length ? default(T) : _items[index];
+            get => index >= _items.Length ? default : _items[index];
             set
             {
                 EnsureCapacity(index + 1);
@@ -65,6 +66,17 @@ namespace MonoGame.Extended.Collections
                     Count = index + 1;
                 _items[index] = value;
             }
+        }
+
+        public bool TryTake(out T value)
+        {
+            if (Count > 0)
+            {
+                value = RemoveAt(Count - 1);
+                return true;
+            }
+            value = default;
+            return false;
         }
 
         public void Add(T element)
@@ -108,7 +120,7 @@ namespace MonoGame.Extended.Collections
             var result = _items[index];
             --Count;
             _items[index] = _items[Count];
-            _items[Count] = default(T);
+            _items[Count] = default;
             return result;
         }
 
@@ -120,7 +132,7 @@ namespace MonoGame.Extended.Collections
                 {
                     --Count;
                     _items[index] = _items[Count];
-                    _items[Count] = default(T);
+                    _items[Count] = default;
 
                     return true;
                 }
@@ -131,7 +143,7 @@ namespace MonoGame.Extended.Collections
 
         public bool RemoveAll(Bag<T> bag)
         {
-            var isResult = false;
+            bool isResult = false;
 
             for (var index = bag.Count - 1; index >= 0; --index)
             {
@@ -151,6 +163,23 @@ namespace MonoGame.Extended.Collections
             var oldElements = _items;
             _items = new T[newCapacity];
             Array.Copy(oldElements, 0, _items, 0, oldElements.Length);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+                
+            if(Count > array.Length)
+                throw new ArgumentException(nameof(array));
+
+            if (arrayIndex < 0 || arrayIndex + Count > array.Length)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+
+            for (var index = Count - 1; index >= 0; --index)
+            {
+                array[index + arrayIndex] = _items[index];
+            }
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()

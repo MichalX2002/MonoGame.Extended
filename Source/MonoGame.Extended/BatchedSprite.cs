@@ -81,83 +81,67 @@ namespace MonoGame.Extended
             for (int i = offset; i < count; i++)
                 batch.DrawRef(texture, ref sprites.GetReferenceAt(i), depth);
         }
-    }
 
-    public struct BatchedSprite
-    {
-        public VertexPositionColorTexture TL;
-        public VertexPositionColorTexture TR;
-        public VertexPositionColorTexture BL;
-        public VertexPositionColorTexture BR;
-
-        public BatchedSprite(
-            VertexPositionColorTexture vertexTL, VertexPositionColorTexture vertexTR,
-            VertexPositionColorTexture vertexBL, VertexPositionColorTexture vertexBR)
+        public static void SetDepth(this ref BatchedSprite sprite, float depth)
         {
-            TL = vertexTL;
-            TR = vertexTR;
-            BL = vertexBL;
-            BR = vertexBR;
+            sprite.TL.Position.Z = depth;
+            sprite.TR.Position.Z = depth;
+            sprite.BL.Position.Z = depth;
+            sprite.BR.Position.Z = depth;
         }
 
-        public void SetDepth(float depth)
+        public static void SetColor(this ref BatchedSprite sprite, Color color)
         {
-            TL.Position.Z = depth;
-            TR.Position.Z = depth;
-            BL.Position.Z = depth;
-            BR.Position.Z = depth;
-        }
-        
-        public void SetColor(Color color)
-        {
-            TL.Color = color;
-            TR.Color = color;
-            BL.Color = color;
-            BR.Color = color;
+            sprite.TL.Color = color;
+            sprite.TR.Color = color;
+            sprite.BL.Color = color;
+            sprite.BR.Color = color;
         }
 
-        public void SetTransform(Matrix2 matrix, Vector2 sourceSize)
+        public static void SetTexCoords(this ref BatchedSprite sprite, TextureRegion2D region)
         {
-            Transform(matrix, 0, 0, ref TL.Position);
-            Transform(matrix, sourceSize.X, 0, ref TR.Position);
-            Transform(matrix, 0, sourceSize.Y, ref BL.Position);
-            Transform(matrix, sourceSize.X, sourceSize.Y, ref BR.Position);
+            SetTexCoords(ref sprite, region.Texture.Texel, region.Bounds);
         }
 
-        public void SetTransform(Matrix2 matrix, Point sourceSize)
+        public static void SetTexCoords(this ref BatchedSprite sprite, Vector2 textureTexel, RectangleF sourceRect)
         {
-            SetTransform(matrix, sourceSize.ToVector2());
+            SourceRectToTexCoords(textureTexel, sourceRect,
+                ref sprite.TL.TextureCoordinate, ref sprite.TR.TextureCoordinate,
+                ref sprite.BL.TextureCoordinate, ref sprite.BR.TextureCoordinate);
         }
 
-        public void SetTransform(
-            Vector2 position, float rotation, Vector2 scale, Vector2 origin, Vector2 sourceSize)
+        public static void SetTransform(this ref BatchedSprite sprite, Matrix2 matrix, Point sourceSize)
+        {
+            SetTransform(ref sprite, matrix, sourceSize.ToVector2());
+        }
+
+        public static void SetTransform(
+            this ref BatchedSprite sprite,
+            Vector2 position, float rotation, Vector2? scale, Vector2? origin, Vector2 sourceSize)
         {
             var matrix = Matrix2.CreateFrom(position, rotation, scale, origin);
-            SetTransform(matrix, sourceSize);
+            SetTransform(ref sprite, matrix, sourceSize);
         }
 
-        public void SetTransform(
-            Vector2 position, float rotation, Vector2 scale, Vector2 origin, Point sourceSize)
+        public static void SetTransform(
+            this ref BatchedSprite sprite,
+            Vector2 position, float rotation, Vector2? scale, Vector2? origin, Point sourceSize)
         {
-            SetTransform(position, rotation, scale, origin, sourceSize.ToVector2());
+            SetTransform(ref sprite, position, rotation, scale, origin, sourceSize.ToVector2());
         }
 
-        private void Transform(Matrix2 matrix, float x, float y, ref Vector3 output)
+        public static void SetTransform(this ref BatchedSprite sprite, Matrix2 matrix, Vector2 sourceSize)
+        {
+            Transform(ref matrix, 0, 0, ref sprite.TL.Position);
+            Transform(ref matrix, sourceSize.X, 0, ref sprite.TR.Position);
+            Transform(ref matrix, 0, sourceSize.Y, ref sprite.BL.Position);
+            Transform(ref matrix, sourceSize.X, sourceSize.Y, ref sprite.BR.Position);
+        }
+
+        private static void Transform(ref Matrix2 matrix, float x, float y, ref Vector3 output)
         {
             output.X = x * matrix.M11 + y * matrix.M21 + matrix.M31;
             output.Y = x * matrix.M12 + y * matrix.M22 + matrix.M32;
-        }
-        
-        public void SetTexCoords(TextureRegion2D region)
-        {
-            SetTexCoords(region.Texture.Texel, region.Bounds);
-        }
-
-        public void SetTexCoords(Vector2 textureTexel, RectangleF sourceRect)
-        {
-            SourceRectToTexCoords(textureTexel, sourceRect,
-                ref TL.TextureCoordinate, ref TR.TextureCoordinate,
-                ref BL.TextureCoordinate, ref BR.TextureCoordinate);
         }
 
         /*
@@ -217,7 +201,7 @@ namespace MonoGame.Extended
 
             br.X = z;   // z
             br.Y = w;   // w
-            
+
             /*
             TL.TextureCoordinate.X = _vec.X;
             TL.TextureCoordinate.Y = _vec.Y;
@@ -231,6 +215,24 @@ namespace MonoGame.Extended
             BR.TextureCoordinate.X = _vec.Z;
             BR.TextureCoordinate.Y = _vec.W;
             */
+        }
+    }
+
+    public struct BatchedSprite
+    {
+        public VertexPositionColorTexture TL;
+        public VertexPositionColorTexture TR;
+        public VertexPositionColorTexture BL;
+        public VertexPositionColorTexture BR;
+
+        public BatchedSprite(
+            VertexPositionColorTexture vertexTL, VertexPositionColorTexture vertexTR,
+            VertexPositionColorTexture vertexBL, VertexPositionColorTexture vertexBR)
+        {
+            TL = vertexTL;
+            TR = vertexTR;
+            BL = vertexBL;
+            BR = vertexBR;
         }
     }
 }

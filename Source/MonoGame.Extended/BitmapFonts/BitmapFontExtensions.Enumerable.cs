@@ -9,111 +9,114 @@ using Glyph = MonoGame.Extended.BitmapFonts.BitmapFont.Glyph;
 namespace MonoGame.Extended.BitmapFonts
 {
     public static partial class BitmapFontExtensions
-    {/// <summary>
-     ///     Adds a string to a batch of sprites for rendering using the specified font,
-     ///     text, position, color, rotation, origin, scale, effects and layer.
-     /// </summary>
-     /// <param name="spriteBatch"></param>
-     /// <param name="font">A font for displaying text.</param>
-     /// <param name="text">The text message to display.</param>
-     /// <param name="position">The location (in screen coordinates) to draw the text.</param>
-     /// <param name="color">The <see cref="Color" /> to tint a sprite.</param>
-     /// <param name="rotation">Specifies the angle (in radians) to rotate the text about its origin.</param>
-     /// <param name="origin">The origin for each letter; the default is (0,0) which is the upper-left corner.</param>
-     /// <param name="scale">Scale factor.</param>
-     /// <param name="effect">Effects to apply.</param>
-     /// <param name="layerDepth">
-     ///     The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer.
-     ///     Use SpriteSortMode if you want sprites to be sorted during drawing.
-     /// </param>
-     /// <param name="clippingRectangle">
-     /// Clips the boundaries of the text so that it's not drawn outside the clipping rectangle.
-     /// </param>
+    {
+        private static void ThrowOnArgs(SpriteEffects effect)
+        {
+            if (effect != SpriteEffects.None)
+                throw new NotSupportedException($"{effect} is currently not supported for {nameof(BitmapFont)}");
+        }
+
+        /// <summary>
+        ///     Adds a string to a batch of sprites for rendering using the specified font,
+        ///     text, position, color, rotation, origin, scale, effects and layer.
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="font">A font for displaying text.</param>
+        /// <param name="text">The text message to display.</param>
+        /// <param name="position">The location (in screen coordinates) to draw the text.</param>
+        /// <param name="color">The <see cref="Color" /> to tint a sprite.</param>
+        /// <param name="rotation">Specifies the angle (in radians) to rotate the text about its origin.</param>
+        /// <param name="origin">The origin for each letter; the default is (0,0) which is the upper-left corner.</param>
+        /// <param name="scale">Scale factor.</param>
+        /// <param name="effect">Effects to apply.</param>
+        /// <param name="layerDepth">
+        ///     The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer.
+        ///     Use SpriteSortMode if you want sprites to be sorted during drawing.
+        /// </param>
+        /// <param name="clippingRectangle">
+        /// Clips the boundaries of the text so that it's not drawn outside the clipping rectangle.
+        /// </param>
         public static void DrawString(
-            this SpriteBatch spriteBatch, BitmapFont font, string text, Vector2 position, Color color, float rotation,
-            Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth, Rectangle? clippingRectangle = null)
+            this SpriteBatch spriteBatch, BitmapFont font, string text, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth, Rectangle? clippingRectangle = null)
         {
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
-
             ThrowOnArgs(effect);
 
-            var glyphs = font.GetGlyphs(text, position);
-            DrawString(spriteBatch, ref glyphs.Glyphs, position, color,
-                rotation, origin, scale, layerDepth, clippingRectangle);
+            using (var glyphs = font.GetGlyphs(text, position))
+                DrawString(spriteBatch, glyphs, position, color, rotation, origin, scale, layerDepth, clippingRectangle);
         }
 
         public static void DrawString(
-            this SpriteBatch spriteBatch, BitmapFont font, StringBuilder text, Vector2 position, Color color, float rotation,
-            Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth, Rectangle? clippingRectangle = null)
+            this SpriteBatch spriteBatch, BitmapFont font, StringBuilder text, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth, Rectangle? clippingRectangle = null)
         {
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
-
             ThrowOnArgs(effect);
 
-            var glyphs = font.GetGlyphs(text, position);
-            DrawString(spriteBatch, ref glyphs.Glyphs, position, color,
-                rotation, origin, scale, layerDepth, clippingRectangle);
+            using (var glyphs = font.GetGlyphs(text, position))
+                DrawString(spriteBatch, glyphs, position, color, rotation, origin, scale, layerDepth, clippingRectangle);
         }
 
-        private static void DrawString(SpriteBatch batch, ref BitmapFont.GlyphEnumerator glyphs, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+        private static void DrawString(
+            SpriteBatch batch, IEnumerator<Glyph> glyphs, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             while (glyphs.MoveNext())
             {
-                ref Glyph glyph = ref glyphs.CurrentGlyph;
+                Glyph glyph = glyphs.Current;
                 if (glyph.FontRegion == null)
                     continue;
 
                 Vector2 characterOrigin = position - glyph.Position + origin;
-
-                batch.Draw(glyph.FontRegion.TextureRegion, position, color,
+                batch.Draw(
+                    glyph.FontRegion.TextureRegion, position, color,
                     rotation, characterOrigin, scale, SpriteEffects.None, depth, clipRect);
             }
         }
 
-        public static void GetGlyphSprites(
-            this BitmapFont font, IList<GlyphBatchedSprite> output, string text, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+        public static void GetGlyphBatchedSprites(
+            this BitmapFont font, IList<GlyphBatchedSprite> output, string text, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
         {
-            var glyphs = font.GetGlyphs(text, position);
-            GetBaseSprites(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
+            using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
+                GetBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
+        }
+
+        public static void GetGlyphBatchedSprites(
+            this BitmapFont font, IList<GlyphBatchedSprite> output, StringBuilder text, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
+        {
+            using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
+                GetBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
         }
 
         public static void GetGlyphSprites(
-            this BitmapFont font, IList<GlyphBatchedSprite> output, StringBuilder text, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            this BitmapFont font, IList<GlyphSprite> output, string text, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
-            var glyphs = font.GetGlyphs(text, position);
-            GetBaseSprites(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetSprite);
+            using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
+                GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
         }
 
-        public static void GetGlyphPositions(
-            this BitmapFont font, IList<GlyphSprite> output, string text, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
-        {
-            var glyphs = font.GetGlyphs(text, position);
-            GetBaseSprites(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
-        }
-
-        public static void GetGlyphPositions(
+        public static void GetGlyphSprites(
             this BitmapFont font, IList<GlyphSprite> output, StringBuilder text, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
-            var glyphs = font.GetGlyphs(text, position);
-            GetBaseSprites(ref glyphs.Glyphs, output, position, color, rotation, origin, scale, depth, clipRect, GetPos);
+            using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
+                GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
         }
 
-        private static void GetBaseSprites<T>(
-            ref BitmapFont.GlyphEnumerator glyphs, IList<T> output,
-            Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale,
-            float depth, Rectangle? clipRect, GetSpriteDelegate<T> onItem)
+        private static void GetSprites(
+            GlyphEnumerator glyphs, IList<GlyphSprite> output, Vector2 position,
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             int index = 0;
             while (glyphs.MoveNext())
             {
-                ref Glyph glyph = ref glyphs.CurrentGlyph;
+                Glyph glyph = glyphs.CurrentGlyph;
                 if (glyph.FontRegion != null)
                 {
                     Vector2 glyphOrigin = position - glyph.Position + origin;
@@ -122,8 +125,43 @@ namespace MonoGame.Extended.BitmapFonts
 
                     if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
                     {
-                        output.Add(onItem.Invoke(
-                            ref glyph, index, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                        output.Add(new GlyphSprite
+                        {
+                            Char = glyph.Character,
+                            Texture = glyph.FontRegion.TextureRegion.Texture,
+                            Index = index,
+                            SourceRect = srcRect,
+                            Position = newPos,
+                            Color = color,
+                            Rotation = rotation,
+                            Origin = glyphOrigin,
+                            Scale = scale,
+                            Depth = depth
+                        });
+                        index++;
+                    }
+                }
+            }
+        }
+
+        private static void GetBatchedSprites(
+            GlyphEnumerator glyphs, IList<GlyphBatchedSprite> output, Vector2 position,
+            Color color, float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
+        {
+            var scaleValue = scale ?? Vector2.One;
+            int index = 0;
+            while (glyphs.MoveNext())
+            {
+                Glyph glyph = glyphs.CurrentGlyph;
+                if (glyph.FontRegion != null)
+                {
+                    Vector2 glyphOrigin = position - glyph.Position + origin;
+                    Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
+                    Vector2 newPos = position;
+
+                    if (srcRect.IsVisible(ref newPos, glyphOrigin, scaleValue, clipRect, out srcRect))
+                    {
+                        output.Add(GetBatchedSprite(glyph, index, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
                         index++;
                     }
                 }

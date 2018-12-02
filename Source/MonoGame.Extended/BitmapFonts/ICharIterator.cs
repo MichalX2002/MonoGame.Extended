@@ -1,7 +1,8 @@
-﻿
+﻿using System;
+
 namespace MonoGame.Extended.BitmapFonts
 {
-    public interface ICharIterator
+    public interface ICharIterator : IDisposable
     {
         int Offset { get; }
         int Count { get; }
