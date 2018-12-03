@@ -11,9 +11,10 @@ namespace MonoGame.Extended.BitmapFonts
         {
             if (iterator.Count <= 0)
                 return SizeF.Empty;
-
+            
+            float largestW = 0;
             Vector2 positionDelta = new Vector2(0, 0);
-			Glyph previousGlyph = default;
+			Glyph previousGlyph = new Glyph();
 
             for (int i = iterator.Offset; i < iterator.Offset + iterator.Count; i++)
             {
@@ -38,6 +39,9 @@ namespace MonoGame.Extended.BitmapFonts
                 previousGlyph = new Glyph(character, newPos, region);
                 output.Add(previousGlyph);
 
+                if (positionDelta.X > largestW)
+                    largestW = positionDelta.X;
+
                 if (character == '\n')
                 {
                     positionDelta.Y += LineHeight;
@@ -45,9 +49,8 @@ namespace MonoGame.Extended.BitmapFonts
                     previousGlyph = default;
                 }
             }
-
-            positionDelta.Y += LineHeight;
-            return positionDelta;
+            
+            return new SizeF(largestW, positionDelta.Y + LineHeight);
         }
 
 		public SizeF GetGlyphs(string text, int offset, int count, IReferenceList<Glyph> output)

@@ -77,95 +77,115 @@ namespace MonoGame.Extended.BitmapFonts
             }
         }
 
-        public static void GetGlyphBatchedSprites(
-            this BitmapFont font, IList<GlyphBatchedSprite> output, string text, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
-        {
-            using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
-                GetBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
-        }
-
-        public static void GetGlyphBatchedSprites(
-            this BitmapFont font, IList<GlyphBatchedSprite> output, StringBuilder text, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
-        {
-            using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
-                GetBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
-        }
-
-        public static void GetGlyphSprites(
+        public static SizeF GetGlyphSprites(
             this BitmapFont font, IList<GlyphSprite> output, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
-                GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
+                return GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
         }
 
-        public static void GetGlyphSprites(
+        public static SizeF GetGlyphSprites(
             this BitmapFont font, IList<GlyphSprite> output, StringBuilder text, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
-                GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
+                return GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
         }
 
-        private static void GetSprites(
+        private static SizeF GetSprites(
             GlyphEnumerator glyphs, IList<GlyphSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
+            SizeF size = new SizeF();
             int index = 0;
             while (glyphs.MoveNext())
             {
                 Glyph glyph = glyphs.CurrentGlyph;
-                if (glyph.FontRegion != null)
-                {
-                    Vector2 glyphOrigin = position - glyph.Position + origin;
-                    Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
-                    Vector2 newPos = position;
+                if (glyph.FontRegion == null)
+                    continue;
 
-                    if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
+                Vector2 glyphOrigin = position - glyph.Position + origin;
+                Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
+                Vector2 newPos = position;
+
+                if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
+                {
+                    output.Add(new GlyphSprite
                     {
-                        output.Add(new GlyphSprite
-                        {
-                            Char = glyph.Character,
-                            Texture = glyph.FontRegion.TextureRegion.Texture,
-                            Index = index,
-                            SourceRect = srcRect,
-                            Position = newPos,
-                            Color = color,
-                            Rotation = rotation,
-                            Origin = glyphOrigin,
-                            Scale = scale,
-                            Depth = depth
-                        });
-                        index++;
-                    }
+                        Char = glyph.Character,
+                        Texture = glyph.FontRegion.TextureRegion.Texture,
+                        Index = index,
+                        SourceRect = srcRect,
+                        Position = newPos,
+                        Color = color,
+                        Rotation = rotation,
+                        Origin = glyphOrigin,
+                        Scale = scale,
+                        Depth = depth
+                    });
+                    index++;
+
+                    float rowX = glyph.Position.X + srcRect.Width * scale.X - position.X;
+                    if (rowX > size.Width)
+                        size.Width = rowX;
+
+                    float rowY = glyph.Position.Y + srcRect.Height * scale.Y - position.Y;
+                    if (rowY > size.Height)
+                        size.Height = rowY;
                 }
             }
+            return new SizeF(size.Width, size.Height);
         }
 
-        private static void GetBatchedSprites(
+        public static SizeF GetGlyphBatchedSprites(
+            this BitmapFont font, IList<GlyphBatchedSprite> output, string text, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
+        {
+            using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
+                return GetGlyphBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
+        }
+
+        public static SizeF GetGlyphBatchedSprites(
+            this BitmapFont font, IList<GlyphBatchedSprite> output, StringBuilder text, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
+        {
+            using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
+                return GetGlyphBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
+        }
+
+        private static SizeF GetGlyphBatchedSprites(
             GlyphEnumerator glyphs, IList<GlyphBatchedSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
         {
+            var size = new SizeF();
             var scaleValue = scale ?? Vector2.One;
             int index = 0;
             while (glyphs.MoveNext())
             {
                 Glyph glyph = glyphs.CurrentGlyph;
-                if (glyph.FontRegion != null)
-                {
-                    Vector2 glyphOrigin = position - glyph.Position + origin;
-                    Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
-                    Vector2 newPos = position;
+                if (glyph.FontRegion == null)
+                    continue;
 
-                    if (srcRect.IsVisible(ref newPos, glyphOrigin, scaleValue, clipRect, out srcRect))
-                    {
-                        output.Add(GetBatchedSprite(glyph, index, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
-                        index++;
-                    }
+                Vector2 glyphOrigin = position - glyph.Position + origin;
+                Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
+                Vector2 newPos = position;
+
+                if (srcRect.IsVisible(ref newPos, glyphOrigin, scaleValue, clipRect, out srcRect))
+                {
+                    output.Add(GetBatchedSprite(glyph, index, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                    index++;
+
+                    float rowX = glyph.Position.X + srcRect.Width * scaleValue.X - position.X;
+                    if (rowX > size.Width)
+                        size.Width = rowX;
+
+                    float rowY = glyph.Position.Y + srcRect.Height * scaleValue.Y - position.Y;
+                    if (rowY > size.Height)
+                        size.Height = rowY;
                 }
             }
+            return new SizeF(size.Width, size.Height);
         }
 
         /// <summary>
