@@ -28,6 +28,8 @@ namespace MonoGame.Extended.Testing
         private Queue<double> _lastTimes = new Queue<double>(new double[] { 0 });
         private Random _rng = new Random();
 
+        private ResourceDownloader _downloader;
+
         public Frame()
         {
             _graphicsManager = new GraphicsDeviceManager(this);
@@ -46,6 +48,9 @@ namespace MonoGame.Extended.Testing
         {
             _batch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<BitmapFont>("Sensation");
+
+            _downloader = new ResourceDownloader();
+            _downloader.Start();
 
             Task.Run(StartLoadingSubreddit);
 
@@ -79,7 +84,7 @@ namespace MonoGame.Extended.Testing
 
         protected override void UnloadContent()
         {
-            WebResourceManager.Unload();
+            _downloader.Unload();
 
             base.UnloadContent();
         }
@@ -91,7 +96,7 @@ namespace MonoGame.Extended.Testing
 
             foreach(var post in subreddit.EnumeratePosts(3))
             {
-                var obj = new PostGraphicsObject(post, GraphicsDevice);
+                var obj = new PostGraphicsObject(post, GraphicsDevice, _downloader);
                 obj.PreRenderText(_font, Color.White, Vector2.One);
                 postGraphics.Add(obj);
             }
@@ -170,6 +175,7 @@ namespace MonoGame.Extended.Testing
         
         public Post Root { get; }
         public GraphicsDevice GraphicsDevice { get; }
+        public ResourceDownloader Downloader { get; }
         
         public bool IsVisible;
         public Vector2 Position;
@@ -192,23 +198,34 @@ namespace MonoGame.Extended.Testing
 
                 if (_thumbnail == null && !_thumbnailRequested)
                 {
-                    WebResourceManager.RequestTexture(Root.Thumbnail, GraphicsDevice, (t) =>
-                    {
-                        _thumbnail = t;
-                        IsThumbnailLoaded = true;
-                    });
                     _thumbnailRequested = true;
+                    Downloader.Request(Root.Thumbnail, (url, response) =>
+                    {
+                        switch (response.ContentType.ToLower())
+                        {
+                            case "image/jpg":
+                            case "image/jpeg":
+                            case "image/png":
+                            case "image/bmp":
+                            case "image/gif":
+                                using (var stream = response.GetResponseStream())
+                                    _thumbnail = Texture2D.FromStream(GraphicsDevice, stream);
+                                IsThumbnailLoaded = true;
+                                break;
+                        }
+                    });
                 }
                 return _thumbnail;
             }
         }
 
-        public PostGraphicsObject(Post root, GraphicsDevice device)
+        public PostGraphicsObject(Post root, GraphicsDevice device, ResourceDownloader downloader)
         {
             Root = root;
             GraphicsDevice = device;
+            Downloader = downloader;
             HasThumbnail = Root.Thumbnail.StartsWith("http");
-
+            
             CachedText = new ListArray<GlyphSprite>(root.Title.Length);
             ThumbnailFade = 1;
         }
@@ -231,7 +248,7 @@ namespace MonoGame.Extended.Testing
                     translation.X, offsetY, Thumbnail.Width, Thumbnail.Height);
                 
                 Size.Width = TextPosition.X + TextSize.Width;
-                Size.Height = ThumbnailDst.Size.Height;
+                Size.Height = MathHelper.Clamp(ThumbnailDst.Size.Height, textOffsetY + TextSize.Height + 6, 200);
             }
             else
             {
