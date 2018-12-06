@@ -63,6 +63,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedditService.cs" />
+    <Compile Include="ResourceCache.cs" />
     <Compile Include="ResourceDownloader.cs" />
     <Compile Include="Subreddit.cs" />
   </ItemGroup>
