@@ -27,8 +27,15 @@ namespace MonoGame.Extended.Testing
         private Stopwatch _watch = new Stopwatch();
         private Queue<double> _lastTimes = new Queue<double>(new double[] { 0 });
         private Random _rng = new Random();
-
+        
         private ResourceDownloader _downloader;
+        private Matrix graphicsMatrix;
+        private List<PostGraphicsObject> postGraphics = new List<PostGraphicsObject>();
+
+        private Vector2 offset = new Vector2(10, 10);
+        private Vector2 scrollOffset;
+        private float lastScroll;
+        private float smoothScroll;
 
         public Frame()
         {
@@ -94,7 +101,7 @@ namespace MonoGame.Extended.Testing
             var reddit = new RedditService();
             var subreddit = await reddit.GetSubredditAsync("Terraria");
 
-            foreach(var post in subreddit.EnumeratePosts(3))
+            foreach(var post in subreddit.EnumeratePosts(100))
             {
                 var obj = new PostGraphicsObject(post, GraphicsDevice, _downloader);
                 obj.PreRenderText(_font, Color.White, Vector2.One);
@@ -103,14 +110,11 @@ namespace MonoGame.Extended.Testing
             Console.WriteLine(postGraphics.Count);
         }
 
-        Matrix graphicsMatrix;
-        List<PostGraphicsObject> postGraphics = new List<PostGraphicsObject>();
-
-        protected override void Update(GameTime gameTime)
+        protected override void Update(GameTime time)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            
+
             Vector2 totalOffset = offset + scrollOffset;
             graphicsMatrix = Matrix.CreateTranslation(totalOffset.X, totalOffset.Y, 0);
 
@@ -123,28 +127,33 @@ namespace MonoGame.Extended.Testing
                 graphicOffsetY += graphic.Size.Height + 10;
             }
 
-            offset = new Vector2(10, 10);
-            if(postGraphics.Count > 0)
-                scrollOffset.Y -= 1;
-
-            base.Update(gameTime);
+            float newScroll = Mouse.GetState().ScrollWheelValue;
+            float scroll = newScroll - lastScroll;
+            lastScroll = newScroll;
+            smoothScroll = MathHelper.Lerp(smoothScroll + scroll, 0, time.Delta * 8f);
+            
+            const float scrollUpThreshold = 12;
+            if (scrollOffset.Y > scrollUpThreshold)
+                scrollOffset.Y = MathHelper.Lerp(scrollOffset.Y, scrollUpThreshold, time.Delta * 12.5f);
+            scrollOffset.Y += MathHelper.Clamp(smoothScroll * 1.2f * time.Delta, -400, 400);
+            
+            base.Update(time);
         }
-
-        private Vector2 offset;
-        private Vector2 scrollOffset;
-
+        
         protected override void Draw(GameTime time)
         {
             GraphicsDevice.Clear(_clearColor);
 
             _watch.Restart();
-            _batch.Begin();
+            _batch.Begin(transformMatrix: graphicsMatrix);
 
+            int lastC = 0;
             for (int i = 0; i < postGraphics.Count; i++)
             {
                 var graphic = postGraphics[i];
                 if (!graphic.IsVisible)
                     continue;
+                lastC++;
                  
                 if (graphic.HasThumbnail && graphic.Thumbnail != null)
                     _batch.Draw(graphic.Thumbnail, graphic.ThumbnailDst.ToRectangle(), Color.White);
@@ -161,109 +170,10 @@ namespace MonoGame.Extended.Testing
                 _lastTimes.Dequeue();
 
             _batch.Begin();
-            _batch.DrawString(_font, ((int)(_lastTimes.Average() * 100f) / 100f).ToString(), new Vector2(1, 0), Color.Green);
+            _batch.DrawString(_font, /*((int)(_lastTimes.Average() * 100f) / 100f).ToString() + " | " + */ lastC + "/" + postGraphics.Count, new Vector2(1, 0), Color.Green);
             _batch.End();
 
             base.Draw(time);
-        }
-    }
-
-    class PostGraphicsObject
-    {
-        private bool _thumbnailRequested;
-        private Texture2D _thumbnail;
-        
-        public Post Root { get; }
-        public GraphicsDevice GraphicsDevice { get; }
-        public ResourceDownloader Downloader { get; }
-        
-        public bool IsVisible;
-        public Vector2 Position;
-        public SizeF Size;
-
-        public Vector2 TextPosition;
-        public SizeF TextSize { get; private set; }
-        public ListArray<GlyphSprite> CachedText { get; }
-
-        public RectangleF ThumbnailDst;
-        public float ThumbnailFade;
-        public bool HasThumbnail { get; }
-        public bool IsThumbnailLoaded { get; private set; }
-        public Texture2D Thumbnail
-        {
-            get
-            {
-                if (!HasThumbnail)
-                    return null;
-
-                if (_thumbnail == null && !_thumbnailRequested)
-                {
-                    _thumbnailRequested = true;
-                    Downloader.Request(Root.Thumbnail, (url, response) =>
-                    {
-                        switch (response.ContentType.ToLower())
-                        {
-                            case "image/jpg":
-                            case "image/jpeg":
-                            case "image/png":
-                            case "image/bmp":
-                            case "image/gif":
-                                using (var stream = response.GetResponseStream())
-                                    _thumbnail = Texture2D.FromStream(GraphicsDevice, stream);
-                                IsThumbnailLoaded = true;
-                                break;
-                        }
-                    });
-                }
-                return _thumbnail;
-            }
-        }
-
-        public PostGraphicsObject(Post root, GraphicsDevice device, ResourceDownloader downloader)
-        {
-            Root = root;
-            GraphicsDevice = device;
-            Downloader = downloader;
-            HasThumbnail = Root.Thumbnail.StartsWith("http");
-            
-            CachedText = new ListArray<GlyphSprite>(root.Title.Length);
-            ThumbnailFade = 1;
-        }
-
-        public void DoLayout(Viewport view, float offsetY, Vector2 translation)
-        {
-            const float graphicExtraWidth = 8;
-            const float textOffsetY = 6;
-            const float textOnlyExtraHeight = 50;
-
-            float realY = translation.Y + offsetY;
-            IsVisible = realY > 0 || realY < view.Height;
-
-            TextPosition = new Vector2(HasThumbnail ? 200 : 100, offsetY + textOffsetY);
-            Position = new Vector2(0, offsetY);
-
-            if (IsThumbnailLoaded)
-            {
-                ThumbnailDst = new RectangleF(
-                    translation.X, offsetY, Thumbnail.Width, Thumbnail.Height);
-                
-                Size.Width = TextPosition.X + TextSize.Width;
-                Size.Height = MathHelper.Clamp(ThumbnailDst.Size.Height, textOffsetY + TextSize.Height + 6, 200);
-            }
-            else
-            {
-                Size = TextSize;
-                Size.Width += TextPosition.X;
-                Size.Height += textOffsetY + textOnlyExtraHeight;
-            }
-            Size.Width += graphicExtraWidth;
-        }
-    
-        public void PreRenderText(BitmapFont font, Color color, Vector2 scale)
-        {
-            CachedText.Clear();
-            TextSize = font.GetGlyphSprites(
-                CachedText, Root.Title, Vector2.Zero, color, 0, Vector2.Zero, scale, 0, null);
         }
     }
    
