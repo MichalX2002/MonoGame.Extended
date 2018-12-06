@@ -79,7 +79,7 @@ namespace MonoGame.Extended.Testing
 
         protected override void UnloadContent()
         {
-            WebResourceManager.Unload();
+            ResourceDownloader.Unload();
 
             base.UnloadContent();
         }
@@ -192,7 +192,7 @@ namespace MonoGame.Extended.Testing
 
                 if (_thumbnail == null && !_thumbnailRequested)
                 {
-                    WebResourceManager.RequestTexture(Root.Thumbnail, GraphicsDevice, (t) =>
+                    ResourceDownloader.RequestTexture(Root.Thumbnail, GraphicsDevice, (t) =>
                     {
                         _thumbnail = t;
                         IsThumbnailLoaded = true;

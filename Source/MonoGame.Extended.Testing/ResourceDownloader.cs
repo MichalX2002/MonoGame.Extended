@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace MonoGame.Extended.Testing
 {
-    static class WebResourceManager
+    static class ResourceDownloader
     {
         public delegate void TextureReadyDelegate(Texture2D texture);
 
@@ -16,7 +16,7 @@ namespace MonoGame.Extended.Testing
         private static Queue<TextureRequest> _textureRequests;
         private static Thread[] _textureRequestHandlers;
 
-        static WebResourceManager()
+        static ResourceDownloader()
         {
             _textureRequestLock = new object();
             _textureRequests = new Queue<TextureRequest>();
@@ -46,38 +46,7 @@ namespace MonoGame.Extended.Testing
 
                     try
                     {
-                        var headRequest = WebRequest.CreateHttp(textureRequest.Url);
-                        headRequest.Method = "HEAD";
-                        using (var response = headRequest.GetResponse())
-                        {
-                            switch (response.ContentType.ToLower())
-                            {
-                                case "image/jpg":
-                                case "image/jpeg":
-                                case "image/png":
-                                case "image/bmp":
-                                case "image/gif":
-                                    break;
-
-                                default:
-                                    continue;
-                            }
-                        }
-
-                        var request = WebRequest.CreateHttp(textureRequest.Url);
-                        using (var response = request.GetResponse())
-                        using (var stream = response.GetResponseStream())
-                        {
-                            var tex = Texture2D.FromStream(textureRequest.GraphicsDevice, stream);
-                            if (tex == null) // add a better error handler
-                                throw new Exception("Could not load image: " + textureRequest.Url);
-
-                            textureRequest.OnTexture.Invoke(tex);
-
-                            //  hmm, we need a cache for textures
-                            //var fs = new System.IO.FileStream(System.IO.Path.GetFileName(textureRequest.Url), System.IO.FileMode.Create))
-                            //    stream.CopyTo(fs);
-                        }
+                        ProcessTextureRequest(textureRequest);
                     }
                     catch (TimeoutException timeoutExc)
                     {
@@ -89,6 +58,42 @@ namespace MonoGame.Extended.Testing
                     }
                 }
                 Thread.Sleep(10);
+            }
+        }
+
+        private static void ProcessTextureRequest(TextureRequest request)
+        {
+            var headRequest = WebRequest.CreateHttp(request.Url);
+            headRequest.Method = "HEAD";
+            using (var response = headRequest.GetResponse())
+            {
+                switch (response.ContentType.ToLower())
+                {
+                    case "image/jpg":
+                    case "image/jpeg":
+                    case "image/png":
+                    case "image/bmp":
+                    case "image/gif":
+                        break;
+
+                    default:
+                        return;
+                }
+            }
+
+            var contentRequest = WebRequest.CreateHttp(request.Url);
+            using (var response = contentRequest.GetResponse())
+            using (var stream = response.GetResponseStream())
+            {
+                var tex = Texture2D.FromStream(request.GraphicsDevice, stream);
+                if (tex == null) // add a better error handler
+                    throw new Exception("Could not load image: " + request.Url);
+
+                request.OnTexture.Invoke(tex);
+
+                // hmm, we need a cache for textures
+                //var fs = new System.IO.FileStream(System.IO.Path.GetFileName(textureRequest.Url), System.IO.FileMode.Create))
+                //    stream.CopyTo(fs);
             }
         }
 
