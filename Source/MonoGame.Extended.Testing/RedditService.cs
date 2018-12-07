@@ -51,20 +51,11 @@ namespace MonoGame.Extended.Testing
             return subreddits;
         }
 
-        public async Task<Post> GetPostAsync(string id)
+        public async Task<Post> GetPostAsync(int postNumber, string id)
         {
             var jObject = await GetObjectAsync("api/info.json?raw_json=1&id=t3_" + id);
             var obj = (jObject["data"]["children"] as JArray)[0];
-
-            var data = obj["data"];
-            return new Post(
-                data["id"].ToString(),
-                data["title"].ToString(),
-                data["author"].ToString(),
-                data["score"].Value<int>(),
-                data["thumbnail"].ToString(),
-                data["url"].ToString(),
-                data["num_comments"].Value<int>());
+            return new Post(postNumber, obj["data"]);
         }
 
         public async Task<JObject> GetObjectAsync(string relativeUrl)

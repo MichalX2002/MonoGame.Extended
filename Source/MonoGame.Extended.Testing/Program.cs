@@ -36,6 +36,7 @@ namespace MonoGame.Extended.Testing
         private Vector2 scrollOffset;
         private float lastScroll;
         private float smoothScroll;
+        private float layoutHeight;
 
         public Frame()
         {
@@ -92,22 +93,49 @@ namespace MonoGame.Extended.Testing
         protected override void UnloadContent()
         {
             _downloader.Unload();
+            _processPosts = false;
 
             base.UnloadContent();
         }
+
+        private bool _processPosts = true;
 
         private async void StartLoadingSubreddit()
         {
             var reddit = new RedditService();
             var subreddit = await reddit.GetSubredditAsync("Terraria");
 
-            foreach(var post in subreddit.EnumeratePosts(100))
+            var watch = new Stopwatch();
+            double totalTime = 0;
+
+            int c = 0;
+            foreach(var post in subreddit.EnumeratePosts(1500))
             {
+                if (!_processPosts)
+                    return;
+
+                c++;
+                if (!post.HasThumbnail)
+                    continue;
+
                 var obj = new PostGraphicsObject(post, GraphicsDevice, _downloader);
-                obj.PreRenderText(_font, Color.White, Vector2.One);
+                obj.RenderMainText(_font, Color.White, Vector2.One);
+                obj.RenderStatusText(_font, Color.White, Vector2.One);
                 postGraphics.Add(obj);
+
+                watch.Restart();
+                DoObjectLayout();
+                watch.Stop();
+
+                totalTime += watch.Elapsed.TotalMilliseconds;
+                Console.WriteLine(
+                    "Layout took " + (int)(watch.Elapsed.TotalMilliseconds * 1000) / 1000f + "ms");
             }
-            Console.WriteLine(postGraphics.Count);
+
+            Console.WriteLine(
+                "Layout of " + postGraphics.Count + " posts took " +
+                (int)(totalTime * 10) / 10f + "ms");
+            Console.WriteLine("Posts iterated: " + c);
         }
 
         protected override void Update(GameTime time)
@@ -117,29 +145,49 @@ namespace MonoGame.Extended.Testing
 
             Vector2 totalOffset = offset + scrollOffset;
             graphicsMatrix = Matrix.CreateTranslation(totalOffset.X, totalOffset.Y, 0);
-
+            
             Viewport view = GraphicsDevice.Viewport;
+            for (int i = 0; i < postGraphics.Count; i++)
+            {
+                var graphic = postGraphics[i];
+                graphic.CheckVisibility(view, totalOffset);
+            }
+            
+            UpdateScroll(view, time);
+            
+            base.Update(time);
+        }
+
+        private void DoObjectLayout()
+        {
             float graphicOffsetY = 0;
             for (int i = 0; i < postGraphics.Count; i++)
             {
                 var graphic = postGraphics[i];
-                graphic.DoLayout(view, graphicOffsetY, totalOffset);
+                graphic.DoLayout(graphicOffsetY);
                 graphicOffsetY += graphic.Size.Height + 10;
             }
+            layoutHeight = graphicOffsetY;
+        }
 
+        private void UpdateScroll(Viewport view, GameTime time)
+        {
             float newScroll = Mouse.GetState().ScrollWheelValue;
             float scroll = newScroll - lastScroll;
             lastScroll = newScroll;
             smoothScroll = MathHelper.Lerp(smoothScroll + scroll, 0, time.Delta * 8f);
-            
+
             const float scrollUpThreshold = 12;
+            float scrollDownThreshold = -layoutHeight + view.Height - 12;
+
             if (scrollOffset.Y > scrollUpThreshold)
-                scrollOffset.Y = MathHelper.Lerp(scrollOffset.Y, scrollUpThreshold, time.Delta * 12.5f);
-            scrollOffset.Y += MathHelper.Clamp(smoothScroll * 1.2f * time.Delta, -400, 400);
-            
-            base.Update(time);
+                scrollOffset.Y = MathHelper.Lerp(scrollOffset.Y, scrollUpThreshold, time.Delta * 30f);
+            else if (scrollOffset.Y < scrollDownThreshold)
+                scrollOffset.Y = MathHelper.Lerp(scrollOffset.Y, scrollDownThreshold, time.Delta * 30f);
+
+            scrollOffset.Y += MathHelper.Clamp(smoothScroll * 13.2f * time.Delta, -350, 350);
         }
-        
+
         protected override void Draw(GameTime time)
         {
             GraphicsDevice.Clear(_clearColor);
@@ -154,10 +202,11 @@ namespace MonoGame.Extended.Testing
                 if (!graphic.IsVisible)
                     continue;
                 lastC++;
-                 
-                if (graphic.HasThumbnail && graphic.Thumbnail != null)
+
+                if (graphic.Thumbnail != null)
                     _batch.Draw(graphic.Thumbnail, graphic.ThumbnailDst.ToRectangle(), Color.White);
-                _batch.DrawString(graphic.CachedText, graphic.TextPosition);
+                _batch.DrawString(graphic.CachedMainText, graphic.MainTextPosition);
+                _batch.DrawString(graphic.CachedStatusText, graphic.StatusTextPosition);
 
                 _batch.DrawRectangle(new RectangleF(graphic.Position, graphic.Size), Color.Red, 1);
             }
@@ -177,26 +226,6 @@ namespace MonoGame.Extended.Testing
         }
     }
    
-    // #OLD DRAWING CODE
-    //watch.Restart();
-
-    //sprites.Clear();
-    //font.GetGlyphSprites(sprites, bbb, Vector2.Zero, Color.White, 0, Vector2.Zero, Vector2.One, 0, null);
-
-    //watch.Stop();
-
-    //double tot = time.TotalGameTime.TotalSeconds * 3f;
-    //for (int i = 0; i < sprites.Count; i++)
-    //{
-    //    ref GlyphSprite gs = ref sprites.GetReferenceAt(i);
-    //    gs.Position.X += (float)(Math.Sin(tot + i / 2f) * 3);
-    //    gs.Position.Y += (float)(Math.Cos(tot + i / 2f) * 3);
-    //}
-    
-    //batch.Begin();
-    //batch.DrawString(sprites);
-    //batch.End();
-
     class Program
     {
         static void Main(string[] args)
@@ -204,13 +233,29 @@ namespace MonoGame.Extended.Testing
             using (var frame = new Frame())
                 frame.Run();
 
-            //var src = new StringBuilder("hi on you mister 69");
-            //var dst = new StringBuilder();
-            //src.CopyTo(0, dst, new char[3], src.Length);
-
-            //Console.WriteLine("\"" + src + "\"");
-            //Console.WriteLine("\"" + dst + "\"");
-            //Console.ReadKey();
+            Console.WriteLine("\nPress any key to exit...");
+            Console.ReadKey();
         }
     }
 }
+
+
+// #OLD DRAWING CODE (from text API refresh)
+//watch.Restart();
+
+//sprites.Clear();
+//font.GetGlyphSprites(sprites, bbb, Vector2.Zero, Color.White, 0, Vector2.Zero, Vector2.One, 0, null);
+
+//watch.Stop();
+
+//double tot = time.TotalGameTime.TotalSeconds * 3f;
+//for (int i = 0; i < sprites.Count; i++)
+//{
+//    ref GlyphSprite gs = ref sprites.GetReferenceAt(i);
+//    gs.Position.X += (float)(Math.Sin(tot + i / 2f) * 3);
+//    gs.Position.Y += (float)(Math.Cos(tot + i / 2f) * 3);
+//}
+
+//batch.Begin();
+//batch.DrawString(sprites);
+//batch.End();

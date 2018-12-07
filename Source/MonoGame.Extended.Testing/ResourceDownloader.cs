@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -14,19 +15,19 @@ namespace MonoGame.Extended.Testing
 
         private bool _running;
 
-        private object _dequeueLock;
-        private Queue<ResourceRequest> _requests;
+        private ConcurrentBag<WebResponse> _responses;
+        private ConcurrentQueue<ResourceRequest> _requests;
         private Thread[] _requestDownloaders;
 
         public ResourceDownloader()
         {
-            _dequeueLock = new object();
-            _requests = new Queue<ResourceRequest>();
-            _requestDownloaders = new Thread[2];
+            _responses = new ConcurrentBag<WebResponse>();
+            _requests = new ConcurrentQueue<ResourceRequest>();
+            _requestDownloaders = new Thread[1];
 
             for (int i = 0; i < _requestDownloaders.Length; i++)
             {
-                _requestDownloaders[i] = new Thread(TextureRequestHandler)
+                _requestDownloaders[i] = new Thread(RequestDownloaderThread)
                 {
                     Name = "Request Downloader " + (i + 1)
                 };
@@ -48,8 +49,9 @@ namespace MonoGame.Extended.Testing
             if (_running)
             {
                 _running = false;
-                lock (_requests)
-                    _requests.Clear();
+
+                while (_responses.TryTake(out WebResponse response))
+                    response.Dispose();
             }
         }
 
@@ -58,26 +60,26 @@ namespace MonoGame.Extended.Testing
             _requests.Enqueue(new ResourceRequest(url, onResponse));
         }
 
-        private void TextureRequestHandler()
+        private void RequestDownloaderThread()
         {
             while (_running)
             {
                 while (_requests.Count > 0)
                 {
-                    ResourceRequest request;
-                    lock (_dequeueLock)
-                    {
-                        if (_requests.Count > 0)
-                            request = _requests.Dequeue();
-                        else
-                            continue;
-                    }
+                    if (!_running)
+                        break;
+
+                    if (!_requests.TryDequeue(out ResourceRequest request))
+                        continue;
 
                     try
                     {
                         var contentRequest = WebRequest.CreateHttp(request.Url);
                         using (var response = contentRequest.GetResponse())
+                        {
+                            _responses.Add(response);
                             request.OnBody.Invoke(request.Url, response as HttpWebResponse);
+                        }
                     }
                     catch (TimeoutException timeoutExc)
                     {
