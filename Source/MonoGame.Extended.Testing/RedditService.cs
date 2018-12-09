@@ -51,12 +51,14 @@ namespace MonoGame.Extended.Testing
             return subreddits;
         }
 
+        /*
         public async Task<Post> GetPostAsync(int postNumber, string id)
         {
             var jObject = await GetObjectAsync("api/info.json?raw_json=1&id=t3_" + id);
             var obj = (jObject["data"]["children"] as JArray)[0];
             return new Post(postNumber, obj["data"]);
         }
+        */
 
         public async Task<JObject> GetObjectAsync(string relativeUrl)
         {
@@ -71,13 +73,16 @@ namespace MonoGame.Extended.Testing
 
         public JObject GetObject(string relativeUrl)
         {
-            string uri = "https://www.reddit.com/" + relativeUrl;
-            using (var stream = _client.OpenRead(uri))
-            using (var streamReader = new StreamReader(stream))
-            {
-                var jsonReader = new JsonTextReader(streamReader);
+            using (var jsonReader = GetJsonReader(relativeUrl))
                 return JObject.Load(jsonReader);
-            };
+        }
+
+        public JsonTextReader GetJsonReader(string relativeUrl)
+        {
+            string uri = "https://www.reddit.com/" + relativeUrl;
+            var stream = _client.OpenRead(uri);
+            var streamReader = new StreamReader(stream);
+            return new JsonTextReader(streamReader);
         }
 
         public void Dispose()

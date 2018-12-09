@@ -2,20 +2,21 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoGame.Extended.Testing
 {
-    public class Subreddit
+    public partial class Subreddit
     {
-        private bool _aboutHasErrored = false;
-        private JObject _about;
+        private bool _aboutHasErrored;
+        private bool _aboutIsLoaded;
+
+        private StringBuilder _urlBuilder;
+        private JsonSerializer _serializer;
 
         public string Name { get; }
-        public string CommunityIconUrl => GetAboutValue("community_icon").ToString();
-        public string IconImageUrl => GetAboutValue("icon_img").ToString();
+        public string CommunityIcon { get; private set; }
+        public string IconImage { get; private set; }
 
         public RedditService Service { get; }
 
@@ -23,11 +24,18 @@ namespace MonoGame.Extended.Testing
         {
             Name = name;
             Service = service;
+
+            _urlBuilder = new StringBuilder();
+            _serializer = new JsonSerializer();
         }
 
-        public IEnumerable<Post> EnumeratePosts(int limit)
+        public IEnumerable<Post> EnumeratePosts(int limit, int postsPerRequest)
         {
-            var urlBuilder = new StringBuilder();
+            if (postsPerRequest <= 5)
+                postsPerRequest = 5;
+            else if (postsPerRequest > 110)
+                postsPerRequest = 110;
+
             string after = null;
             int usedLimit = limit;
 
@@ -36,69 +44,62 @@ namespace MonoGame.Extended.Testing
                 if (usedLimit <= 0)
                     yield break;
 
-                urlBuilder.Append($"r/{Name}/.json?limit={usedLimit}");
+                int queryLimit = Math.Min(postsPerRequest, usedLimit);
+                _urlBuilder.Append($"r/{Name}/.json?limit={queryLimit}");
 
                 if (after != null)
                 {
-                    urlBuilder.Append("&after=");
-                    urlBuilder.Append(after);
+                    _urlBuilder.Append("&after=");
+                    _urlBuilder.Append(after);
                 }
 
                 int count = limit - usedLimit;
                 if (count > 0)
                 {
-                    urlBuilder.Append("&count=");
-                    urlBuilder.Append(count);
+                    _urlBuilder.Append("&count=");
+                    _urlBuilder.Append(count);
                 }
 
-                var jObject = Service.GetObject(urlBuilder.ToString());
-                urlBuilder.Clear();
+                string url = _urlBuilder.ToString();
+                _urlBuilder.Clear();
 
-                var data = jObject["data"];
-                after = data["after"].ToString();
+                var jsonReader = Service.GetJsonReader(url);
+                var container = _serializer.Deserialize<JsonPostCollection>(jsonReader);
+                after = container.Data.After;
 
-                var jArray = data["children"] as JArray;
-                if (jArray.Count == 0)
+                var children = container.Data.Children;
+                if (children.Length == 0)
                     yield break;
 
-                for (int j = 0; j < jArray.Count; j++)
+                for (int j = 0; j < children.Length; j++)
                 {
                     if (usedLimit <= 0)
                         yield break;
 
                     usedLimit--;
-                    yield return new Post(j + count + 1, jArray[j]["data"]);
+                    yield return new Post(j + count + 1, children[j].Data);
                 }
             }
         }
 
-        private object GetAboutValue(string key)
-        {
-            if (_about == null)
-                LoadAbout();
-
-            if (_about == null)
-                return null;
-
-            return _about[key];
-        }
-
         private void LoadAbout()
         {
-            if (_aboutHasErrored || _about != null)
+            if (_aboutHasErrored || _aboutIsLoaded)
                 return;
 
             try
             {
-                var obj = Service.GetObject($"r/{Name}/about/.json");
+                var jsonReader = Service.GetJsonReader($"r/{Name}/about/.json");
+                var container = _serializer.Deserialize<JsonAbout>(jsonReader);
 
-                if (obj == null)
+                if (container == null)
                     _aboutHasErrored = true;
                 else
-                    _about = obj["data"] as JObject;
-
-                if (_about == null)
-                    _aboutHasErrored = true;
+                {
+                    CommunityIcon = container.Data.CommunityIcon;
+                    IconImage = container.Data.IconImg;
+                    _aboutIsLoaded = true;
+                }
             }
             catch
             {

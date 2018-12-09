@@ -1,108 +1,208 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 
 namespace MonoGame.Extended.Testing
 {
-    public class ResourceDownloader
+    public class ResourceDownloader : IResourceRequester
     {
-        public delegate void OnErrorDelegate(string url);
-        public delegate void OnResponseDelegate(string url, HttpWebResponse response);
-
-        private bool _running;
-
-        private ConcurrentBag<WebResponse> _responses;
+        private ConcurrentDictionary<Uri, ResourceRequest> _responses;
         private ConcurrentQueue<ResourceRequest> _requests;
-        private Thread[] _requestDownloaders;
+        private AutoResetEvent _requestEvent;
+
+        private Thread[] _threads;
+        private DownloadWorker[] _downloadWorkers;
+        
+        public bool IsDisposed { get; private set; }
+        public bool IsRunning { get; private set; }
+        public ReadOnlyCollection<DownloadWorker> Threads { get; }
 
         public ResourceDownloader()
         {
-            _responses = new ConcurrentBag<WebResponse>();
+            _responses = new ConcurrentDictionary<Uri, ResourceRequest>();
             _requests = new ConcurrentQueue<ResourceRequest>();
-            _requestDownloaders = new Thread[1];
+            _requestEvent = new AutoResetEvent(false);
 
-            for (int i = 0; i < _requestDownloaders.Length; i++)
+            _threads = new Thread[1];
+            _downloadWorkers = new DownloadWorker[_threads.Length];
+            Threads = new ReadOnlyCollection<DownloadWorker>(_downloadWorkers);
+            
+            for (int i = 0; i < _threads.Length; i++)
             {
-                _requestDownloaders[i] = new Thread(RequestDownloaderThread)
+                int id = i + 1;
+                _downloadWorkers[i] = new DownloadWorker(new DownloadWorkerData(id));
+                _threads[i] = new Thread(DownloadWorkerThread)
                 {
-                    Name = "Request Downloader " + (i + 1)
+                    Name = "ResourceDownloader Thread " + id
                 };
             }
         }
 
         public void Start()
         {
-            if (_running)
+            if (IsRunning)
                 return;
-            _running = true;
+            IsRunning = true;
 
-            for (int i = 0; i < _requestDownloaders.Length; i++)
-                _requestDownloaders[i].Start();
-        }
-
-        public void Unload()
-        {
-            if (_running)
+            for (int i = 0; i < _threads.Length; i++)
             {
-                _running = false;
-
-                while (_responses.TryTake(out WebResponse response))
-                    response.Dispose();
+                DownloadWorker worker = _downloadWorkers[i];
+                _threads[i].Start(worker.Data);
             }
         }
 
-        public void Request(string url, OnResponseDelegate onResponse)
+        public IResponseStatus Request(string uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            _requests.Enqueue(new ResourceRequest(url, onResponse));
+            return Request(new Uri(uri), onResponse, onError);
         }
 
-        private void RequestDownloaderThread()
+        public IResponseStatus Request(Uri uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            while (_running)
-            {
-                while (_requests.Count > 0)
-                {
-                    if (!_running)
-                        break;
+            var request = new ResourceRequest(uri, onResponse, onError);
+            _requests.Enqueue(request);
+            _requestEvent.Set();
+            return request;
+        }
 
-                    if (!_requests.TryDequeue(out ResourceRequest request))
-                        continue;
+        private void DownloadWorkerThread(object obj)
+        {
+            var workerData = obj as DownloadWorkerData;
+            while (IsRunning)
+            {
+                if (!_requestEvent.WaitOne())
+                    continue;
+
+                while (_requests.TryDequeue(out ResourceRequest resourceRequest))
+                {
+                    var url = resourceRequest.Url;
+                    _responses.TryAdd(url, resourceRequest);
+                    workerData.CurrentRequest = resourceRequest;
 
                     try
                     {
-                        var contentRequest = WebRequest.CreateHttp(request.Url);
-                        using (var response = contentRequest.GetResponse())
-                        {
-                            _responses.Add(response);
-                            request.OnBody.Invoke(request.Url, response as HttpWebResponse);
-                        }
-                    }
-                    catch (TimeoutException timeoutExc)
-                    {
-                        Console.WriteLine(request.Url + ": Request timed out");
+                        using (var response = WebRequest.CreateHttp(url).GetResponse())
+                            resourceRequest.HandleOnResponse(response);
                     }
                     catch (Exception exc)
                     {
-                        Console.WriteLine(request.Url + ": " + exc);
+                        resourceRequest.OnError?.Invoke(url, exc);
                     }
+
+                    _responses.TryRemove(url, out var tmp);
+                    workerData.CurrentRequest = null;
                 }
-                Thread.Sleep(10);
             }
         }
-        
-        struct ResourceRequest
-        {
-            public readonly string Url;
-            public readonly OnResponseDelegate OnBody;
 
-            public ResourceRequest(string url, OnResponseDelegate onTexture)
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
             {
-                Url = url;
-                OnBody = onTexture;
+                if (disposing)
+                {
+                    IsRunning = false;
+                    
+                    foreach (var response in _responses)
+                        response.Value.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        public class DownloadWorker
+        {
+            internal DownloadWorkerData Data { get; }
+
+            public int ID => Data.ID;
+            public IResponseStatus CurrentRequest => Data.CurrentRequest;
+
+            internal DownloadWorker(DownloadWorkerData data)
+            {
+                Data = data;
+            }
+        }
+
+        internal class DownloadWorkerData
+        {
+            public int ID { get; }
+            public IResponseStatus CurrentRequest { get; set; }
+
+            public DownloadWorkerData(int id)
+            {
+                ID = id;
+            }
+        }
+
+        private class ResourceRequest : IResponseStatus, IDisposable
+        {
+            private ResourceStream _stream;
+
+            public long ContentLength { get { ValidateLifetime(); return _stream == null ? -1 : _stream.Length; } }
+            public long BytesDownloaded { get { ValidateLifetime(); return _stream == null ? -1 : _stream.Position; } }
+
+            public Uri Url { get; }
+            public Exception Fault { get; private set; }
+
+            public bool IsDisposed { get; }
+            public bool IsFaulted { get; private set; }
+            public bool IsComplete { get; private set; }
+            public bool IsCanceled { get; private set; }
+
+            public readonly OnResponseDelegate OnResponse;
+            public readonly OnErrorDelegate OnError;
+
+            public ResourceRequest(Uri uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
+            {
+                Url = uri ?? throw new ArgumentNullException(nameof(uri));
+                OnResponse = onResponse ?? throw new ArgumentNullException(nameof(onResponse));
+                OnError = onError;
+            }
+
+            public void HandleOnResponse(WebResponse response)
+            {
+                if (IsCanceled)
+                    return;
+
+                try
+                {
+                    _stream = new ResourceStream(response);
+                    OnResponse.Invoke(Url, _stream);
+                    IsComplete = true;
+                }
+                catch (Exception exc)
+                {
+                    IsFaulted = true;
+                    Fault = exc;
+                    throw;
+                }
+            }
+
+            [DebuggerHidden]
+            private void ValidateLifetime()
+            {
+                if (IsDisposed)
+                    throw new ObjectDisposedException(nameof(ResourceStream));
+            }
+
+            public void Dispose()
+            {
+                if (!IsComplete)
+                    IsCanceled = true;
+
+                if (_stream != null)
+                {
+                    _stream.Dispose();
+                    _stream = null;
+                }
             }
         }
     }

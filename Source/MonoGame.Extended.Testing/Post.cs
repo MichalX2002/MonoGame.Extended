@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
+﻿
 namespace MonoGame.Extended.Testing
 {
     public class Post
@@ -17,25 +16,21 @@ namespace MonoGame.Extended.Testing
         public int ThumbnailWidth { get; }
         public int ThumbnailHeight { get; }
 
-        public Post(int postNumber, JToken data)
+        internal Post(int postNumber, Subreddit.JsonPostData data)
         {
             PostNumber = postNumber;
-            ID = data["id"].ToString();
-            Title = data["title"].ToString();
-            Author = data["author"].ToString();
-            Score = data["score"].Value<int>();
-            Url = data["url"].ToString();
-            NumberOfComments = data["num_comments"].Value<int>();
 
-            Thumbnail = data["thumbnail"].ToString();
+            ID = data.ID;
+            Title = data.Title;
+            Author = data.Author;
+            Score = data.Score;
+            Url = data.Url;
+            NumberOfComments = data.NumComments;
+
+            Thumbnail = data.Thumbnail;
             HasThumbnail = Thumbnail.StartsWith("http");
-            ThumbnailWidth = GetInt(data["thumbnail_width"]);
-            ThumbnailHeight = GetInt(data["thumbnail_height"]);
+            ThumbnailWidth = data.ThumbnailWidth ?? -1;
+            ThumbnailHeight = data.ThumbnailHeight ?? -1;
         }
-
-        private int GetInt(JToken value)
-        {
-            return value.Type == JTokenType.Integer ? value.Value<int>() : -1;
-        } 
     }
 }

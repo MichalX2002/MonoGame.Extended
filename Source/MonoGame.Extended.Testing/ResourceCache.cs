@@ -1,12 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoGame.Extended.Testing
 {
-    public class ResourceCache
+    public class ResourceCache : IResourceRequester
     {
+        public bool IsDisposed => throw new NotImplementedException();
+        public bool IsRunning => throw new NotImplementedException();
+
+        public IResponseStatus Request(string uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResponseStatus Request(Uri uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

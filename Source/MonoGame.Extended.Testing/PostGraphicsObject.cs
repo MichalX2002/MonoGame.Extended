@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
+using MonoGame.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,12 +13,12 @@ namespace MonoGame.Extended.Testing
 {
     public class PostGraphicsObject
     {
-        private bool _thumbnailRequested;
+        private Image _thumbnailImage;
         private Texture2D _thumbnail;
 
         public Post Root { get; }
         public GraphicsDevice GraphicsDevice { get; }
-        public ResourceDownloader Downloader { get; }
+        public IResourceRequester Requester { get; }
 
         public bool IsVisible;
         public Vector2 Position;
@@ -32,42 +34,26 @@ namespace MonoGame.Extended.Testing
         public RectangleF ThumbnailDst;
         public float ThumbnailFade;
         public bool HasThumbnail { get; }
+        public bool IsThumbnailRequested { get; private set; }
+        public bool IsThumbnailDownloaded { get; private set; }
         public bool IsThumbnailLoaded { get; private set; }
+        public bool IsThumbnailFaulted { get; private set; }
+
         public Texture2D Thumbnail
         {
             get
             {
-                if (!HasThumbnail)
-                    return null;
-
-                if (_thumbnail == null && !_thumbnailRequested)
-                {
-                    _thumbnailRequested = true;
-                    Downloader.Request(Root.Thumbnail, (url, response) =>
-                    {
-                        switch (response.ContentType.ToLower())
-                        {
-                            case "image/jpg":
-                            case "image/jpeg":
-                            case "image/png":
-                            case "image/bmp":
-                            case "image/gif":
-                                using (var stream = response.GetResponseStream())
-                                    _thumbnail = Texture2D.FromStream(GraphicsDevice, stream);
-                                IsThumbnailLoaded = true;
-                                break;
-                        }
-                    });
-                }
+                if (!IsThumbnailDownloaded)
+                    RequestThumbnail();
                 return _thumbnail;
             }
         }
 
-        public PostGraphicsObject(Post root, GraphicsDevice device, ResourceDownloader downloader)
+        public PostGraphicsObject(Post root, GraphicsDevice device, IResourceRequester requester)
         {
             Root = root;
             GraphicsDevice = device;
-            Downloader = downloader;
+            Requester = requester;
             
             CachedMainText = new ListArray<GlyphSprite>();
             CachedStatusText = new ListArray<GlyphSprite>();
@@ -77,6 +63,60 @@ namespace MonoGame.Extended.Testing
                 Root.HasThumbnail
                 && Root.ThumbnailWidth != -1
                 && Root.ThumbnailHeight != -1;
+        }
+
+        public void RequestThumbnail()
+        {
+            if (!HasThumbnail)
+                return;
+
+            if (_thumbnail == null && !IsThumbnailRequested)
+            {
+                IsThumbnailRequested = true;
+                Requester.Request(Root.Thumbnail, OnThumbnailResponse, null);
+            }
+        }
+
+        public void UploadThumbnail(GraphicsDevice device)
+        {
+            if (IsThumbnailDownloaded && _thumbnail == null && _thumbnailImage != null)
+            {
+                IntPtr ptr = _thumbnailImage.GetPointer();
+                if (ptr != IntPtr.Zero && _thumbnailImage.Info.IsValid())
+                {
+                    int channels = (int)_thumbnailImage.PixelFormat;
+                    int length = _thumbnailImage.PointerLength;
+
+                    _thumbnail = new Texture2D(device, _thumbnailImage.Width, _thumbnailImage.Height);
+                    _thumbnail.SetData(ptr, 0, channels, length / channels);
+                    IsThumbnailLoaded = true;
+                }
+                else
+                    IsThumbnailFaulted = true;
+
+                _thumbnailImage.Dispose();
+                _thumbnailImage = null;
+            }
+        }
+
+        private void OnThumbnailResponse(Uri uri, ResourceStream stream)
+        {
+            switch (stream.ContentType.ToLower())
+            {
+                case "image/jpg":
+                case "image/jpeg":
+                case "image/png":
+                case "image/bmp":
+                case "image/gif": 
+                    // needs to be RgbWithAlpha because Texture2D only supports RGBA
+                    _thumbnailImage = new Image(stream, ImagePixelFormat.RgbWithAlpha, false);
+
+                    // GetPointer() here to decode the image on the downloader thread
+                    _thumbnailImage.GetPointer();
+
+                    IsThumbnailDownloaded = true;
+                    break;
+            }
         }
 
         public void DoLayout(float offsetY)

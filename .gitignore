@@ -211,3 +211,6 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 *.DotSettings
+
+# FFmpeg binaries
+FFmpeg/
