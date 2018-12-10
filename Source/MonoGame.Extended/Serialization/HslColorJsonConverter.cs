@@ -10,14 +10,14 @@ namespace MonoGame.Extended.Serialization
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var color = ((HslColor) value).ToRgb();
+            Color color = ((HslColor)value).ToRgb();
             _colorConverter.WriteJson(writer, color, serializer);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var color = (Color)_colorConverter.ReadJson(reader, objectType, existingValue, serializer);
-            return HslColor.FromRgb(color);
+            Color color = (Color)_colorConverter.ReadJson(reader, objectType, existingValue, serializer);
+            return new HslColor(color);
         }
 
         public override bool CanConvert(Type objectType)

@@ -72,7 +72,7 @@ namespace MonoGame.Extended.Testing
             var workerData = obj as DownloadWorkerData;
             while (IsRunning)
             {
-                if (!_requestEvent.WaitOne())
+                if (!_requestEvent.WaitOne(10))
                     continue;
 
                 while (_requests.TryDequeue(out ResourceRequest resourceRequest))
@@ -104,9 +104,13 @@ namespace MonoGame.Extended.Testing
                 if (disposing)
                 {
                     IsRunning = false;
-                    
+
                     foreach (var response in _responses)
                         response.Value.Dispose();
+
+                    for (int i = 0; i < _threads.Length; i++)
+                        _threads[i].Join();
+                    _requestEvent.Dispose();
                 }
 
                 IsDisposed = true;

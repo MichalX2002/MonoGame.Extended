@@ -1,32 +1,38 @@
 ﻿using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace MonoGame.Extended
 {
     /// <summary>
-    ///     An immutable data structure representing a 24bit color composed of separate hue, saturation and lightness channels.
+    /// A data structure representing a 24bit color composed of separate hue, saturation and lightness channels.
     /// </summary>
     //[Serializable]
     [DataContract]
     public struct HslColor : IEquatable<HslColor>, IComparable<HslColor>
     {
-        /// <summary>
-        ///     Gets the value of the hue channel in degrees.
-        /// </summary>
-        [DataMember] public readonly float H;
+        internal float _h;
+        internal float _s;
+        internal float _l;
 
         /// <summary>
-        ///     Gets the value of the saturation channel.
+        /// Gets the value of the hue channel in degrees.
         /// </summary>
-        [DataMember] public readonly float S;
+        [DataMember] public float H { get => _h; set => _h = NormalizeHue(value); }
 
         /// <summary>
-        ///     Gets the value of the lightness channel.
+        /// Gets the value of the saturation channel.
         /// </summary>
-        [DataMember] public readonly float L;
+        [DataMember] public float S { get => _s; set => _s = MathHelper.Clamp(value, 0f, 1f); }
 
+        /// <summary>
+        /// Gets the value of the lightness channel.
+        /// </summary>
+        [DataMember] public float L { get => _l; set => _l = MathHelper.Clamp(value, 0f, 1f); }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float NormalizeHue(float h)
         {
             if (h < 0)
@@ -43,70 +49,111 @@ namespace MonoGame.Extended
         public HslColor(float h, float s, float l)
         {
             // normalize the hue
-            H = NormalizeHue(h);
-            S = MathHelper.Clamp(s, 0f, 1f);
-            L = MathHelper.Clamp(l, 0f, 1f);
+            _h = NormalizeHue(h);
+            _s = MathHelper.Clamp(s, 0f, 1f);
+            _l = MathHelper.Clamp(l, 0f, 1f);
+        }
+        
+        public HslColor(Color color)
+        {
+            // derived from http://www.geekymonkey.com/Programming/CSharp/RGB2HSL_HSL2RGB.htm
+            var r = color.R / 255f;
+            var g = color.G / 255f;
+            var b = color.B / 255f;
+            _h = 0f; // default to black
+            _s = 0f;
+            _l = 0f;
+            var v = Math.Max(r, g);
+            v = Math.Max(v, b);
+
+            var m = Math.Min(r, g);
+            m = Math.Min(m, b);
+            _l = (m + v) / 2.0f;
+
+            if (_l <= 0.0)
+                return;
+
+            var vm = v - m;
+            _s = vm;
+
+            if (_s > 0.0)
+                _s /= _l <= 0.5f ? v + m : 2.0f - v - m;
+            else
+                return;
+
+            var r2 = (v - r) / vm;
+            var g2 = (v - g) / vm;
+            var b2 = (v - b) / vm;
+
+            if (Math.Abs(r - v) < float.Epsilon)
+                _h = Math.Abs(g - m) < float.Epsilon ? 5.0f + b2 : 1.0f - g2;
+            else if (Math.Abs(g - v) < float.Epsilon)
+                _h = Math.Abs(b - m) < float.Epsilon ? 1.0f + r2 : 3.0f - b2;
+            else
+                _h = Math.Abs(r - m) < float.Epsilon ? 3.0f + g2 : 5.0f - r2;
+
+            _h = NormalizeHue(_h * 60);
         }
 
         /// <summary>
-        ///     Copies the individual channels of the color to the specified memory location.
+        /// Copies the individual channels of the color to the specified memory location.
         /// </summary>
         /// <param name="destination">The memory location to copy the axis to.</param>
         public void CopyTo(out HslColor destination)
         {
-            destination = new HslColor(H, S, L);
+            destination = new HslColor(_h, _s, _l);
         }
 
         /// <summary>
-        ///     Destructures the color, exposing the individual channels.
+        /// Destructures the color, exposing the individual channels.
         /// </summary>
         public void Destructure(out float h, out float s, out float l)
         {
-            h = H;
-            s = S;
-            l = L;
+            h = _h;
+            s = _s;
+            l = _l;
         }
 
         /// <summary>
-        ///     Exposes the individual channels of the color to the specified matching function.
+        /// Exposes the individual channels of the color to the specified matching function.
         /// </summary>
         /// <param name="callback">The function which matches the individual channels of the color.</param>
         /// <exception cref="T:System.ArgumentNullException">
-        ///     Thrown if the value passed to the <paramref name="callback" /> parameter is <c>null</c>.
+        /// Thrown if the value passed to the <paramref name="callback" /> parameter is <c>null</c>.
         /// </exception>
         public void Match(Action<float, float, float> callback)
         {
             if (callback == null)
                 throw new ArgumentNullException(nameof(callback));
 
-            callback(H, S, L);
+            callback(_h, _s, _l);
         }
 
         /// <summary>
-        ///     Exposes the individual channels of the color to the specified mapping function and returns the
-        ///     result;
+        /// Exposes the individual channels of the color to the
+        /// specified mapping function and returns the result.
         /// </summary>
         /// <typeparam name="T">The type being mapped to.</typeparam>
         /// <param name="map">
-        ///     A function which maps the color channels to an instance of <typeparamref name="T" />.
+        /// A function which maps the color channels to an instance of <typeparamref name="T" />.
         /// </param>
         /// <returns>
-        ///     The result of the <paramref name="map" /> function when passed the individual X and Y components.
+        /// The result of the <paramref name="map"/> function when passed the individual X and Y components.
         /// </returns>
         /// <exception cref="T:System.ArgumentNullException">
-        ///     Thrown if the value passed to the <paramref name="map" /> parameter is <c>null</c>.
+        /// Thrown if the value passed to the <paramref name="map" /> parameter is <c>null</c>.
         /// </exception>
         public T Map<T>(Func<float, float, float, T> map)
         {
             if (map == null)
                 throw new ArgumentNullException(nameof(map));
 
-            return map(H, S, L);
+            return map(_h, _s, _l);
         }
 
         public static HslColor operator +(HslColor a, HslColor b)
         {
-            return new HslColor(a.H + b.H, a.S + b.S, a.L + b.L);
+            return new HslColor(a._h + b._h, a._s + b._s, a._l + b._l);
         }
 
         public static implicit operator HslColor(string value)
@@ -117,7 +164,7 @@ namespace MonoGame.Extended
         public int CompareTo(HslColor other)
         {
             // ReSharper disable ImpureMethodCallOnReadonlyValueField
-            return H.CompareTo(other.H)*100 + S.CompareTo(other.S)*10 + L.CompareTo(L);
+            return _h.CompareTo(other._h) * 100 + _s.CompareTo(other._s) * 10 + _l.CompareTo(_l);
             // ReSharper restore ImpureMethodCallOnReadonlyValueField
         }
 
@@ -131,7 +178,7 @@ namespace MonoGame.Extended
         public override bool Equals(object obj)
         {
             if (obj is HslColor)
-                return Equals((HslColor) obj);
+                return Equals((HslColor)obj);
 
             return base.Equals(obj);
         }
@@ -146,7 +193,7 @@ namespace MonoGame.Extended
         public bool Equals(HslColor value)
         {
             // ReSharper disable ImpureMethodCallOnReadonlyValueField
-            return H.Equals(value.H) && S.Equals(value.S) && L.Equals(value.L);
+            return _h.Equals(value._h) && _s.Equals(value._s) && _l.Equals(value._l);
             // ReSharper restore ImpureMethodCallOnReadonlyValueField
         }
 
@@ -158,9 +205,9 @@ namespace MonoGame.Extended
         /// </returns>
         public override int GetHashCode()
         {
-            return H.GetHashCode() ^
-                   S.GetHashCode() ^
-                   L.GetHashCode();
+            return _h.GetHashCode() ^
+                   _s.GetHashCode() ^
+                   _l.GetHashCode();
         }
 
         /// <summary>
@@ -172,7 +219,7 @@ namespace MonoGame.Extended
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "H:{0:N1}° S:{1:N1} L:{2:N1}",
-                H, 100*S, 100*L);
+                _h, 100*_s, 100*_l);
         }
 
         public static HslColor Parse(string s)
@@ -213,61 +260,17 @@ namespace MonoGame.Extended
 
         public static HslColor operator -(HslColor a, HslColor b)
         {
-            return new HslColor(a.H - b.H, a.S - b.S, a.L - b.L);
+            return new HslColor(a._h - b._h, a._s - b._s, a._l - b._l);
         }
 
         public static HslColor Lerp(HslColor c1, HslColor c2, float t)
         {
             // loop around if c2.H < c1.H
-            var h2 = c2.H >= c1.H ? c2.H : c2.H + 360;
+            var h2 = c2._h >= c1._h ? c2._h : c2._h + 360;
             return new HslColor(
-                c1.H + t*(h2 - c1.H),
-                c1.S + t*(c2.S - c1.S),
-                c1.L + t*(c2.L - c2.L));
-        }
-
-        public static HslColor FromRgb(Color color)
-        {
-            // derived from http://www.geekymonkey.com/Programming/CSharp/RGB2HSL_HSL2RGB.htm
-            var r = color.R / 255f;
-            var g = color.G / 255f;
-            var b = color.B / 255f;
-            var h = 0f; // default to black
-            var s = 0f;
-            var l = 0f;
-            var v = Math.Max(r, g);
-            v = Math.Max(v, b);
-
-            var m = Math.Min(r, g);
-            m = Math.Min(m, b);
-            l = (m + v) / 2.0f;
-
-            if (l <= 0.0)
-                return new HslColor(h, s, l);
-
-            var vm = v - m;
-            s = vm;
-
-            if (s > 0.0)
-                s /= l <= 0.5f ? v + m : 2.0f - v - m;
-            else
-                return new HslColor(h, s, l);
-
-            var r2 = (v - r) / vm;
-            var g2 = (v - g) / vm;
-            var b2 = (v - b) / vm;
-
-            if (Math.Abs(r - v) < float.Epsilon)
-                h = Math.Abs(g - m) < float.Epsilon ? 5.0f + b2 : 1.0f - g2;
-            else if (Math.Abs(g - v) < float.Epsilon)
-                h = Math.Abs(b - m) < float.Epsilon ? 1.0f + r2 : 3.0f - b2;
-            else
-                h = Math.Abs(r - m) < float.Epsilon ? 3.0f + g2 : 5.0f - r2;
-
-            h *= 60;
-            h = NormalizeHue(h);
-
-            return new HslColor(h, s, l);
+                c1._h + t*(h2 - c1._h),
+                c1._s + t*(c2._s - c1._s),
+                c1._l + t*(c2._l - c2._l));
         }
     }
 }

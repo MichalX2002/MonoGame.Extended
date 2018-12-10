@@ -4,7 +4,10 @@
     {
         public override unsafe void Update(float amount, Particle* particle)
         {
-            particle->Color = new HslColor((EndValue - StartValue) * amount + StartValue, particle->Color.S, particle->Color.L);
+            particle->Color = new HslColor(
+                (EndValue - StartValue) * amount + StartValue,
+                particle->Color.S,
+                particle->Color.L);
         }
     }
 }

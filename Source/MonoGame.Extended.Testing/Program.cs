@@ -35,10 +35,11 @@ namespace MonoGame.Extended.Testing
         private float lastScroll;
         private float smoothScroll;
         private float layoutHeight;
+        private bool _processPosts = true;
 
-        int _postsLeftToLoad;
-        int _firstVisibleGraphic;
-        int _lastVisibleGraphic;
+        private int _postsLeftToLoad;
+        private int _firstVisibleGraphic;
+        private int _lastVisibleGraphic;
 
         public Frame()
         {
@@ -66,13 +67,11 @@ namespace MonoGame.Extended.Testing
 
         protected override void UnloadContent()
         {
-            _resourceManager?.Dispose();
             _processPosts = false;
+            _resourceManager?.Dispose();
 
             base.UnloadContent();
         }
-
-        private bool _processPosts = true;
 
         private async void StartLoadingSubreddit()
         {
@@ -138,9 +137,7 @@ namespace MonoGame.Extended.Testing
                 LoadThumbnails(_firstVisibleGraphic, _lastVisibleGraphic, 6);
 
                 if(_postsLeftToLoad == 0 && _lastVisibleGraphic + 15 > postGraphics.Count)
-                {
                     _postsLeftToLoad += 5;
-                }
             }
 
             base.Update(time);
