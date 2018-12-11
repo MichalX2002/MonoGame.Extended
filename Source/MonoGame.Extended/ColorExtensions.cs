@@ -20,16 +20,12 @@ namespace MonoGame.Extended
 
         public static Color ToRgb(this HslColor c)
         {
-            var h = c._h;
-            var s = c._s;
-            var l = c._l;
+            if (c._s == 0f)
+                return new Color(c._l, c._l, c._l);
 
-            if (s == 0f)
-                return new Color(l, l, l);
-
-            h = h / 360f;
-            var max = l < 0.5f ? l * (1 + s) : l + s - l * s;
-            var min = 2f * l - max;
+            float h = c._h / 360f;
+            var max = c._l < 0.5f ? c._l * (1 + c._s) : c._l + c._s - c._l * c._s;
+            var min = 2f * c._l - max;
 
             return new Color(
                 ComponentFromHue(min, max, h + 1f / 3f),
@@ -39,7 +35,8 @@ namespace MonoGame.Extended
 
         private static float ComponentFromHue(float m1, float m2, float h)
         {
-            h = (h + 1f) % 1f;
+            h = h - (int)h;
+
             if (h * 6f < 1)
                 return m1 + (m2 - m1) * 6f * h;
             if (h * 2 < 1)
@@ -51,22 +48,21 @@ namespace MonoGame.Extended
 
         public static HslColor ToHsl(this Color c)
         {
-            var r = c.R / 255f;
-            var b = c.B / 255f;
-            var g = c.G / 255f;
+            float r = c.R / 255f;
+            float b = c.B / 255f;
+            float g = c.G / 255f;
 
-            var max = Math.Max(Math.Max(r, g), b);
-            var min = Math.Min(Math.Min(r, g), b);
-            var chroma = max - min;
-            var sum = max + min;
+            float max = Math.Max(Math.Max(r, g), b);
+            float min = Math.Min(Math.Min(r, g), b);
+            float chroma = max - min;
+            float sum = max + min;
 
-            var l = sum * 0.5f;
+            float l = sum * 0.5f;
 
             if (chroma == 0)
                 return new HslColor(0f, 0f, l);
 
             float h;
-
             if (r == max)
                 h = (60 * (g - b) / chroma + 360) % 360;
             else
@@ -77,7 +73,7 @@ namespace MonoGame.Extended
                     h = 60 * (r - g) / chroma + 240f;
             }
 
-            var s = l <= 0.5f ? chroma / sum : chroma / (2f - sum);
+            float s = l <= 0.5f ? chroma / sum : chroma / (2f - sum);
 
             return new HslColor(h, s, l);
         }

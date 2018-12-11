@@ -53,20 +53,20 @@ namespace MonoGame.Extended
             _s = MathHelper.Clamp(s, 0f, 1f);
             _l = MathHelper.Clamp(l, 0f, 1f);
         }
-        
+
         public HslColor(Color color)
         {
             // derived from http://www.geekymonkey.com/Programming/CSharp/RGB2HSL_HSL2RGB.htm
-            var r = color.R / 255f;
-            var g = color.G / 255f;
-            var b = color.B / 255f;
+            float r = color.R / 255f;
+            float g = color.G / 255f;
+            float b = color.B / 255f;
             _h = 0f; // default to black
             _s = 0f;
             _l = 0f;
-            var v = Math.Max(r, g);
+            float v = Math.Max(r, g);
             v = Math.Max(v, b);
 
-            var m = Math.Min(r, g);
+            float m = Math.Min(r, g);
             m = Math.Min(m, b);
             _l = (m + v) / 2.0f;
 
@@ -81,9 +81,9 @@ namespace MonoGame.Extended
             else
                 return;
 
-            var r2 = (v - r) / vm;
-            var g2 = (v - g) / vm;
-            var b2 = (v - b) / vm;
+            float r2 = (v - r) / vm;
+            float g2 = (v - g) / vm;
+            float b2 = (v - b) / vm;
 
             if (Math.Abs(r - v) < float.Epsilon)
                 _h = Math.Abs(g - m) < float.Epsilon ? 5.0f + b2 : 1.0f - g2;
@@ -218,16 +218,16 @@ namespace MonoGame.Extended
         /// </returns>
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "H:{0:N1}° S:{1:N1} L:{2:N1}",
-                _h, 100*_s, 100*_l);
+            return string.Format(
+                CultureInfo.InvariantCulture, "H:{0:N1}° S:{1:N1} L:{2:N1}", _h, 100 * _s, 100 * _l);
         }
 
         public static HslColor Parse(string s)
         {
-            var hsl = s.Split(',');
-            var hue = float.Parse(hsl[0].TrimEnd('°'), CultureInfo.InvariantCulture.NumberFormat);
-            var sat = float.Parse(hsl[1], CultureInfo.InvariantCulture.NumberFormat);
-            var lig = float.Parse(hsl[2], CultureInfo.InvariantCulture.NumberFormat);
+            string[] hsl = s.Split(',');
+            float hue = float.Parse(hsl[0].TrimEnd('°'), CultureInfo.InvariantCulture.NumberFormat);
+            float sat = float.Parse(hsl[1], CultureInfo.InvariantCulture.NumberFormat);
+            float lig = float.Parse(hsl[2], CultureInfo.InvariantCulture.NumberFormat);
 
             return new HslColor(hue, sat, lig);
         }
@@ -266,11 +266,11 @@ namespace MonoGame.Extended
         public static HslColor Lerp(HslColor c1, HslColor c2, float t)
         {
             // loop around if c2.H < c1.H
-            var h2 = c2._h >= c1._h ? c2._h : c2._h + 360;
+            float h2 = c2._h >= c1._h ? c2._h : c2._h + 360;
             return new HslColor(
-                c1._h + t*(h2 - c1._h),
-                c1._s + t*(c2._s - c1._s),
-                c1._l + t*(c2._l - c2._l));
+                c1._h + t * (h2 - c1._h),
+                c1._s + t * (c2._s - c1._s),
+                c1._l + t * (c2._l - c2._l));
         }
     }
 }
