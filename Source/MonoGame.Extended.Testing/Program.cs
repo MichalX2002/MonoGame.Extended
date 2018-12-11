@@ -127,7 +127,7 @@ namespace MonoGame.Extended.Testing
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+            
             Viewport view = GraphicsDevice.Viewport;
             UpdateScroll(view, time);
             UpdateObjectVisibility(view, out _firstVisibleGraphic, out _lastVisibleGraphic);
@@ -317,6 +317,16 @@ namespace MonoGame.Extended.Testing
     {
         private static void Main(string[] args)
         {
+            StringBuilder boi = new StringBuilder(new string('l', 3000));
+            
+            for (int i = 0; i < 1000; i++)
+            {
+                var b = CharIteratorPool.Rent(boi, 0, boi.Length);
+
+
+                CharIteratorPool.Return(b);
+            }
+
             using (var frame = new Frame())
                 frame.Run();
 

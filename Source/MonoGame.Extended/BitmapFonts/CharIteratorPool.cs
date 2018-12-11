@@ -48,9 +48,7 @@ namespace MonoGame.Extended.BitmapFonts
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            StringBuilder immutableBuilder = count < LargeBuilderThreshold ?
-                RentSmallBuilder() : RentLargeBuilder();
-
+            StringBuilder immutableBuilder = RentBuilder(count);
             char[] buffer = GetCharBuffer();
             value.CopyTo(offset, immutableBuilder, buffer, count);
 
@@ -94,6 +92,12 @@ namespace MonoGame.Extended.BitmapFonts
                 throw new ArgumentException("The iterator was not rented from this pool.");
         }
 
+        public static StringBuilder RentBuilder(int expectedCapacity)
+        {
+            return expectedCapacity >= LargeBuilderThreshold ?
+                RentLargeBuilder() : RentSmallBuilder();
+        }
+
         public static StringBuilder RentSmallBuilder()
         {
             lock (_smallBuilders)
@@ -122,20 +126,20 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static void ReturnBuilder(StringBuilder builder)
         {
-            if (builder.Capacity < LargeBuilderThreshold)
-            {
-                lock (_smallBuilders)
-                {
-                    if (_smallBuilders.Count < 128)
-                        _smallBuilders.Add(builder);
-                }
-            }
-            else
+            if (builder.Capacity >= LargeBuilderThreshold)
             {
                 lock (_largeBuilders)
                 {
                     if (_largeBuilders.Count < 64)
                         _largeBuilders.Add(builder);
+                }
+            }
+            else
+            {
+                lock (_smallBuilders)
+                {
+                    if (_smallBuilders.Count < 128)
+                        _smallBuilders.Add(builder);
                 }
             }
         }

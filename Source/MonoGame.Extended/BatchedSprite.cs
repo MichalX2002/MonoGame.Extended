@@ -90,7 +90,7 @@ namespace MonoGame.Extended
             sprite.BR.Position.Z = depth;
         }
 
-        public static void SetColor(this ref BatchedSprite sprite, Color color)
+        public static void SetColor(this ref BatchedSprite sprite, ref Color color)
         {
             sprite.TL.Color = color;
             sprite.TR.Color = color;

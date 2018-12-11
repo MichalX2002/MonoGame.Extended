@@ -2,12 +2,13 @@
 using System;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Collections;
+using System.Collections.Generic;
 
 namespace MonoGame.Extended.BitmapFonts
 {
     public partial class BitmapFont
     {
-		public SizeF GetGlyphs(ICharIterator iterator, IReferenceList<Glyph> output)
+		public SizeF GetGlyphs(ICharIterator iterator, ICollection<Glyph> output)
         {
             if (iterator.Count <= 0)
                 return SizeF.Empty;
@@ -53,29 +54,29 @@ namespace MonoGame.Extended.BitmapFonts
             return new SizeF(largestW, positionDelta.Y + LineHeight);
         }
 
-		public SizeF GetGlyphs(string text, int offset, int count, IReferenceList<Glyph> output)
+		public SizeF GetGlyphs(string text, int offset, int count, ICollection<Glyph> output)
         {
             using (var iterator = CharIteratorPool.Rent(text, offset, count))
                 return GetGlyphs(iterator, output);
         }
 
-        public SizeF GetGlyphs(StringBuilder text, int offset, int count, IReferenceList<Glyph> output)
+        public SizeF GetGlyphs(StringBuilder text, int offset, int count, ICollection<Glyph> output)
         {
             using (var iterator = CharIteratorPool.Rent(text, offset, count))
                 return GetGlyphs(iterator, output);
         }
 
-        public SizeF GetGlyphs(string text, IReferenceList<Glyph> output)
+        public SizeF GetGlyphs(string text, ICollection<Glyph> output)
         {
             return GetGlyphs(text, 0, text.Length, output);
         }
 
-        public SizeF GetGlyphs(StringBuilder text, IReferenceList<Glyph> output)
+        public SizeF GetGlyphs(StringBuilder text, ICollection<Glyph> output)
         {
             return GetGlyphs(text, 0, text.Length, output);
         }
 
-        public SizeF MeasureString(IReferenceList<Glyph> glyphs, int offset, int count)
+        public SizeF MeasureString(IList<Glyph> glyphs, int offset, int count)
         {
             if (count <= 0)
                 return SizeF.Empty;
@@ -92,7 +93,7 @@ namespace MonoGame.Extended.BitmapFonts
             int c = offset + count;
             for (int i = offset; i < c; i++)
             {
-                ref Glyph glyph = ref glyphs.GetReferenceAt(i);
+                Glyph glyph = glyphs[i];
                 if (glyph.FontRegion != null)
                 {
                     float right = glyph.Position.X + glyph.FontRegion.Width;
@@ -106,7 +107,7 @@ namespace MonoGame.Extended.BitmapFonts
             return size;
         }
         
-        public SizeF MeasureString(IReferenceList<Glyph> glyphs)
+        public SizeF MeasureString(IList<Glyph> glyphs)
         {
             return MeasureString(glyphs, 0, glyphs.Count);
         }

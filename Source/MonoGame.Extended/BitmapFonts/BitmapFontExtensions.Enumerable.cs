@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Collections;
 using MonoGame.Extended.TextureAtlases;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,8 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         /// <summary>
-        ///     Adds a string to a batch of sprites for rendering using the specified font,
-        ///     text, position, color, rotation, origin, scale, effects and layer.
+        /// Adds a string to a batch of sprites for rendering using the specified font,
+        /// text, position, color, rotation, origin, scale, effects and layer.
         /// </summary>
         /// <param name="spriteBatch"></param>
         /// <param name="font">A font for displaying text.</param>
@@ -30,8 +31,8 @@ namespace MonoGame.Extended.BitmapFonts
         /// <param name="scale">Scale factor.</param>
         /// <param name="effect">Effects to apply.</param>
         /// <param name="layerDepth">
-        ///     The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer.
-        ///     Use SpriteSortMode if you want sprites to be sorted during drawing.
+        /// The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer.
+        /// Use SpriteSortMode if you want sprites to be sorted during drawing.
         /// </param>
         /// <param name="clippingRectangle">
         /// Clips the boundaries of the text so that it's not drawn outside the clipping rectangle.
@@ -78,7 +79,7 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         public static SizeF GetGlyphSprites(
-            this BitmapFont font, IList<GlyphSprite> output, string text, Vector2 position, Color color,
+            this BitmapFont font, ICollection<GlyphSprite> output, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
@@ -86,7 +87,7 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         public static SizeF GetGlyphSprites(
-            this BitmapFont font, IList<GlyphSprite> output, StringBuilder text, Vector2 position,
+            this BitmapFont font, ICollection<GlyphSprite> output, StringBuilder text, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
@@ -94,9 +95,10 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         private static SizeF GetSprites(
-            GlyphEnumerator glyphs, IList<GlyphSprite> output, Vector2 position,
+            GlyphEnumerator glyphs, ICollection<GlyphSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
+            GlyphSprite tmpSprite;
             SizeF size = new SizeF();
             int index = 0;
             while (glyphs.MoveNext())
@@ -111,19 +113,18 @@ namespace MonoGame.Extended.BitmapFonts
 
                 if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
                 {
-                    output.Add(new GlyphSprite
-                    {
-                        Char = glyph.Character,
-                        Texture = glyph.FontRegion.TextureRegion.Texture,
-                        Index = index,
-                        SourceRect = srcRect,
-                        Position = newPos,
-                        Color = color,
-                        Rotation = rotation,
-                        Origin = glyphOrigin,
-                        Scale = scale,
-                        Depth = depth
-                    });
+                    tmpSprite.Char = glyph.Character;
+                    tmpSprite.Texture = glyph.FontRegion.TextureRegion.Texture;
+                    tmpSprite.Index = index;
+                    tmpSprite.SourceRect = srcRect;
+                    tmpSprite.Position = newPos;
+                    tmpSprite.Color = color;
+                    tmpSprite.Rotation = rotation;
+                    tmpSprite.Origin = glyphOrigin;
+                    tmpSprite.Scale = scale;
+                    tmpSprite.Depth = depth;
+
+                    output.Add(tmpSprite);
                     index++;
 
                     float rowX = glyph.Position.X + srcRect.Width * scale.X - position.X;
@@ -139,7 +140,7 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         public static SizeF GetGlyphBatchedSprites(
-            this BitmapFont font, IList<GlyphBatchedSprite> output, string text, Vector2 position, Color color,
+            this BitmapFont font, ICollection<GlyphBatchedSprite> output, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
@@ -147,7 +148,7 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         public static SizeF GetGlyphBatchedSprites(
-            this BitmapFont font, IList<GlyphBatchedSprite> output, StringBuilder text, Vector2 position, Color color,
+            this BitmapFont font, ICollection<GlyphBatchedSprite> output, StringBuilder text, Vector2 position, Color color,
             float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
@@ -155,9 +156,10 @@ namespace MonoGame.Extended.BitmapFonts
         }
 
         private static SizeF GetGlyphBatchedSprites(
-            GlyphEnumerator glyphs, IList<GlyphBatchedSprite> output, Vector2 position,
+            GlyphEnumerator glyphs, ICollection<GlyphBatchedSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
         {
+            GlyphBatchedSprite tmpSprite;
             var size = new SizeF();
             var scaleValue = scale ?? Vector2.One;
             int index = 0;
@@ -173,7 +175,16 @@ namespace MonoGame.Extended.BitmapFonts
 
                 if (srcRect.IsVisible(ref newPos, glyphOrigin, scaleValue, clipRect, out srcRect))
                 {
-                    output.Add(GetBatchedSprite(glyph, index, newPos, srcRect, color, rotation, glyphOrigin, scale, depth));
+                    tmpSprite.Char = glyph.Character;
+                    tmpSprite.Index = index;
+                    tmpSprite.Texture = glyph.FontRegion.TextureRegion.Texture;
+                    tmpSprite.Sprite = default;
+                    tmpSprite.Sprite.SetTransform(position, rotation, scale, origin, srcRect.Size);
+                    tmpSprite.Sprite.SetTexCoords(tmpSprite.Texture.Texel, srcRect);
+                    tmpSprite.Sprite.SetDepth(depth);
+                    tmpSprite.Sprite.SetColor(ref color);
+
+                    output.Add(tmpSprite);
                     index++;
 
                     float rowX = glyph.Position.X + srcRect.Width * scaleValue.X - position.X;

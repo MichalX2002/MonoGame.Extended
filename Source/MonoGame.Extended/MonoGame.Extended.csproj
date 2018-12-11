@@ -103,7 +103,6 @@
     <Compile Include="Serialization\TextureRegion2DJsonConverter.cs" />
     <Compile Include="Shapes\Polyline.cs" />
     <Compile Include="BitmapFonts\BitmapFont.cs" />
-    <Compile Include="BitmapFonts\BitmapFontExtensions.cs" />
     <Compile Include="BitmapFonts\BitmapFontReader.cs" />
     <Compile Include="BitmapFonts\BitmapFontRegion.cs" />
     <Compile Include="Collections\Deque.cs" />
