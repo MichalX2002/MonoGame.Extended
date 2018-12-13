@@ -46,6 +46,11 @@ namespace MonoGame.Extended.BitmapFonts
             return _characterMap.TryGetValue(character, out region);
         }
 
+        public bool ContainsCharacterRegion(int character)
+        {
+            return _characterMap.ContainsKey(character);
+        }
+
         public override string ToString()
         {
             return $"BitmapFont: {Name}";
