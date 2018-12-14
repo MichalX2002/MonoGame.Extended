@@ -9,8 +9,11 @@ namespace MonoGame.Extended
             this StringBuilder src, int srcIndex,
             StringBuilder dst, char[] buffer, int count)
         {
-            if (src.Length < count)
+            if (count > src.Length)
                 throw new ArgumentOutOfRangeException(nameof(count));
+            
+            if (srcIndex + count > src.Length)
+                throw new ArgumentOutOfRangeException(nameof(srcIndex));
 
             int left = count;
             dst.EnsureCapacity(left);
@@ -18,7 +21,7 @@ namespace MonoGame.Extended
             while (left > 0)
             {
                 int c = Math.Min(buffer.Length, left);
-                src.CopyTo(src.Length - left, buffer, 0, c);
+                src.CopyTo(srcIndex + count - left, buffer, 0, c);
                 dst.Append(buffer, 0, c);
                 left -= c;
             }

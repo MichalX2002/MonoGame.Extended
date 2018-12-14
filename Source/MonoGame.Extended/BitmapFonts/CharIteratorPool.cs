@@ -13,7 +13,7 @@ namespace MonoGame.Extended.BitmapFonts
         private static Bag<StringBuilder> _largeBuilders;
 
         [ThreadStatic]
-        private static WeakReference<char[]> _charBuffer;
+        private static char[] _charBuffer;
 
         private static Bag<StringCharIterator> _stringIterators;
         private static Bag<StringBuilderCharIterator> _builderIterators;
@@ -48,6 +48,12 @@ namespace MonoGame.Extended.BitmapFonts
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
+            if(count > value.Length)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (offset + count > value.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+
             StringBuilder immutableBuilder = RentBuilder(count);
             char[] buffer = GetCharBuffer();
             value.CopyTo(offset, immutableBuilder, buffer, count);
@@ -56,11 +62,11 @@ namespace MonoGame.Extended.BitmapFonts
             {
                 if (_builderIterators.TryTake(out var result))
                 {
-                    result.Set(immutableBuilder, offset, count);
+                    result.Set(immutableBuilder, count);
                     return result;
                 }
             }
-            return new StringBuilderCharIterator(immutableBuilder, offset, count);
+            return new StringBuilderCharIterator(immutableBuilder, count);
         }
 
         public static void Return(ICharIterator iterator)
@@ -83,7 +89,7 @@ namespace MonoGame.Extended.BitmapFonts
                     if (builderIterator._isInUse)
                     {
                         ReturnBuilder(builderIterator._builder);
-                        builderIterator.Set(null, 0, 0);
+                        builderIterator.Set(null, 0);
                         _builderIterators.Add(builderIterator);
                     }
                 }
@@ -147,19 +153,9 @@ namespace MonoGame.Extended.BitmapFonts
         private static char[] GetCharBuffer()
         {
             // _charBuffer is thread-static, no locks needed here
-
-            char[] buffer;
             if (_charBuffer == null)
-            {
-                buffer = new char[CharBufferSize];
-                _charBuffer = new WeakReference<char[]>(buffer);
-            }
-            else if (!_charBuffer.TryGetTarget(out buffer))
-            {
-                buffer = new char[CharBufferSize];
-                _charBuffer.SetTarget(buffer);
-            }
-            return buffer;
+                _charBuffer = new char[CharBufferSize];
+            return _charBuffer;
         }
     }
 }

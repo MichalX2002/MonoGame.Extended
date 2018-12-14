@@ -42,10 +42,10 @@ namespace MonoGame.Extended.BitmapFonts
         public bool MoveNext()
         {
             _index++;
-            if (_index >= _iterator.Offset + _iterator.Count)
+            if (_index >= _iterator.Length)
                 return false;
 
-            int character = _iterator.GetCharacter(ref _index);
+            int character = _iterator.GetCharacter32(ref _index);
             BitmapFontRegion region = _font.GetCharacterRegion(character);
             Vector2 newPos = _position + _positionDelta;
 
@@ -78,7 +78,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         public void Reset()
         {
-            _index = _iterator.Offset - 1;
+            _index = -1;
             _positionDelta = Vector2.Zero;
             _hasPreviousGlyph = false;
         }

@@ -10,16 +10,16 @@ namespace MonoGame.Extended.BitmapFonts
     {
 		public SizeF GetGlyphs(ICharIterator iterator, ICollection<Glyph> output)
         {
-            if (iterator.Count <= 0)
+            if (iterator.Length <= 0)
                 return SizeF.Empty;
             
             float largestW = 0;
             Vector2 positionDelta = new Vector2(0, 0);
 			Glyph previousGlyph = new Glyph();
 
-            for (int i = iterator.Offset; i < iterator.Offset + iterator.Count; i++)
+            for (int i = 0; i < iterator.Length; i++)
             {
-                int character = iterator.GetCharacter(ref i);
+                int character = iterator.GetCharacter32(ref i);
                 BitmapFontRegion region = GetCharacterRegion(character);
                 Vector2 newPos = positionDelta;
 

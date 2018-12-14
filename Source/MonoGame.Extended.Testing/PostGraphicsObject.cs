@@ -160,8 +160,11 @@ namespace MonoGame.Extended.Testing
         public void RenderMainText(BitmapFont font, Color color, Vector2 scale)
         {
             CachedMainText.Clear();
-            MainTextSize = font.GetGlyphSprites(
-                CachedMainText, Root.Title, Vector2.Zero, color, 0, Vector2.Zero, scale, 0, null);
+            for (int i = 0; i < 200; i++)
+            {
+                MainTextSize = font.GetGlyphSprites(
+                    CachedMainText, Root.Title, Vector2.Zero, color, 0, Vector2.Zero, scale, 0, null);
+            }
         }
 
         public void RenderStatusText(BitmapFont font, Color color, Vector2 scale)

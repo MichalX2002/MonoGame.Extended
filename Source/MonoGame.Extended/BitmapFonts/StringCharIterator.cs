@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+using System.Diagnostics;
 
 namespace MonoGame.Extended.BitmapFonts
 {
@@ -7,32 +7,43 @@ namespace MonoGame.Extended.BitmapFonts
     {
         private string _value;
         internal bool _isInUse;
+        private int _offset;
 
-        public int Offset { get; private set; }
-        public int Count { get; private set; }
-        public int TotalCount => _value.Length;
+        public int Length { get; private set; }
 
-        public StringCharIterator(string value, int offset, int count)
+        public StringCharIterator(string value, int offset, int length)
         {
-            Set(value, offset, count);
+            Set(value, offset, length);
         }
 
-        public void Set(string value, int offset, int count)
+        public void Set(string value, int offset, int length)
         {
             _value = value;
-            Offset = offset;
-            Count = count;
+            _offset = offset;
+            Length = length;
             _isInUse = _value != null;
         }
 
-        public int GetCharacter(ref int index)
+        [DebuggerHidden]
+        private void CheckIfInUse()
         {
-            if (_isInUse == false)
+            if (!_isInUse)
                 throw new InvalidOperationException("This iterator is no longer valid.");
+        }
+    
+        public int GetCharacter32(ref int index)
+        {
+            CheckIfInUse();
+            char firstChar = _value[index + _offset];
+            return char.IsHighSurrogate(firstChar) && (++index + _offset) < Length
+                ? char.ConvertToUtf32(firstChar, _value[index + _offset])
+                : firstChar;
+        }
 
-            return char.IsHighSurrogate(_value[index]) && ++index < TotalCount
-                ? char.ConvertToUtf32(_value[index - 1], _value[index])
-                : _value[index];
+        public char GetCharacter16(int index)
+        {
+            CheckIfInUse();
+            return _value[index + _offset];
         }
 
         public void Dispose()

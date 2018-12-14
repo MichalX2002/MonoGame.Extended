@@ -4,9 +4,9 @@ namespace MonoGame.Extended.BitmapFonts
 {
     public interface ICharIterator : IDisposable
     {
-        int Offset { get; }
-        int Count { get; }
+        int Length { get; }
 
-        int GetCharacter(ref int index);
+        int GetCharacter32(ref int index);
+        char GetCharacter16(int index);
     }
 }
