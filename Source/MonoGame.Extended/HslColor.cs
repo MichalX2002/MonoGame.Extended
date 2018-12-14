@@ -272,5 +272,33 @@ namespace MonoGame.Extended
                 c1._s + t * (c2._s - c1._s),
                 c1._l + t * (c2._l - c2._l));
         }
+
+        public Color ToRgb()
+        {
+            if (_s == 0f)
+                return new Color(_l, _l, _l);
+
+            float h = _h / 360f;
+            var max = _l < 0.5f ? _l * (1 + _s) : _l + _s - _l * _s;
+            var min = 2f * _l - max;
+
+            return new Color(
+                ComponentFromHue(min, max, h + 1f / 3f),
+                ComponentFromHue(min, max, h),
+                ComponentFromHue(min, max, h - 1f / 3f));
+        }
+        
+        private static float ComponentFromHue(float m1, float m2, float h)
+        {
+            h = h - (int)h; // h % 1f
+
+            if (h * 6f < 1)
+                return m1 + (m2 - m1) * 6f * h;
+            if (h * 2 < 1)
+                return m2;
+            if (h * 3 < 2)
+                return m1 + (m2 - m1) * (2f / 3f - h) * 6f;
+            return m1;
+        }
     }
 }

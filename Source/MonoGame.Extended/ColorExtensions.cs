@@ -18,34 +18,6 @@ namespace MonoGame.Extended
             return new Color(r, g, b, a);
         }
 
-        public static Color ToRgb(this HslColor c)
-        {
-            if (c._s == 0f)
-                return new Color(c._l, c._l, c._l);
-
-            float h = c._h / 360f;
-            var max = c._l < 0.5f ? c._l * (1 + c._s) : c._l + c._s - c._l * c._s;
-            var min = 2f * c._l - max;
-
-            return new Color(
-                ComponentFromHue(min, max, h + 1f / 3f),
-                ComponentFromHue(min, max, h),
-                ComponentFromHue(min, max, h - 1f / 3f));
-        }
-
-        private static float ComponentFromHue(float m1, float m2, float h)
-        {
-            h = h - (int)h;
-
-            if (h * 6f < 1)
-                return m1 + (m2 - m1) * 6f * h;
-            if (h * 2 < 1)
-                return m2;
-            if (h * 3 < 2)
-                return m1 + (m2 - m1) * (2f / 3f - h) * 6f;
-            return m1;
-        }
-
         public static HslColor ToHsl(this Color c)
         {
             float r = c.R / 255f;
