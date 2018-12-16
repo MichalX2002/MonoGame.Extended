@@ -15,12 +15,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Sensation.fnt
+#begin LiberationSerif Regular 26px.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
-/build:Sensation.fnt
+/build:LiberationSerif Regular 26px.fnt
 
-#begin Sensation_0.png
+#begin LiberationSerif Regular 26px_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -30,5 +30,22 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sensation_0.png
+/build:LiberationSerif Regular 26px_0.png
+
+#begin LiberationSerif Regular 40px.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:LiberationSerif Regular 40px.fnt
+
+#begin LiberationSerif Regular 40px_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:LiberationSerif Regular 40px_0.png
 

@@ -48,6 +48,7 @@
     <Compile Include="BitmapFonts\GlyphSprite.cs" />
     <Compile Include="BitmapFonts\GlyphBatchedSprite.cs" />
     <Compile Include="BitmapFonts\StringBuilderCharIterator.cs" />
+    <Compile Include="BitmapFonts\StringBuilderPool.cs" />
     <Compile Include="BitmapFonts\StringCharIterator.cs" />
     <Compile Include="BitmapFonts\TextAlignMode.cs" />
     <Compile Include="BoundingRectangle.cs" />

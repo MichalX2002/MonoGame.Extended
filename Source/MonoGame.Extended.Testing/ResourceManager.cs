@@ -17,14 +17,14 @@ namespace MonoGame.Extended.Testing
             _downloader.Start();
         }
 
-        public IResponseStatus Request(string uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public IResponseStatus Request(string uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            return _downloader.Request(uri, onResponse, onError);
+            return _downloader.Request(uri, accept, onResponse, onError);
         }
 
-        public IResponseStatus Request(Uri uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public IResponseStatus Request(Uri uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            return _downloader.Request(uri, onResponse, onError);
+            return _downloader.Request(uri, accept, onResponse, onError);
         }
 
         public void Dispose()

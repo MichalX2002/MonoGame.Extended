@@ -1,16 +1,15 @@
 ﻿using MonoGame.Extended.Collections;
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace MonoGame.Extended.BitmapFonts
 {
     public static class CharIteratorPool
     {
-        public const int LargeBuilderThreshold = 360;
         public const int CharBufferSize = 1024 * 8;
-
-        private static Bag<StringBuilder> _smallBuilders;
-        private static Bag<StringBuilder> _largeBuilders;
+        public const int DefaultPoolCapacity = 512;
+        public const int MaxPoolCapacity = 1024 * 16;
 
         [ThreadStatic]
         private static char[] _charBuffer;
@@ -18,11 +17,20 @@ namespace MonoGame.Extended.BitmapFonts
         private static Bag<StringCharIterator> _stringIterators;
         private static Bag<StringBuilderCharIterator> _builderIterators;
 
+        private static int _poolCapacity = DefaultPoolCapacity;
+        public static int PoolCapacity
+        {
+            get => _poolCapacity;
+            set
+            {
+                if (value < 0 || value > MaxPoolCapacity)
+                    throw new ArgumentException(nameof(value));
+                _poolCapacity = value;
+            }
+        }
+
         static CharIteratorPool()
         {
-            _smallBuilders = new Bag<StringBuilder>();
-            _largeBuilders = new Bag<StringBuilder>();
-
             _stringIterators = new Bag<StringCharIterator>();
             _builderIterators = new Bag<StringBuilderCharIterator>();
         }
@@ -31,6 +39,7 @@ namespace MonoGame.Extended.BitmapFonts
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
+            CheckArguments(value.Length, offset, count);
 
             lock (_stringIterators)
             {
@@ -47,17 +56,12 @@ namespace MonoGame.Extended.BitmapFonts
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
+            CheckArguments(value.Length, offset, count);
 
-            if(count > value.Length)
-                throw new ArgumentOutOfRangeException(nameof(count));
-
-            if (offset + count > value.Length)
-                throw new ArgumentOutOfRangeException(nameof(offset));
-
-            StringBuilder immutableBuilder = RentBuilder(count);
+            StringBuilder immutableBuilder = StringBuilderPool.Rent(count);
             char[] buffer = GetCharBuffer();
             value.CopyTo(offset, immutableBuilder, buffer, count);
-
+            
             lock (_builderIterators)
             {
                 if (_builderIterators.TryTake(out var result))
@@ -69,85 +73,44 @@ namespace MonoGame.Extended.BitmapFonts
             return new StringBuilderCharIterator(immutableBuilder, count);
         }
 
+        [DebuggerHidden]
+        private static void CheckArguments(int length, int offset, int count)
+        {
+            if (count > length)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (offset + count > length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+        }
+
         public static void Return(ICharIterator iterator)
         {
+            if (iterator == null)
+                throw new ArgumentNullException(nameof(iterator));
+
             if (iterator is StringCharIterator stringIterator)
             {
                 lock (_stringIterators)
                 {
-                    if (stringIterator._isInUse)
-                    {
-                        stringIterator.Set(null, 0, 0);
+                    if (stringIterator._isInUse && _stringIterators.Count < _poolCapacity)
                         _stringIterators.Add(stringIterator);
-                    }
+
+                    stringIterator.Set(null, 0, 0);
                 }
             }
             else if (iterator is StringBuilderCharIterator builderIterator)
             {
                 lock (_builderIterators)
                 {
-                    if (builderIterator._isInUse)
-                    {
-                        ReturnBuilder(builderIterator._builder);
-                        builderIterator.Set(null, 0);
+                    if (builderIterator._isInUse && _builderIterators.Count < _poolCapacity)
                         _builderIterators.Add(builderIterator);
-                    }
+
+                    StringBuilderPool.Return(builderIterator._builder);
+                    builderIterator.Set(null, 0);
                 }
             }
             else
                 throw new ArgumentException("The iterator was not rented from this pool.");
-        }
-
-        public static StringBuilder RentBuilder(int expectedCapacity)
-        {
-            return expectedCapacity >= LargeBuilderThreshold ?
-                RentLargeBuilder() : RentSmallBuilder();
-        }
-
-        public static StringBuilder RentSmallBuilder()
-        {
-            lock (_smallBuilders)
-            {
-                if (_smallBuilders.TryTake(out var result))
-                {
-                    result.Clear();
-                    return result;
-                }
-            }
-            return new StringBuilder();
-        }
-
-        public static StringBuilder RentLargeBuilder()
-        {
-            lock (_largeBuilders)
-            {
-                if (_largeBuilders.TryTake(out var result))
-                {
-                    result.Clear();
-                    return result;
-                }
-            }
-            return new StringBuilder(LargeBuilderThreshold);
-        }
-
-        public static void ReturnBuilder(StringBuilder builder)
-        {
-            if (builder.Capacity >= LargeBuilderThreshold)
-            {
-                lock (_largeBuilders)
-                {
-                    if (_largeBuilders.Count < 64)
-                        _largeBuilders.Add(builder);
-                }
-            }
-            else
-            {
-                lock (_smallBuilders)
-                {
-                    if (_smallBuilders.Count < 128)
-                        _smallBuilders.Add(builder);
-                }
-            }
         }
 
         private static char[] GetCharBuffer()

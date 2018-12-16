@@ -9,9 +9,10 @@ namespace MonoGame.Extended.Testing
 {
     public class ResourceDownloader : IResourceRequester
     {
-        private ConcurrentDictionary<Uri, ResourceRequest> _responses;
-        private ConcurrentQueue<ResourceRequest> _requests;
         private AutoResetEvent _requestEvent;
+        private ConcurrentQueue<ResourceRequest> _requests;
+        private ConcurrentQueue<ResourceRequest> _priorityRequests;
+        private ConcurrentDictionary<Uri, ResourceRequest> _responses;
 
         private Thread[] _threads;
         private DownloadWorker[] _downloadWorkers;
@@ -22,9 +23,10 @@ namespace MonoGame.Extended.Testing
 
         public ResourceDownloader()
         {
-            _responses = new ConcurrentDictionary<Uri, ResourceRequest>();
-            _requests = new ConcurrentQueue<ResourceRequest>();
             _requestEvent = new AutoResetEvent(false);
+            _requests = new ConcurrentQueue<ResourceRequest>();
+            _priorityRequests = new ConcurrentQueue<ResourceRequest>();
+            _responses = new ConcurrentDictionary<Uri, ResourceRequest>();
 
             _threads = new Thread[1];
             _downloadWorkers = new DownloadWorker[_threads.Length];
@@ -54,17 +56,28 @@ namespace MonoGame.Extended.Testing
             }
         }
 
-        public IResponseStatus Request(string uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public IResponseStatus Request(string uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            return Request(new Uri(uri), onResponse, onError);
+            return Request(new Uri(uri), accept, onResponse, onError);
         }
 
-        public IResponseStatus Request(Uri uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public IResponseStatus Request(Uri uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            var request = new ResourceRequest(uri, onResponse, onError);
+            var request = new ResourceRequest(uri, accept, onResponse, onError);
             _requests.Enqueue(request);
             _requestEvent.Set();
             return request;
+        }
+
+        private bool DequeueRequest(out ResourceRequest request)
+        {
+            if (_priorityRequests.TryDequeue(out request))
+                return true;
+
+            if (_requests.TryDequeue(out request))
+                return true;
+
+            return false;
         }
 
         private void DownloadWorkerThread(object obj)
@@ -75,7 +88,7 @@ namespace MonoGame.Extended.Testing
                 if (!_requestEvent.WaitOne(10))
                     continue;
 
-                while (_requests.TryDequeue(out ResourceRequest resourceRequest))
+                while (DequeueRequest(out ResourceRequest resourceRequest))
                 {
                     var url = resourceRequest.Url;
                     _responses.TryAdd(url, resourceRequest);
@@ -83,7 +96,10 @@ namespace MonoGame.Extended.Testing
 
                     try
                     {
-                        using (var response = WebRequest.CreateHttp(url).GetResponse())
+                        var request = WebRequest.CreateHttp(url);
+                        request.Accept = resourceRequest.Accept;
+
+                        using (var response = request.GetResponse())
                             resourceRequest.HandleOnResponse(response);
                     }
                     catch (Exception exc)
@@ -101,17 +117,23 @@ namespace MonoGame.Extended.Testing
         {
             if (!IsDisposed)
             {
-                if (disposing)
-                {
-                    IsRunning = false;
+                IsRunning = false;
 
+                if (_responses != null)
+                {
                     foreach (var response in _responses)
                         response.Value.Dispose();
+                }
 
+                if (_threads != null)
+                {
                     for (int i = 0; i < _threads.Length; i++)
                         _threads[i].Join();
-                    _requestEvent.Dispose();
+                    _threads = null;
                 }
+
+                _requestEvent?.Dispose();
+                _responses = null;
 
                 IsDisposed = true;
             }
@@ -154,9 +176,10 @@ namespace MonoGame.Extended.Testing
             public long BytesDownloaded { get { ValidateLifetime(); return _stream == null ? -1 : _stream.Position; } }
 
             public Uri Url { get; }
+            public string Accept { get; }
             public Exception Fault { get; private set; }
 
-            public bool IsDisposed { get; }
+            public bool IsDisposed { get; private set; }
             public bool IsFaulted { get; private set; }
             public bool IsComplete { get; private set; }
             public bool IsCanceled { get; private set; }
@@ -164,9 +187,13 @@ namespace MonoGame.Extended.Testing
             public readonly OnResponseDelegate OnResponse;
             public readonly OnErrorDelegate OnError;
 
-            public ResourceRequest(Uri uri, OnResponseDelegate onResponse, OnErrorDelegate onError)
+            public ResourceRequest(Uri uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
             {
+                if (string.IsNullOrWhiteSpace(accept))
+                    throw new ArgumentNullException(accept);
+
                 Url = uri ?? throw new ArgumentNullException(nameof(uri));
+                Accept = accept;
                 OnResponse = onResponse ?? throw new ArgumentNullException(nameof(onResponse));
                 OnError = onError;
             }
@@ -197,15 +224,25 @@ namespace MonoGame.Extended.Testing
                     throw new ObjectDisposedException(nameof(ResourceStream));
             }
 
+            public void Cancel()
+            {
+                Dispose();
+            }
+
             public void Dispose()
             {
-                if (!IsComplete)
-                    IsCanceled = true;
-
-                if (_stream != null)
+                if (!IsDisposed)
                 {
-                    _stream.Dispose();
-                    _stream = null;
+                    if (!IsComplete)
+                        IsCanceled = true;
+
+                    if (_stream != null)
+                    {
+                        _stream.Dispose();
+                        _stream = null;
+                    }
+
+                    IsDisposed = true;
                 }
             }
         }

@@ -83,7 +83,7 @@ namespace MonoGame.Extended.Collections
         {
             EnsureCapacity(Count + 1);
             _items[Count] = element;
-            ++Count;
+            Count++;
         }
 
         public void AddRange(Bag<T> range)

@@ -10,7 +10,7 @@ namespace MonoGame.Extended.Testing
         bool IsDisposed { get; }
         bool IsRunning { get; }
 
-        IResponseStatus Request(string uri, OnResponseDelegate onResponse, OnErrorDelegate onError);
-        IResponseStatus Request(Uri uri, OnResponseDelegate onResponse, OnErrorDelegate onError);
+        IResponseStatus Request(string uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError);
+        IResponseStatus Request(Uri uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError);
     }
 }

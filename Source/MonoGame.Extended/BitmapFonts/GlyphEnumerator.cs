@@ -91,6 +91,7 @@ namespace MonoGame.Extended.BitmapFonts
                 _font = null;
                 _iterator.Dispose();
                 _iterator = null;
+
                 GlyphEnumeratorPool.Return(this);
             }
         }

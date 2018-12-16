@@ -62,12 +62,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumExtensions.cs" />
     <Compile Include="HeaderCollection.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="IResourceRequester.cs" />
     <Compile Include="IResponseStatus.cs" />
     <Compile Include="ListArray.cs" />
-    <Compile Include="Post.cs" />
+    <Compile Include="MouseButton.cs" />
     <Compile Include="PostGraphicsObject.cs" />
+    <Compile Include="GameFrame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedditService.cs" />

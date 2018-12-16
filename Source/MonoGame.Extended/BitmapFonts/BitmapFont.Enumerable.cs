@@ -75,13 +75,12 @@ namespace MonoGame.Extended.BitmapFonts
             return rectangle;
         }
 
-        public IEnumerator<Glyph> GetGlyphs(string text, int offset, int count, Vector2 position = default)
+        public IEnumerator<Glyph> GetGlyphs(ICharIterator text, Vector2 position = default)
         {
-            var iterator = CharIteratorPool.Rent(text, offset, count);
-            return GlyphEnumeratorPool.Rent(this, iterator, position);
+            return GlyphEnumeratorPool.Rent(this, text, position);
         }
 
-        public IEnumerator<Glyph> GetGlyphs(StringBuilder text, int offset, int count, Vector2 position = default)
+        public IEnumerator<Glyph> GetGlyphs(string text, int offset, int count, Vector2 position = default)
         {
             var iterator = CharIteratorPool.Rent(text, offset, count);
             return GlyphEnumeratorPool.Rent(this, iterator, position);
@@ -92,9 +91,15 @@ namespace MonoGame.Extended.BitmapFonts
             return GetGlyphs(text, 0, text.Length, position);
         }
 
+        public IEnumerator<Glyph> GetGlyphs(StringBuilder text, int offset, int count, Vector2 position = default)
+        {
+            var iterator = CharIteratorPool.Rent(text, offset, count);
+            return GlyphEnumeratorPool.Rent(this, iterator, position);
+        }
+
         public IEnumerator<Glyph> GetGlyphs(StringBuilder text, Vector2 position = default)
         {
             return GetGlyphs(text, 0, text.Length, position);
-        }                   
+        }
     }
 }

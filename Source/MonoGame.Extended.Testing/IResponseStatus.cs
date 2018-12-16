@@ -12,5 +12,7 @@ namespace MonoGame.Extended.Testing
         bool IsCanceled { get; }
         bool IsFaulted { get; }
         Exception Fault { get; }
+
+        void Cancel();
     }
 }

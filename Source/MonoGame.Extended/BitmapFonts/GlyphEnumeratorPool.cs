@@ -7,6 +7,8 @@ namespace MonoGame.Extended.BitmapFonts
 {
     public static class GlyphEnumeratorPool
     {
+        public const int DefaultCapacity = 256;
+
         private static Bag<GlyphEnumerator> _enumerators;
 
         static GlyphEnumeratorPool()
@@ -34,7 +36,7 @@ namespace MonoGame.Extended.BitmapFonts
                 lock (_enumerators)
                 {
                     glyphEnumerator.Dispose();
-                    if (_enumerators.Count < 128)
+                    if (_enumerators.Count < DefaultCapacity)
                         _enumerators.Add(glyphEnumerator);
                 }
             }

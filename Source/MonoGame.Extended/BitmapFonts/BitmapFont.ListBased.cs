@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using System;
 using Microsoft.Xna.Framework;
-using MonoGame.Extended.Collections;
 using System.Collections.Generic;
 
 namespace MonoGame.Extended.BitmapFonts

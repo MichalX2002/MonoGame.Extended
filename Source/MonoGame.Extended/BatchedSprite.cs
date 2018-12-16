@@ -17,7 +17,7 @@ namespace MonoGame.Extended
             {
                 if (_texture == null)
                 {
-                    _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+                    _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Rgba32);
                     _texture.SetData(new[] { Color.White });
                 }
                 return _texture;

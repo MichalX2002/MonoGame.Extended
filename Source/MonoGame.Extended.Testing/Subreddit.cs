@@ -64,7 +64,7 @@ namespace MonoGame.Extended.Testing
                 _urlBuilder.Clear();
 
                 var jsonReader = Service.GetJsonReader(url);
-                var container = _serializer.Deserialize<JsonPostCollection>(jsonReader);
+                var container = _serializer.Deserialize<PostCollection>(jsonReader);
                 after = container.Data.After;
 
                 var children = container.Data.Children;
@@ -77,7 +77,10 @@ namespace MonoGame.Extended.Testing
                         yield break;
 
                     usedLimit--;
-                    yield return new Post(j + count + 1, children[j].Data);
+
+                    var post = children[j];
+                    post.PostNumber = j + count + 1;
+                    yield return post;
                 }
             }
         }
@@ -90,7 +93,7 @@ namespace MonoGame.Extended.Testing
             try
             {
                 var jsonReader = Service.GetJsonReader($"r/{Name}/about/.json");
-                var container = _serializer.Deserialize<JsonAbout>(jsonReader);
+                var container = _serializer.Deserialize<About>(jsonReader);
 
                 if (container == null)
                     _aboutHasErrored = true;
