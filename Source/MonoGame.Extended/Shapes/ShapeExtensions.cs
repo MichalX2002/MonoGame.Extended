@@ -22,8 +22,8 @@ namespace MonoGame.Extended
         /// <param name="polygon">The polygon to draw</param>
         /// <param name="color">The color to use</param>
         /// <param name="thickness">The thickness of the lines</param>
-        public static void DrawPolygon(this SpriteBatch spriteBatch, Vector2 position, Polygon polygon, Color color,
-            float thickness = 1f)
+        public static void DrawPolygon(
+            this SpriteBatch spriteBatch, Vector2 position, Polygon polygon, Color color, float thickness = 1f)
         {
             DrawPolygon(spriteBatch, position, polygon.Vertices, color, thickness);
         }
@@ -37,8 +37,8 @@ namespace MonoGame.Extended
         /// <param name="points">The points to connect with lines</param>
         /// <param name="color">The color to use</param>
         /// <param name="thickness">The thickness of the lines</param>
-        public static void DrawPolygon(this SpriteBatch spriteBatch, Vector2 offset, Vector2[] points, Color color,
-            float thickness = 1f)
+        public static void DrawPolygon(
+            this SpriteBatch spriteBatch, Vector2 offset, Vector2[] points, Color color, float thickness = 1f)
         {
             if (points.Length == 0)
                 return;
@@ -71,7 +71,8 @@ namespace MonoGame.Extended
         /// <param name="spriteBatch">The destination drawing surface</param>
         /// <param name="rectangle">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void DrawFilledRectangle(this SpriteBatch spriteBatch, RectangleF rectangle, Color color)
+        public static void DrawFilledRectangle(
+            this SpriteBatch spriteBatch, RectangleF rectangle, Color color)
         {
             DrawFilledRectangle(spriteBatch, rectangle.Position, rectangle.Size, color);
         }
@@ -83,7 +84,8 @@ namespace MonoGame.Extended
         /// <param name="location">Where to draw</param>
         /// <param name="size">The size of the rectangle</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void DrawFilledRectangle(this SpriteBatch spriteBatch, Vector2 location, SizeF size, Color color)
+        public static void DrawFilledRectangle(
+            this SpriteBatch spriteBatch, Vector2 location, SizeF size, Color color)
         {
             var texture = BatchedSpriteExtensions.GetOnePixelTexture(spriteBatch);
             spriteBatch.Draw(texture, location, null, color, 0, Vector2.Zero, size, SpriteEffects.None, 0);
@@ -98,8 +100,8 @@ namespace MonoGame.Extended
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void DrawFilledRectangle(this SpriteBatch spriteBatch,
-            float x, float y, float width, float height, Color color)
+        public static void DrawFilledRectangle(
+            this SpriteBatch spriteBatch, float x, float y, float width, float height, Color color)
         {
             DrawFilledRectangle(spriteBatch, new Vector2(x, y), new SizeF(width, height), color);
         }
@@ -111,8 +113,8 @@ namespace MonoGame.Extended
         /// <param name="rectangle">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the lines</param>
-        public static void DrawRectangle(this SpriteBatch spriteBatch, RectangleF rectangle, Color color,
-            float thickness = 1f)
+        public static void DrawRectangle(
+            this SpriteBatch spriteBatch, RectangleF rectangle, Color color, float thickness = 1f)
         {
             var texture = BatchedSpriteExtensions.GetOnePixelTexture(spriteBatch);
             var topLeft = new Vector2(rectangle.X, rectangle.Y);
@@ -135,8 +137,8 @@ namespace MonoGame.Extended
         /// <param name="size">The size of the rectangle</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawRectangle(this SpriteBatch spriteBatch, Vector2 location, SizeF size, Color color,
-            float thickness = 1f)
+        public static void DrawRectangle(
+            this SpriteBatch spriteBatch, Vector2 location, SizeF size, Color color, float thickness = 1f)
         {
             DrawRectangle(spriteBatch, new RectangleF(location.X, location.Y, size.Width, size.Height), color, thickness);
         }
@@ -145,7 +147,8 @@ namespace MonoGame.Extended
         /// <summary>
         /// Draws a rectangle outline.
         /// </summary>
-        public static void DrawRectangle(this SpriteBatch spriteBatch, float x, float y, float width, float height, Color color, float thickness = 1f)
+        public static void DrawRectangle(
+            this SpriteBatch spriteBatch, float x, float y, float width, float height, Color color, float thickness = 1f)
         {
             DrawRectangle(spriteBatch, new RectangleF(x, y, width, height), color, thickness);
         }
@@ -160,8 +163,8 @@ namespace MonoGame.Extended
         /// <param name="y2">The Y coord of the second point</param>
         /// <param name="color">The color to use</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawLine(this SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Color color,
-            float thickness = 1f)
+        public static void DrawLine(
+            this SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Color color, float thickness = 1f)
         {
             DrawLine(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), color, thickness);
         }
@@ -174,8 +177,8 @@ namespace MonoGame.Extended
         /// <param name="point2">The second point</param>
         /// <param name="color">The color to use</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawLine(this SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Color color,
-            float thickness = 1f)
+        public static void DrawLine(
+            this SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Color color, float thickness = 1f)
         {
             // calculate the distance between the two vectors
             var distance = Vector2.Distance(point1, point2);
@@ -195,8 +198,8 @@ namespace MonoGame.Extended
         /// <param name="angle">The angle of this line from the starting point</param>
         /// <param name="color">The color to use</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawLine(this SpriteBatch spriteBatch, Vector2 point, float length, float angle, Color color,
-            float thickness = 1f)
+        public static void DrawLine(
+            this SpriteBatch spriteBatch, Vector2 point, float length, float angle, Color color, float thickness = 1f)
         {
             var texture = BatchedSpriteExtensions.GetOnePixelTexture(spriteBatch);
             var origin = new Vector2(0f, 0.5f);
@@ -224,22 +227,22 @@ namespace MonoGame.Extended
         }
 
         public static void DrawCircle(
-            Vector2 center, float radius, Color color, float thickness, Vector2[] points, BatchedSprite[] output)
+            Vector2 center, float radius, Color color, float thickness, Vector2[] sides, BatchedSprite[] output)
         {
-            DrawCircle(Vector2.One, _rectOne, center, radius, color, thickness, points, output);
+            DrawCircle(Vector2.One, _rectOne, center, radius, color, thickness, sides, output);
         }
 
         public static void DrawCircle(
-            TextureRegion2D region, Vector2 center, float radius, Color color, float thickness, Vector2[] points, BatchedSprite[] output)
+            TextureRegion2D region, Vector2 center, float radius, Color color, float thickness, Vector2[] sides, BatchedSprite[] output)
         {
-            DrawCircle(region.Texel, region.Bounds, center, radius, color, thickness, points, output);
+            DrawCircle(region.Texel, region.Bounds, center, radius, color, thickness, sides, output);
         }
 
         public static void DrawCircle(
             Vector2 textureTexel, Rectangle sourceRect, Vector2 center,
-            float radius, Color color, float thickness, Vector2[] points, BatchedSprite[] output)
+            float radius, Color color, float thickness, Vector2[] sides, BatchedSprite[] output)
         {
-            if (output.Length < points.Length)
+            if (output.Length < sides.Length)
                 throw new ArgumentException("Array is too small.", nameof(output));
 
             void GetPolygonEdge(Vector2 point1, Vector2 point2, int index)
@@ -254,13 +257,13 @@ namespace MonoGame.Extended
                 sprite.SetColor(ref color);
             }
 
-            CreateCircle(radius, points);
+            CreateCircle(radius, sides);
 
-            int len = points.Length - 1;
+            int len = sides.Length - 1;
             for (int i = 0; i < len; i++)
-                GetPolygonEdge(points[i] + center, points[i + 1] + center, i);
+                GetPolygonEdge(sides[i] + center, sides[i + 1] + center, i);
 
-            GetPolygonEdge(points[points.Length - 1] + center, points[0] + center, len);
+            GetPolygonEdge(sides[sides.Length - 1] + center, sides[0] + center, len);
         }
 
         /// <summary>
@@ -271,8 +274,8 @@ namespace MonoGame.Extended
         /// <param name="sides">The number of sides to generate</param>
         /// <param name="color">The color of the circle</param>
         /// <param name="thickness">The thickness of the lines used</param>
-        public static void DrawCircle(this SpriteBatch spriteBatch, CircleF circle, int sides, Color color,
-            float thickness = 1f)
+        public static void DrawCircle(
+            this SpriteBatch spriteBatch, CircleF circle, int sides, Color color, float thickness = 1f)
         {
             DrawCircle(spriteBatch, circle.Center, circle.Radius, sides, color, thickness);
         }
@@ -305,19 +308,19 @@ namespace MonoGame.Extended
         public static void DrawCircle(
             this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color, float thickness = 1f)
         {
-            var points = new Vector2[sides];
-            CreateCircle(radius, points);
-            DrawPolygon(spriteBatch, center, points, color, thickness);
+            var tmpSides = new Vector2[sides];
+            CreateCircle(radius, tmpSides);
+            DrawPolygon(spriteBatch, center, tmpSides, color, thickness);
         }
 
-        public static void CreateCircle(double radius, Vector2[] points)
+        public static void CreateCircle(double radius, Vector2[] sides)
         {
-            var step = MathHelper.TwoPi / points.Length;
+            var step = MathHelper.TwoPi / sides.Length;
             var theta = -MathHelper.PiOver2;
 
-            for (var i = 0; i < points.Length; i++)
+            for (var i = 0; i < sides.Length; i++)
             {
-                points[i] = new Vector2((float)(radius * Math.Cos(theta)), (float)(radius * Math.Sin(theta)));
+                sides[i] = new Vector2((float)(radius * Math.Cos(theta)), (float)(radius * Math.Sin(theta)));
                 theta += step;
             }
         }
