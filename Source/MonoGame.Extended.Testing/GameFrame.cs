@@ -246,26 +246,28 @@ namespace MonoGame.Extended.Testing
             float maxCharsInLine = GetMaxCharsInView(_font40, GraphicsDevice.Viewport.Width * 1.1f);
             PostGraphicsObject.DivideTextIntoLines(post.Data.Title, builder, (int)maxCharsInLine);
             
-            _batch.Begin(samplerState: SamplerState.PointClamp);
-
+            _batch.Begin(samplerState: SamplerState.LinearClamp);
             _batch.DrawString(_font40, builder, new Vector2(8, 4), Color.White);
 
-            if(post.PreviewResponse != null && post.PreviewResponse.ContentLength > 0)
+            if (post.PreviewResponse != null && post.PreviewResponse.ContentLength > 0)
             {
                 float p = (float)(post.PreviewResponse.BytesDownloaded / (decimal)post.PreviewResponse.ContentLength);
                 if(p >= 0 && p <= 1)
                     DrawCircle(new Vector2(GraphicsDevice.Viewport.Width / 2f, GraphicsDevice.Viewport.Height / 2f), 60, p);
             }
+            _batch.End();
 
             post.UploadPostTexture();
             var postTex = post.PostTexture;
             if (postTex != null)
             {
-                SizeF size = _font40.MeasureString(builder);
-                _batch.Draw(postTex, new Vector2(5, size.Height + 12), Color.White);
-            }
 
-            _batch.End();
+                SizeF size = _font40.MeasureString(builder);
+
+                _batch.Begin(samplerState: SamplerState.PointClamp);
+                _batch.Draw(postTex, new Vector2(5, size.Height + 12), Color.White);
+                _batch.End();
+            }
             
             StringBuilderPool.Return(builder);
         }
@@ -387,7 +389,7 @@ namespace MonoGame.Extended.Testing
             if (_firstVisibleGraphic < 0 || _lastVisibleGraphic < 0)
                 return;
 
-            _batch.Begin(transformMatrix: graphicsMatrix);
+            _batch.Begin(SpriteSortMode.BackToFront, transformMatrix: graphicsMatrix);
             int last = Math.Min(postGraphics.Count, _lastVisibleGraphic + 1);
             for (int i = _firstVisibleGraphic; i < last; i++)
             {
@@ -396,7 +398,10 @@ namespace MonoGame.Extended.Testing
                     continue;
 
                 if (graphic.ThumbnailTexture != null)
-                    _batch.Draw(graphic.ThumbnailTexture, graphic.ThumbnailDst.ToRectangle(), Color.White);
+                {
+                    Rectangle dst = graphic.ThumbnailDst.ToRectangle();
+                    _batch.Draw(graphic.ThumbnailTexture, dst, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.1f);
+                } 
                 _batch.DrawRectangle(graphic.Boundaries, HoveredPost == graphic ? Color.Green : Color.Red, 1);
             }
             _batch.End();
