@@ -8,10 +8,10 @@ namespace MonoGame.Extended.BitmapFonts
     {
         public const int DefaultSmallPoolCapacity = 256;
         public const int MaxSmallPoolCapacity = 1024 * 16;
+        public const int LargeBuilderThreshold = 360;
 
         public const int DefaultLargePoolCapacity = 64;
         public const int MaxLargePoolCapacity = 1024 * 4;
-        public const int LargeBuilderThreshold = 360;
         public const int MaxLargeBuilderSize = 1024 * 16;
         
         private static int _smallPoolCapacity = DefaultSmallPoolCapacity;
@@ -49,11 +49,15 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static StringBuilder Rent(int expectedLength)
         {
-            return expectedLength >= LargeBuilderThreshold ? RentLarge() : RentSmall();
+            return expectedLength >= LargeBuilderThreshold ?
+                RentLarge(expectedLength) : RentSmall(expectedLength);
         }
 
-        public static StringBuilder RentSmall()
+        public static StringBuilder RentSmall(int expectedLength)
         {
+            if (expectedLength >= LargeBuilderThreshold)
+                return RentLarge(expectedLength);
+
             lock (_smallBuilders)
             {
                 if (_smallBuilders.TryTake(out var result))
@@ -62,11 +66,14 @@ namespace MonoGame.Extended.BitmapFonts
                     return result;
                 }
             }
-            return new StringBuilder();
+            return new StringBuilder(Math.Max(16, expectedLength));
         }
 
-        public static StringBuilder RentLarge()
+        public static StringBuilder RentLarge(int expectedLength)
         {
+            if (expectedLength < LargeBuilderThreshold)
+                return RentSmall(expectedLength);
+
             lock (_largeBuilders)
             {
                 if (_largeBuilders.TryTake(out var result))
@@ -75,28 +82,25 @@ namespace MonoGame.Extended.BitmapFonts
                     return result;
                 }
             }
-            return new StringBuilder(LargeBuilderThreshold);
+            return new StringBuilder(Math.Max(LargeBuilderThreshold, expectedLength));
         }
 
         public static void Return(StringBuilder builder)
         {
-            if (builder.Capacity >= LargeBuilderThreshold)
-            {
-                if (builder.Capacity > MaxLargeBuilderSize)
-                    return;
-
-                lock (_largeBuilders)
-                {
-                    if (_largeBuilders.Count < _largePoolCapacity)
-                        _largeBuilders.Add(builder);
-                }
-            }
-            else
+            if (builder.Capacity < LargeBuilderThreshold)
             {
                 lock (_smallBuilders)
                 {
                     if (_smallBuilders.Count < _smallPoolCapacity)
                         _smallBuilders.Add(builder);
+                }
+            }
+            else if (builder.Capacity < MaxLargeBuilderSize)
+            {
+                lock (_largeBuilders)
+                {
+                    if (_largeBuilders.Count < _largePoolCapacity)
+                        _largeBuilders.Add(builder);
                 }
             }
         }

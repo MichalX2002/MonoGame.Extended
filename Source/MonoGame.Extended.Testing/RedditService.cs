@@ -11,11 +11,8 @@ namespace MonoGame.Extended.Testing
 {
     public class RedditService : IDisposable
     {
-        private WebClient _client;
-
         public RedditService()
         {
-            _client = new WebClient();
         }
 
         public async Task<IEnumerable<string>> GetSubredditsAsync()
@@ -60,10 +57,18 @@ namespace MonoGame.Extended.Testing
         }
         */
 
-        public async Task<JObject> GetObjectAsync(string relativeUrl)
+        private HttpWebRequest CreateRequest(string relativeUrl)
         {
             string uri = "https://www.reddit.com/" + relativeUrl;
-            using (var stream = await _client.OpenReadTaskAsync(uri))
+            var request = WebRequest.CreateHttp(uri);
+            return request;
+        }
+
+        public async Task<JObject> GetObjectAsync(string relativeUrl)
+        {
+            var request = CreateRequest(relativeUrl);
+            using (var response = await request.GetResponseAsync())
+            using (var stream = response.GetResponseStream())
             using (var streamReader = new StreamReader(stream))
             {
                 var jsonReader = new JsonTextReader(streamReader);
@@ -79,15 +84,19 @@ namespace MonoGame.Extended.Testing
 
         public JsonTextReader GetJsonReader(string relativeUrl)
         {
-            string uri = "https://www.reddit.com/" + relativeUrl;
-            var stream = _client.OpenRead(uri);
+            var request = CreateRequest(relativeUrl);
+            var response = request.GetResponse();
+            if (!response.ContentType.ToLower().Contains("json"))
+                throw new InvalidDataException();
+
+            var stream = response.GetResponseStream();
             var streamReader = new StreamReader(stream);
             return new JsonTextReader(streamReader);
         }
 
         public void Dispose()
         {
-            _client.Dispose();
+            // dispose all current requests
         }
     }
 }

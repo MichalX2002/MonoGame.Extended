@@ -50,6 +50,7 @@ namespace MonoGame.Extended.Testing
         public bool IsPostImageRequested { get; private set; }
         public bool IsPostImageLoaded { get; private set; }
         public bool IsPostImageFaulted { get; private set; }
+        public IResponseStatus PreviewResponse { get; private set; }
 
         public Texture2D ThumbnailTexture
         {
@@ -98,7 +99,7 @@ namespace MonoGame.Extended.Testing
                 !IsThumbnailLoaded)
             {
                 IsThumbnailRequested = true;
-                Requester.Request(Data.Thumbnail.Url, HttpAccept_Image, OnThumbnailResponse, null);
+                Requester.Request(Data.Thumbnail.Url, HttpAccept_Image, false, OnThumbnailResponse, null);
             }
         }
 
@@ -114,7 +115,8 @@ namespace MonoGame.Extended.Testing
                 !IsPostImageLoaded)
             {
                 IsPostImageRequested = true;
-                Requester.Request(Data.Preview.Images[0].Source.Url, HttpAccept_Image, OnPostImageResponse, (u, x) => Console.WriteLine(u + ": " + x));
+                PreviewResponse = Requester.Request(
+                    Data.Preview.Images[0].Source.Url, HttpAccept_Image, true, OnPostImageResponse, (u, x) => Console.WriteLine(u + ": " + x));
             }
         }
 
@@ -135,9 +137,6 @@ namespace MonoGame.Extended.Testing
                 _thumbnailImage != null)
             {
                 IntPtr ptr = _thumbnailImage.GetPointer();
-
-                Console.WriteLine(_thumbnailImage.Info);
-                
                 if (ptr != IntPtr.Zero && _thumbnailImage.Info.IsValid())
                 {
                     int channels = (int)_thumbnailImage.PixelFormat;
@@ -164,9 +163,6 @@ namespace MonoGame.Extended.Testing
                 _postImage != null)
             {
                 IntPtr ptr = _postImage.GetPointer();
-
-                Console.WriteLine(_postImage.Info);
-
                 if (ptr != IntPtr.Zero && _postImage.Info.IsValid())
                 {
                     int channels = (int)_postImage.PixelFormat;

@@ -50,7 +50,7 @@ namespace MonoGame.Extended.Testing
             public bool HasThumbnail => Thumbnail != null;
 
             public PreviewCollection Preview { get; }
-            public bool HasPreview => Preview != null && Preview.Enabled;
+            public bool HasPreview => Preview != null; // && Preview.Enabled;
 
             [JsonConstructor]
             internal PostData(

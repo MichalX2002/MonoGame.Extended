@@ -4,32 +4,49 @@ namespace MonoGame.Extended.Testing
 {
     public class ResourceManager : IResourceRequester
     {
-        private ResourceDownloader _downloader;
-        
-        public bool IsDisposed => _downloader.IsDisposed;
-        public bool IsRunning => _downloader.IsRunning;
+        public bool IsDisposed => Downloader.IsDisposed;
+        public bool IsRunning => Downloader.IsRunning;
 
-        public ResourceDownloader Downloader => _downloader;
+        public ResourceDownloader Downloader { get; }
+        public ResourceCache Cache { get; }
 
         public ResourceManager()
         {
-            _downloader = new ResourceDownloader();
-            _downloader.Start();
+            Downloader = new ResourceDownloader();
+            Cache = new ResourceCache();
         }
 
-        public IResponseStatus Request(string uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public void Start()
         {
-            return _downloader.Request(uri, accept, onResponse, onError);
+            Downloader.Start();
+            Cache.Start();
         }
 
-        public IResponseStatus Request(Uri uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public IResponseStatus Request(string uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            return _downloader.Request(uri, accept, onResponse, onError);
+            return Downloader.Request(uri, accept, prioritized, onResponse, onError);
+        }
+
+        public IResponseStatus Request(Uri uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        {
+            return Downloader.Request(uri, accept, prioritized, onResponse, onError);
         }
 
         public void Dispose()
         {
-            _downloader.Dispose();
+            Downloader.Dispose();
+            Cache.Dispose();
+        }
+
+        public class Worker
+        {
+            public int ID { get; }
+            public IResponseStatus CurrentRequest { get; internal set; }
+
+            internal Worker(int id)
+            {
+                ID = id;
+            }
         }
     }
 }

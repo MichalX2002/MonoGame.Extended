@@ -79,7 +79,7 @@ namespace MonoGame.Extended.Testing
             _font40 = Content.Load<BitmapFont>("LiberationSerif Regular 40px");
 
             Task.Run(StartLoadingSubreddit);
-            
+
             base.LoadContent();
         }
 
@@ -125,6 +125,7 @@ namespace MonoGame.Extended.Testing
                 var subreddit = await reddit.GetSubredditAsync("Terraria");
 
                 _resourceManager = new ResourceManager();
+                _resourceManager.Start();
 
                 _postsLeftToLoad = 20;
                 var postEnumerator = subreddit.EnumeratePosts(10000, 25).GetEnumerator();
@@ -154,7 +155,7 @@ namespace MonoGame.Extended.Testing
             }
             catch(Exception exc)
             {
-                Console.WriteLine("Loading subreddit failed: " + exc.Message);
+                Console.WriteLine("Loading subreddit failed: " + exc);
             }
         }
 
@@ -194,10 +195,21 @@ namespace MonoGame.Extended.Testing
             base.Update(time);
         }
 
+        private BatchedSprite[] _circleBuffer = new BatchedSprite[200];
+
+        private void DrawCircle(Vector2 center, float radius, float progress)
+        {
+            ShapeExtensions.DrawCircle(center, radius, _circleBuffer.Length, Color.White, 8, _circleBuffer);
+
+            int iters = (int)(_circleBuffer.Length * progress);
+            for (int i = 0; i < iters; i++)
+                _batch.DrawRef(BatchedSpriteExtensions.GetOnePixelTexture(_batch), ref _circleBuffer[i]);
+        }
+
         protected override void Draw(GameTime time)
         {
             GraphicsDevice.Clear(_clearColor);
-
+            
             _watch.Restart();
 
             if (OpenPost != null)
@@ -238,12 +250,19 @@ namespace MonoGame.Extended.Testing
 
             _batch.DrawString(_font40, builder, new Vector2(8, 4), Color.White);
 
-            post.UploadPostTexture();
+            if(post.PreviewResponse != null && post.PreviewResponse.ContentLength > 0)
+            {
+                float p = (float)(post.PreviewResponse.BytesDownloaded / (decimal)post.PreviewResponse.ContentLength);
+                if(p >= 0 && p <= 1)
+                    DrawCircle(new Vector2(GraphicsDevice.Viewport.Width / 2f, GraphicsDevice.Viewport.Height / 2f), 60, p);
+            }
 
+            post.UploadPostTexture();
             var postTex = post.PostTexture;
             if (postTex != null)
             {
-                _batch.Draw(postTex, new Vector2(5, 50), Color.White);
+                SizeF size = _font40.MeasureString(builder);
+                _batch.Draw(postTex, new Vector2(5, size.Height + 12), Color.White);
             }
 
             _batch.End();
