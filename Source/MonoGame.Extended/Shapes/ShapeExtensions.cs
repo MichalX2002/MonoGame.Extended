@@ -224,23 +224,23 @@ namespace MonoGame.Extended
         }
 
         public static void DrawCircle(
-            Vector2 center, float radius, int sides, Color color, float thickness, BatchedSprite[] output)
+            Vector2 center, float radius, Color color, float thickness, Vector2[] points, BatchedSprite[] output)
         {
-            DrawCircle(Vector2.One, _rectOne, center, radius, sides, color, thickness, output);
+            DrawCircle(Vector2.One, _rectOne, center, radius, color, thickness, points, output);
         }
 
         public static void DrawCircle(
-            TextureRegion2D region, Vector2 center, float radius, int sides, Color color, float thickness, BatchedSprite[] output)
+            TextureRegion2D region, Vector2 center, float radius, Color color, float thickness, Vector2[] points, BatchedSprite[] output)
         {
-            DrawCircle(region.Texel, region.Bounds, center, radius, sides, color, thickness, output);
+            DrawCircle(region.Texel, region.Bounds, center, radius, color, thickness, points, output);
         }
 
         public static void DrawCircle(
             Vector2 textureTexel, Rectangle sourceRect, Vector2 center,
-            float radius, int sides, Color color, float thickness, BatchedSprite[] output)
+            float radius, Color color, float thickness, Vector2[] points, BatchedSprite[] output)
         {
-            if (output.Length < sides)
-                throw new ArgumentException("Array was too small.", nameof(output));
+            if (output.Length < points.Length)
+                throw new ArgumentException("Array is too small.", nameof(output));
 
             void GetPolygonEdge(Vector2 point1, Vector2 point2, int index)
             {
@@ -254,7 +254,7 @@ namespace MonoGame.Extended
                 sprite.SetColor(ref color);
             }
 
-            Vector2[] points = CreateCircle(radius, sides);
+            CreateCircle(radius, points);
 
             int len = points.Length - 1;
             for (int i = 0; i < len; i++)
@@ -278,22 +278,7 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
-        ///     Draw a circle
-        /// </summary>
-        /// <param name="spriteBatch">The destination drawing surface</param>
-        /// <param name="center">The center of the circle</param>
-        /// <param name="radius">The radius of the circle</param>
-        /// <param name="sides">The number of sides to generate</param>
-        /// <param name="color">The color of the circle</param>
-        /// <param name="thickness">The thickness of the lines used</param>
-        public static void DrawCircle(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color,
-            float thickness = 1f)
-        {
-            DrawPolygon(spriteBatch, center, CreateCircle(radius, sides), color, thickness);
-        }
-
-        /// <summary>
-        ///     Draw a circle
+        /// Draw a circle.
         /// </summary>
         /// <param name="spriteBatch">The destination drawing surface</param>
         /// <param name="x">The center X of the circle</param>
@@ -302,25 +287,39 @@ namespace MonoGame.Extended
         /// <param name="sides">The number of sides to generate</param>
         /// <param name="color">The color of the circle</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawCircle(this SpriteBatch spriteBatch, float x, float y, float radius, int sides,
-            Color color, float thickness = 1f)
+        public static void DrawCircle(
+            this SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color, float thickness = 1f)
         {
-            DrawPolygon(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, thickness);
+            DrawCircle(spriteBatch, new Vector2(x, y), radius, sides, color, thickness);
         }
 
-        public static Vector2[] CreateCircle(double radius, int sides)
+        /// <summary>
+        /// Draw a circle.
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="center">The center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        /// <param name="sides">The number of sides to generate</param>
+        /// <param name="color">The color of the circle</param>
+        /// <param name="thickness">The thickness of the lines used</param>
+        public static void DrawCircle(
+            this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color, float thickness = 1f)
         {
             var points = new Vector2[sides];
-            var step = MathHelper.TwoPi / sides;
+            CreateCircle(radius, points);
+            DrawPolygon(spriteBatch, center, points, color, thickness);
+        }
+
+        public static void CreateCircle(double radius, Vector2[] points)
+        {
+            var step = MathHelper.TwoPi / points.Length;
             var theta = -MathHelper.PiOver2;
 
-            for (var i = 0; i < sides; i++)
+            for (var i = 0; i < points.Length; i++)
             {
                 points[i] = new Vector2((float)(radius * Math.Cos(theta)), (float)(radius * Math.Sin(theta)));
                 theta += step;
             }
-
-            return points;
         }
     }
 }

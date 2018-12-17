@@ -28,7 +28,7 @@ namespace MonoGame.Extended.Testing
             _priorityRequests = new ConcurrentQueue<ResourceRequest>();
             _responses = new ConcurrentDictionary<Uri, ResourceRequest>();
 
-            _threads = new Thread[1];
+            _threads = new Thread[2];
             _downloadWorkers = new Worker[_threads.Length];
             Threads = new ReadOnlyCollection<Worker>(_downloadWorkers);
             for (int i = 0; i < _threads.Length; i++)

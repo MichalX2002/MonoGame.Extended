@@ -29,8 +29,9 @@ namespace MonoGame.Extended.Testing
         private Stopwatch _watch = new Stopwatch();
         private Random _rng = new Random();
         
-        private Matrix graphicsMatrix;
-        private List<PostGraphicsObject> postGraphics = new List<PostGraphicsObject>();
+        private Matrix _graphicsMatrix;
+        private List<PostGraphicsObject> _postGraphics = new List<PostGraphicsObject>();
+        private CircularProgressBar _postLoadingBar;
 
         private Vector2 offset = new Vector2(10, 10);
         private Vector2 scrollOffset;
@@ -65,10 +66,10 @@ namespace MonoGame.Extended.Testing
 
         private void Window_ClientSizeChanged(object s, EventArgs e)
         {
-            lock (postGraphics)
+            lock (_postGraphics)
             {
-                for (int i = 0; i < postGraphics.Count; i++)
-                    postGraphics[i].IsTextDirty = true;
+                for (int i = 0; i < _postGraphics.Count; i++)
+                    _postGraphics[i].IsTextDirty = true;
             }
         }
 
@@ -77,6 +78,8 @@ namespace MonoGame.Extended.Testing
             _batch = new SpriteBatch(GraphicsDevice);
             _font26 = Content.Load<BitmapFont>("LiberationSerif Regular 26px");
             _font40 = Content.Load<BitmapFont>("LiberationSerif Regular 40px");
+
+            _postLoadingBar = new CircularProgressBar(150);
 
             Task.Run(StartLoadingSubreddit);
 
@@ -143,8 +146,8 @@ namespace MonoGame.Extended.Testing
                         //if (!post.HasThumbnail) continue;
 
                         var graphic = new PostGraphicsObject(post, GraphicsDevice, _resourceManager);
-                        lock (postGraphics)
-                            postGraphics.Add(graphic);
+                        lock (_postGraphics)
+                            _postGraphics.Add(graphic);
 
                         DoObjectLayout();
                     }
@@ -187,23 +190,12 @@ namespace MonoGame.Extended.Testing
                     ProcessMouse(_firstVisibleGraphic, _lastVisibleGraphic);
                     LoadThumbnails(_firstVisibleGraphic, _lastVisibleGraphic, 6);
 
-                    if (_postsLeftToLoad == 0 && _lastVisibleGraphic + 15 > postGraphics.Count)
+                    if (_postsLeftToLoad == 0 && _lastVisibleGraphic + 15 > _postGraphics.Count)
                         _postsLeftToLoad += 5;
                 }
             }
 
             base.Update(time);
-        }
-
-        private BatchedSprite[] _circleBuffer = new BatchedSprite[200];
-
-        private void DrawCircle(Vector2 center, float radius, float progress)
-        {
-            ShapeExtensions.DrawCircle(center, radius, _circleBuffer.Length, Color.White, 8, _circleBuffer);
-
-            int iters = (int)(_circleBuffer.Length * progress);
-            for (int i = 0; i < iters; i++)
-                _batch.DrawRef(BatchedSpriteExtensions.GetOnePixelTexture(_batch), ref _circleBuffer[i]);
         }
 
         protected override void Draw(GameTime time)
@@ -231,7 +223,7 @@ namespace MonoGame.Extended.Testing
             {
                 _batch.Begin();
                 int gCount = _lastVisibleGraphic - _firstVisibleGraphic;
-                string countStr = gCount + "/" + postGraphics.Count;
+                string countStr = gCount + "/" + _postGraphics.Count;
                 _batch.DrawString(_font26, countStr, new Vector2(dx - _font26.MeasureString(countStr).Width - 6, 0), Color.LimeGreen);
                 //_batch.DrawString(_font26, _firstVisibleGraphic + " - " + _lastVisibleGraphic, new Vector2(3, _font26.LineHeight - 4), Color.Red);
                 _batch.End();
@@ -252,8 +244,12 @@ namespace MonoGame.Extended.Testing
             if (post.PreviewResponse != null && post.PreviewResponse.ContentLength > 0)
             {
                 float p = (float)(post.PreviewResponse.BytesDownloaded / (decimal)post.PreviewResponse.ContentLength);
-                if(p >= 0 && p <= 1)
-                    DrawCircle(new Vector2(GraphicsDevice.Viewport.Width / 2f, GraphicsDevice.Viewport.Height / 2f), 60, p);
+                if (p >= 0 && p <= 1)
+                {
+                    var view = GraphicsDevice.Viewport;
+                    var pos = new Vector2(view.Width / 2f, view.Height / 2f);
+                    _postLoadingBar.Draw(_batch, pos, 60, Color.White, 8, p);
+                }
             }
             _batch.End();
 
@@ -274,12 +270,12 @@ namespace MonoGame.Extended.Testing
 
         private void ProcessMouse(int firstVisible, int lastVisible)
         {
-            var mousePos = Vector2.Transform(Input.MousePosition.ToVector2(), Matrix.Invert(graphicsMatrix));
+            var mousePos = Vector2.Transform(Input.MousePosition.ToVector2(), Matrix.Invert(_graphicsMatrix));
             HoveredPost = null;
             
             for (int i = firstVisible; i < lastVisible + 1; i++)
             {
-                var graphic = postGraphics[i];
+                var graphic = _postGraphics[i];
                 if (graphic.Boundaries.Contains(mousePos))
                 {
                     if(Input.IsMousePressed(MouseButton.Left))
@@ -294,13 +290,13 @@ namespace MonoGame.Extended.Testing
         private void UpdateObjectVisibility(Viewport view, out int firstVisible, out int lastVisible)
         {
             Vector2 totalOffset = offset + scrollOffset;
-            graphicsMatrix = Matrix.CreateTranslation(totalOffset.X, totalOffset.Y, 0) * Matrix.CreateScale(1f);
+            _graphicsMatrix = Matrix.CreateTranslation(totalOffset.X, totalOffset.Y, 0) * Matrix.CreateScale(1f);
 
             firstVisible = -1;
             lastVisible = -1;
-            for (int i = 0; i < postGraphics.Count; i++)
+            for (int i = 0; i < _postGraphics.Count; i++)
             {
-                var graphic = postGraphics[i];
+                var graphic = _postGraphics[i];
                 graphic.CheckVisibility(view, totalOffset);
 
                 if (graphic.IsVisible)
@@ -315,10 +311,10 @@ namespace MonoGame.Extended.Testing
 
         private void LoadThumbnails(int firstVisible, int lastVisible, int extra)
         {
-            int last = Math.Min(postGraphics.Count, lastVisible + extra);
+            int last = Math.Min(_postGraphics.Count, lastVisible + extra);
             for (int i = firstVisible; i < last; i++)
             {
-                var graphic = postGraphics[i];
+                var graphic = _postGraphics[i];
                 if (graphic.HasThumbnail)
                 {
                     graphic.RequestThumbnailImage();
@@ -330,9 +326,9 @@ namespace MonoGame.Extended.Testing
         private void DoObjectLayout()
         {
             float graphicOffsetY = 0;
-            for (int i = 0; i < postGraphics.Count; i++)
+            for (int i = 0; i < _postGraphics.Count; i++)
             {
-                var graphic = postGraphics[i];
+                var graphic = _postGraphics[i];
                 graphic.DoLayout(graphicOffsetY);
                 graphicOffsetY += graphic.Boundaries.Height + 10;
             }
@@ -344,7 +340,7 @@ namespace MonoGame.Extended.Testing
             int count = 0;
             for (int i = firstVisible; i < _lastVisibleGraphic + 1; i++)
             {
-                var graphic = postGraphics[i];
+                var graphic = _postGraphics[i];
                 if (!graphic.IsTextDirty)
                     continue;
 
@@ -389,11 +385,11 @@ namespace MonoGame.Extended.Testing
             if (_firstVisibleGraphic < 0 || _lastVisibleGraphic < 0)
                 return;
 
-            _batch.Begin(SpriteSortMode.BackToFront, transformMatrix: graphicsMatrix);
-            int last = Math.Min(postGraphics.Count, _lastVisibleGraphic + 1);
+            _batch.Begin(SpriteSortMode.BackToFront, transformMatrix: _graphicsMatrix);
+            int last = Math.Min(_postGraphics.Count, _lastVisibleGraphic + 1);
             for (int i = _firstVisibleGraphic; i < last; i++)
             {
-                var graphic = postGraphics[i];
+                var graphic = _postGraphics[i];
                 if (!graphic.IsVisible)
                     continue;
 
@@ -409,13 +405,13 @@ namespace MonoGame.Extended.Testing
 
         private void DrawGraphicText()
         {
-            _batch.Begin(transformMatrix: graphicsMatrix);
+            _batch.Begin(transformMatrix: _graphicsMatrix);
             for (int i = _firstVisibleGraphic; i <= _lastVisibleGraphic; i++)
             {
-                if (i < 0 || i >= postGraphics.Count)
+                if (i < 0 || i >= _postGraphics.Count)
                     break;
 
-                var graphic = postGraphics[i];
+                var graphic = _postGraphics[i];
                 if (!graphic.IsVisible)
                     continue;
 

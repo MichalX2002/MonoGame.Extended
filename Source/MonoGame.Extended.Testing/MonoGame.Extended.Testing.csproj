@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CircularProgressBar.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="HeaderCollection.cs" />
     <Compile Include="Input.cs" />
