@@ -37,6 +37,9 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static ICharIterator Rent(string value, int offset, int count)
         {
+            if (count == 0)
+                return EmptyCharIterator.Instance;
+
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
             CheckArguments(value.Length, offset, count);
@@ -54,11 +57,14 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static ICharIterator Rent(StringBuilder value, int offset, int count)
         {
+            if (count == 0)
+                return EmptyCharIterator.Instance;
+
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
             CheckArguments(value.Length, offset, count);
-
-            StringBuilder immutableBuilder = StringBuilderPool.Rent(count);
+            
+            var immutableBuilder = StringBuilderPool.Rent(count);
             char[] buffer = GetCharBuffer();
             value.CopyTo(offset, immutableBuilder, buffer, count);
             
@@ -83,10 +89,16 @@ namespace MonoGame.Extended.BitmapFonts
                 throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
+        /// <summary>
+        /// Return a <see cref="ICharIterator"/> previously rented from this pool.
+        /// </summary>
+        /// <param name="iterator">The iterator to return to the pool.</param>
+        /// <exception cref="ArgumentException">The iterator was not rented from this pool.</exception>
+        /// <remarks>This method does not throw if <see cref="EmptyCharIterator.Instance"/> is passed as the argument.</remarks>
         public static void Return(ICharIterator iterator)
         {
             if (iterator == null)
-                throw new ArgumentNullException(nameof(iterator));
+                return;
 
             if (iterator is StringCharIterator stringIterator)
             {
@@ -109,7 +121,7 @@ namespace MonoGame.Extended.BitmapFonts
                     builderIterator.Set(null, 0);
                 }
             }
-            else
+            else if(!(iterator is EmptyCharIterator))
                 throw new ArgumentException("The iterator was not rented from this pool.");
         }
 
