@@ -10,10 +10,10 @@ namespace MonoGame.Extended.Testing
         public ResourceDownloader Downloader { get; }
         public ResourceCache Cache { get; }
 
-        public ResourceManager()
+        public ResourceManager(string cachePath)
         {
             Downloader = new ResourceDownloader();
-            Cache = new ResourceCache();
+            Cache = new ResourceCache(cachePath);
         }
 
         public void Start()
@@ -24,11 +24,19 @@ namespace MonoGame.Extended.Testing
 
         public IResponseStatus Request(string uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
+            var cachedResponse = Cache.Request(uri, accept, prioritized, onResponse, onError);
+            if (cachedResponse.IsNotFound)
+            {
+
+            }
+
             return Downloader.Request(uri, accept, prioritized, onResponse, onError);
         }
 
         public IResponseStatus Request(Uri uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
+            Cache.Request(uri, accept, prioritized, onResponse, onError);
+
             return Downloader.Request(uri, accept, prioritized, onResponse, onError);
         }
 

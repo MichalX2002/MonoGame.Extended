@@ -127,7 +127,7 @@ namespace MonoGame.Extended.Testing
                 var reddit = new RedditService();
                 var subreddit = await reddit.GetSubredditAsync("Terraria");
 
-                _resourceManager = new ResourceManager();
+                _resourceManager = new ResourceManager("Cache");
                 _resourceManager.Start();
 
                 _postsLeftToLoad = 20;

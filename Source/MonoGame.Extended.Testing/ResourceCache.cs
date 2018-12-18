@@ -20,18 +20,21 @@ namespace MonoGame.Extended.Testing
 
         public bool IsDisposed { get; private set; }
         public bool IsRunning { get; private set; }
+        public DirectoryInfo CacheDirectory { get; }
         public ReadOnlyCollection<Worker> Threads { get; }
-
-        public ResourceCache()
+        
+        public ResourceCache(DirectoryInfo directory)
         {
             _requestEvent = new AutoResetEvent(false);
             _requests = new ConcurrentQueue<ResourceRequest>();
             _priorityRequests = new ConcurrentQueue<ResourceRequest>();
             _responses = new ConcurrentDictionary<Uri, ResourceRequest>();
 
+            CacheDirectory = directory;
             _threads = new Thread[1];
             _downloadWorkers = new Worker[_threads.Length];
             Threads = new ReadOnlyCollection<Worker>(_downloadWorkers);
+
             for (int i = 0; i < _threads.Length; i++)
             {
                 int id = i + 1;
@@ -41,6 +44,10 @@ namespace MonoGame.Extended.Testing
                     Name = "ResourceCache Worker " + id
                 };
             }
+        }
+
+        public ResourceCache(string directory) : this(new DirectoryInfo(directory))
+        {
         }
 
         public void Start()
@@ -58,14 +65,20 @@ namespace MonoGame.Extended.Testing
 
         public IResponseStatus Request(string uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            throw new NotImplementedException();
+            return Request(new Uri(uri), accept, prioritized, onResponse, onError);
         }
 
         public IResponseStatus Request(Uri uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            throw new NotImplementedException();
+            var request = new ResourceRequest(uri, accept, onResponse, onError);
+            if (prioritized)
+                _priorityRequests.Enqueue(request);
+            else
+                _requests.Enqueue(request);
+            _requestEvent.Set();
+            return request;
         }
-        
+
         private bool DequeueRequest(out ResourceRequest request)
         {
             if (_priorityRequests.TryDequeue(out request))
@@ -87,8 +100,8 @@ namespace MonoGame.Extended.Testing
 
                 while (DequeueRequest(out ResourceRequest resourceRequest))
                 {
-                    var url = resourceRequest.Url;
-                    _responses.TryAdd(url, resourceRequest);
+                    var uri = resourceRequest.Uri;
+                    _responses.TryAdd(uri, resourceRequest);
                     worker.CurrentRequest = resourceRequest;
 
                     try
@@ -96,19 +109,41 @@ namespace MonoGame.Extended.Testing
                         var headers = new WebHeaderCollection();
                         headers.Add(HttpRequestHeader.Accept, resourceRequest.Accept);
 
-                        //var stream = new FileStream();
-                        //resourceRequest.HandleOnResponse(stream, headers);
+                        string path = UriToFile(uri);
+                        if (SatisfyRequest(path, headers, out FileInfo file))
+                            resourceRequest.HandleOnResponse(file, headers);
+                        else
+                            resourceRequest.OnError?.Invoke(uri, new FileNotFoundException(
+                                "The cache did not contain the requested resource.", path));
                     }
                     catch (Exception exc)
                     {
-                        resourceRequest.OnError?.Invoke(url, exc);
+                        resourceRequest.OnError?.Invoke(uri, exc);
                     }
 
                     worker.CurrentRequest = null;
-                    _responses.TryRemove(url, out var finishedRequest);
+                    _responses.TryRemove(uri, out var finishedRequest);
                     finishedRequest.Dispose();
                 }
             }
+        }
+
+        private string UriToFile(Uri uri)
+        {
+            return Path.Combine(CacheDirectory.FullName, uri.LocalPath);
+        }
+
+        private bool SatisfyRequest(string path, WebHeaderCollection headers, out FileInfo file)
+        {
+            var fileInfo = new FileInfo(path);
+            if (fileInfo.Exists)
+            {
+                file = fileInfo;
+                return true;
+            }
+
+            file = null;
+            return false;
         }
 
         public void Dispose()

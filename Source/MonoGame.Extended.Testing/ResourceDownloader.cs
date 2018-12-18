@@ -95,25 +95,25 @@ namespace MonoGame.Extended.Testing
 
                 while (DequeueRequest(out ResourceRequest resourceRequest))
                 {
-                    var url = resourceRequest.Url;
-                    _responses.TryAdd(url, resourceRequest);
+                    var uri = resourceRequest.Uri;
+                    _responses.TryAdd(uri, resourceRequest);
                     worker.CurrentRequest = resourceRequest;
 
                     try
                     {
-                        var request = WebRequest.CreateHttp(url);
+                        var request = WebRequest.CreateHttp(uri);
                         request.Accept = resourceRequest.Accept;
 
                         using (var response = request.GetResponse())
-                            resourceRequest.HandleOnResponse(response);
+                            resourceRequest.HandleOnResponse(response as HttpWebResponse);
                     }
                     catch (Exception exc)
                     {
-                        resourceRequest.OnError?.Invoke(url, exc);
+                        resourceRequest.OnError?.Invoke(uri, exc);
                     }
 
                     worker.CurrentRequest = null;
-                    _responses.TryRemove(url, out var finishedRequest);
+                    _responses.TryRemove(uri, out var finishedRequest);
                     finishedRequest.Dispose();
                 }
             }

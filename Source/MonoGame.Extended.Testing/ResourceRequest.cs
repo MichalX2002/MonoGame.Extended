@@ -1,71 +1,73 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
 
 namespace MonoGame.Extended.Testing
 {
-    internal class ResourceRequest : IResponseStatus, IDisposable
+    internal partial class ResourceRequest : IResponseStatus, IDisposable
     {
+        public const string EXCEPTION_CANCELED = "This request was canceled.";
+
         private ResourceStream _stream;
+        private Exception _fault;
 
         public long ContentLength { get { return _stream == null ? -1 : _stream.Length; } }
         public long BytesDownloaded { get { return _stream == null ? -1 : _stream.Position; } }
 
-        public Uri Url { get; }
+        public Uri Uri { get; }
         public string Accept { get; }
-        public Exception Fault { get; private set; }
+        public Exception Fault
+        {
+            get => _fault;
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException();
+                IsFaulted = true;
+                OnError?.Invoke(Uri, value);
+            }
+        }
 
         public bool IsDisposed { get; private set; }
         public bool IsFaulted { get; private set; }
         public bool IsComplete { get; private set; }
         public bool IsCanceled { get; private set; }
+        public bool IsNotFound { get; private set; }
 
-        public readonly OnResponseDelegate OnResponse;
-        public readonly OnErrorDelegate OnError;
+        public OnResponseDelegate OnResponse { get; private set; }
+        public OnErrorDelegate OnError { get; private set; }
 
         public ResourceRequest(Uri uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
             if (string.IsNullOrWhiteSpace(accept))
                 throw new ArgumentNullException(accept);
 
-            Url = uri ?? throw new ArgumentNullException(nameof(uri));
+            Uri = uri ?? throw new ArgumentNullException(nameof(uri));
             Accept = accept;
             OnResponse = onResponse ?? throw new ArgumentNullException(nameof(onResponse));
             OnError = onError;
         }
 
-        public void HandleOnResponse(FileStream stream, WebHeaderCollection headers)
+        private void SetNotFound()
         {
-            if (IsCanceled)
-                return;
-
-            var resourceStream = new ResourceStream(stream, headers);
-            HandleOnResponse(resourceStream);
-        }
-
-        public void HandleOnResponse(WebResponse response)
-        {
-            if (IsCanceled)
-                return;
-
-            var resourceStream = new ResourceStream(response);
-            HandleOnResponse(resourceStream);
+            IsComplete = true;
+            IsNotFound = true;
+            IsFaulted = true;
         }
 
         public void HandleOnResponse(ResourceStream stream)
         {
             try
             {
+                ValidateLifetime();
+
                 _stream = stream;
-                OnResponse.Invoke(Url, _stream);
+                OnResponse.Invoke(Uri, _stream);
                 IsComplete = true;
             }
             catch (Exception exc)
             {
                 IsFaulted = true;
                 Fault = exc;
-                throw;
             }
             finally
             {
@@ -97,6 +99,8 @@ namespace MonoGame.Extended.Testing
                     _stream.Dispose();
                     _stream = null;
                 }
+
+                OnResponse = null;
 
                 IsDisposed = true;
             }
