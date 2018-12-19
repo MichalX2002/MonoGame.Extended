@@ -55,6 +55,11 @@ namespace MonoGame.Extended.BitmapFonts
             return new StringCharIterator(value, offset, count);
         }
 
+        public static ICharIterator Rent(string value)
+        {
+            return Rent(value, 0, value.Length);
+        }
+
         public static ICharIterator Rent(StringBuilder value, int offset, int count)
         {
             if (count == 0)
@@ -77,6 +82,11 @@ namespace MonoGame.Extended.BitmapFonts
                 }
             }
             return new StringBuilderCharIterator(immutableBuilder, count);
+        }
+
+        public static ICharIterator Rent(StringBuilder value)
+        {
+            return Rent(value, 0, value.Length);
         }
 
         [DebuggerHidden]
