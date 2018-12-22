@@ -10,8 +10,8 @@ namespace MonoGame.Extended.BitmapFonts
     public static partial class BitmapFontExtensions
     {
         private static void GetSprites(
-            IList<Glyph> glyphs, ICollection<GlyphSprite> output, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            IList<Glyph> glyphs, ICollection<GlyphSprite> output, Vector2 position,
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
             GlyphSprite tmpSprite;
             for (int i = 0, count = glyphs.Count; i < count; i++)

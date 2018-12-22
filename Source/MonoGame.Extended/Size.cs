@@ -49,6 +49,15 @@ namespace MonoGame.Extended
         }
 
         /// <summary>
+        /// Gets a two-component <see cref="Point"/> representation for this object.
+        /// </summary>
+        /// <returns></returns>
+        public Point ToPoint()
+        {
+            return new Point(Width, Height);
+        }
+
+        /// <summary>
         ///     Compares two <see cref="Size" /> structures. The result specifies
         ///     whether the values of the <see cref="Width" /> and <see cref="Height" />
         ///     fields of the two <see cref="Size" /> structures are equal.
@@ -234,18 +243,6 @@ namespace MonoGame.Extended
             return new Vector2(size.Width, size.Height);
         }
         
-        ///// <summary>
-        /////     Performs an implicit conversion from a <see cref="Size" /> to a <see cref="Size2" />.
-        ///// </summary>
-        ///// <param name="size">The size.</param>
-        ///// <returns>
-        /////     The resulting <see cref="Size2" />.
-        ///// </returns>
-        //public static implicit operator Size2(Size size)
-        //{
-        //    return new Size2(size.Width, size.Height);
-        //}
-
         /// <summary>
         ///     Performs an explicit conversion from a <see cref="Size" /> to a <see cref="Point" />.
         /// </summary>

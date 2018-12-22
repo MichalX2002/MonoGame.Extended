@@ -17,7 +17,7 @@ namespace MonoGame.Extended.TextureAtlases
         public int Y => Bounds.Y;
         public int Width => Bounds.Width;
         public int Height => Bounds.Height;
-        public SizeF Size => new SizeF(Width, Height);
+        public Size Size => _bounds.Size;
 
         public Vector2 Texel { get; private set; }
         public float TexelWidth => Texel.X;
