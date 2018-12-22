@@ -49,6 +49,15 @@ namespace MonoGame.Extended
         {
             Width = width;
             Height = height;
+        } 
+        
+        /// <summary>
+        /// Gets a two-component <see cref="Vector2"/> representation for this object.
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 ToVector2()
+        {
+            return new Vector2(Width, Height);
         }
 
         /// <summary>
