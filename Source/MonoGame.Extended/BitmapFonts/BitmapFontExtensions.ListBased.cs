@@ -183,7 +183,7 @@ namespace MonoGame.Extended.BitmapFonts
         public static void DrawString(
             this SpriteBatch batch, IReferenceList<GlyphSprite> sprites, Vector2 position, Vector2 scale, float depth)
         {
-
+            DrawString(batch, sprites, 0, sprites.Count, position, scale, depth);
         }
         #endregion
     }
