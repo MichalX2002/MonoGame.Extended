@@ -6,6 +6,8 @@ namespace MonoGame.Extended.BitmapFonts
 {
     internal class StringBuilderCharIterator : ICharIterator
     {
+        private string _cachedString;
+
         internal StringBuilder _builder;
         internal bool _isInUse;
 
@@ -21,6 +23,8 @@ namespace MonoGame.Extended.BitmapFonts
             _builder = builder;
             Length = length;
             _isInUse = builder != null;
+
+            _cachedString = null;
         }
 
         [DebuggerHidden]
@@ -43,6 +47,22 @@ namespace MonoGame.Extended.BitmapFonts
         {
             CheckIfInUse();
             return _builder[index];
+        }
+
+        public string GetString()
+        {
+            CheckIfInUse();
+
+            if (_cachedString == null)
+                _cachedString = _builder.ToString().Substring(0, Length);
+            return _cachedString;
+        }
+
+        public override string ToString()
+        {
+            if (!_isInUse)
+                return string.Empty;
+            return GetString();
         }
 
         public void Dispose()

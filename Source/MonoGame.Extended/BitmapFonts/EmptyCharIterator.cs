@@ -24,5 +24,15 @@ namespace MonoGame.Extended.BitmapFonts
         public void Dispose()
         {
         }
+
+        public string GetString()
+        {
+            return string.Empty;
+        }
+
+        public override string ToString()
+        {
+            return string.Empty;
+        }
     }
 }
