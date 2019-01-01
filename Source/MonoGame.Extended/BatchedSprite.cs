@@ -8,22 +8,6 @@ namespace MonoGame.Extended
 {
     public static class BatchedSpriteExtensions
     {
-        private static readonly object _textureCreationLock = new object();
-        private static Texture2D _texture;
-        
-        public static Texture2D GetOnePixelTexture(SpriteBatch spriteBatch)
-        {
-            lock (_textureCreationLock)
-            {
-                if (_texture == null)
-                {
-                    _texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Rgba32);
-                    _texture.SetData(new[] { Color.White });
-                }
-                return _texture;
-            }
-        }
-        
         public static void Draw(this SpriteBatch batch, Texture2D texture, BatchedSprite sprite, float depth)
         {
             DrawRef(batch, texture, ref sprite, depth);

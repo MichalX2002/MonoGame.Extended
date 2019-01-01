@@ -24,12 +24,10 @@ namespace MonoGame.Extended.Testing
                 _circleBuffer = new BatchedSprite[Sides];
             }
 
-            ShapeExtensions.DrawCircle(center, radius, color, thickness, _circlePointBuffer, _circleBuffer);
-
-            Texture2D tex = BatchedSpriteExtensions.GetOnePixelTexture(batch);
+            ShapeExtensions.CreateCircle(radius, _circlePointBuffer);
+            
             int pointsVisible = (int)(_circleBuffer.Length * progress);
-            for (int i = 0; i < pointsVisible; i++)
-                batch.DrawRef(tex, ref _circleBuffer[i]);
+            batch.DrawPolygon(center, _circlePointBuffer, pointsVisible, color, thickness);
         }
     }
 }
