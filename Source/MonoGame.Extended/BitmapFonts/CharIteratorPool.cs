@@ -16,6 +16,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         private static Bag<StringCharIterator> _stringIterators;
         private static Bag<StringBuilderCharIterator> _builderIterators;
+        private static Bag<SingularCharIterator> _singularIterators;
 
         private static int _poolCapacity = DefaultPoolCapacity;
         public static int PoolCapacity
@@ -33,6 +34,45 @@ namespace MonoGame.Extended.BitmapFonts
         {
             _stringIterators = new Bag<StringCharIterator>();
             _builderIterators = new Bag<StringBuilderCharIterator>();
+            _singularIterators = new Bag<SingularCharIterator>();
+        }
+
+        public static ICharIterator Rent(char value)
+        {
+            if (char.IsSurrogate(value))
+                throw new ArgumentOutOfRangeException(nameof(value), "The character is a surrogate.");
+
+            lock (_singularIterators)
+            {
+                if (_singularIterators.TryTake(out var result))
+                {
+                    result.Set(value);
+                    return result;
+                }
+            }
+            return new SingularCharIterator(value);
+        }
+
+        public static ICharIterator Rent(char highSurrogate, char lowSurrogate)
+        {
+            if (!char.IsHighSurrogate(highSurrogate))
+                throw new ArgumentException(nameof(highSurrogate));
+
+            if (!char.IsLowSurrogate(lowSurrogate))
+                throw new ArgumentException(nameof(lowSurrogate));
+
+            if (!char.IsSurrogatePair(highSurrogate, lowSurrogate))
+                throw new ArgumentException("The surrogates were not a pair.");
+
+            lock (_singularIterators)
+            {
+                if (_singularIterators.TryTake(out var result))
+                {
+                    result.Set(highSurrogate, lowSurrogate);
+                    return result;
+                }
+            }
+            return new SingularCharIterator(highSurrogate, lowSurrogate);
         }
 
         public static ICharIterator Rent(string value, int offset, int count)
@@ -131,7 +171,19 @@ namespace MonoGame.Extended.BitmapFonts
                     builderIterator.Set(null, 0);
                 }
             }
-            else if(!(iterator is EmptyCharIterator))
+            else if (iterator is SingularCharIterator singularIterator)
+            {
+                lock (_singularIterators)
+                {
+                    if (singularIterator._isInUse && _singularIterators.Count < _poolCapacity)
+                        _singularIterators.Add(singularIterator);
+                }
+            }
+            else if(iterator is EmptyCharIterator)
+            {
+                // this is fine
+            }
+            else
                 throw new ArgumentException("The iterator was not rented from this pool.");
         }
 

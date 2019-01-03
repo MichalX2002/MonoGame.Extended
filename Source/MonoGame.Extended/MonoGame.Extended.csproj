@@ -49,6 +49,7 @@
     <Compile Include="BitmapFonts\GlyphEnumeratorPool.cs" />
     <Compile Include="BitmapFonts\GlyphSprite.cs" />
     <Compile Include="BitmapFonts\GlyphBatchedSprite.cs" />
+    <Compile Include="BitmapFonts\SingularCharIterator.cs" />
     <Compile Include="BitmapFonts\StringBuilderCharIterator.cs" />
     <Compile Include="BitmapFonts\StringBuilderPool.cs" />
     <Compile Include="BitmapFonts\StringCharIterator.cs" />
