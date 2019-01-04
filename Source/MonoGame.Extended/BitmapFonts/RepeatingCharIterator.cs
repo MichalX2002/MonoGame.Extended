@@ -3,44 +3,46 @@ using System.Diagnostics;
 
 namespace MonoGame.Extended.BitmapFonts
 {
-    internal class SingularCharIterator : ICharIterator
+    internal class RepeatingCharIterator : ICharIterator
     {
         private string _cachedString;
         private char _firstChar;
         private char _lowSurrogateChar;
+        private bool _isUtf32;
 
         internal bool _isInUse;
 
         public int Length { get; private set; }
 
-        public SingularCharIterator(char value)
+        public RepeatingCharIterator(char value, int length)
         {
-            Set(value);
+            Set(value, length);
         }
 
-        public SingularCharIterator(char highSurrogate, char lowSurrogate)
+        public RepeatingCharIterator(char highSurrogate, char lowSurrogate, int length)
         {
-            Set(highSurrogate, lowSurrogate);
+            Set(highSurrogate, lowSurrogate, length);
         }
 
-        private void Set(int length)
+        private void Set(int length, bool utf32)
         {
             Length = length;
+            _isUtf32 = utf32;
             _isInUse = true;
             _cachedString = null;
         }
 
-        internal void Set(char value)
+        internal void Set(char value, int length)
         {
             _firstChar = value;
-            Set(length: 1);
+            Set(length, utf32: false);
         }
 
-        internal void Set(char highSurrogate, char lowSurrogate)
+        internal void Set(char highSurrogate, char lowSurrogate, int length)
         {
             _firstChar = highSurrogate;
             _lowSurrogateChar = lowSurrogate;
-            Set(length: 2);
+            Set(length, utf32: true);
         }
 
         [DebuggerHidden]
@@ -56,9 +58,9 @@ namespace MonoGame.Extended.BitmapFonts
             if (index >= Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            if (Length == 2)
+            if (_isUtf32)
             {
-                if (index == 1)
+                if (index % 2 == 1)
                     return _lowSurrogateChar;
 
                 index++;
@@ -72,8 +74,8 @@ namespace MonoGame.Extended.BitmapFonts
             CheckIfInUse();
             if (index >= Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
-
-            if (index == 1)
+            
+            if (_isUtf32 && index % 2 == 1)
                 return _lowSurrogateChar;
             return _firstChar;
         }
@@ -83,13 +85,12 @@ namespace MonoGame.Extended.BitmapFonts
             CheckIfInUse();
             if (_cachedString == null)
             {
-                if (Length == 2)
-                {
-                    int utf32 = char.ConvertToUtf32(_firstChar, _lowSurrogateChar);
-                    _cachedString = char.ConvertFromUtf32(utf32);
-                }
-                else
-                    _cachedString = _firstChar.ToString();
+                var builder = StringBuilderPool.Rent(Length);
+                for (int i = 0; i < Length; i++)
+                    builder.Append(GetCharacter16(i));
+
+                _cachedString = builder.ToString();
+                StringBuilderPool.Return(builder);
             }
             return _cachedString;
         }

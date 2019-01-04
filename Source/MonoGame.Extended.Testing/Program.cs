@@ -1,4 +1,6 @@
 ﻿
+using MonoGame.Extended.BitmapFonts;
+
 namespace MonoGame.Extended.Testing
 {
     class Program

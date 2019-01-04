@@ -33,5 +33,15 @@ namespace MonoGame.Extended.BitmapFonts
         {
             return CharIteratorPool.Rent(highSurrogate, lowSurrogate);
         }
+
+        public static ICharIterator ToRepeatingIterator(this char value, int length)
+        {
+            return CharIteratorPool.RentRepeater(value, length);
+        }
+
+        public static ICharIterator ToRepeatingIterator(this char highSurrogate, char lowSurrogate, int length)
+        {
+            return CharIteratorPool.RentRepeater(highSurrogate, lowSurrogate, length);
+        }
     }
 }

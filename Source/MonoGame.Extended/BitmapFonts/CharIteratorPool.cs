@@ -17,6 +17,7 @@ namespace MonoGame.Extended.BitmapFonts
         private static Bag<StringCharIterator> _stringIterators;
         private static Bag<StringBuilderCharIterator> _builderIterators;
         private static Bag<SingularCharIterator> _singularIterators;
+        private static Bag<RepeatingCharIterator> _repeatingIterators;
 
         private static int _poolCapacity = DefaultPoolCapacity;
         public static int PoolCapacity
@@ -35,12 +36,12 @@ namespace MonoGame.Extended.BitmapFonts
             _stringIterators = new Bag<StringCharIterator>();
             _builderIterators = new Bag<StringBuilderCharIterator>();
             _singularIterators = new Bag<SingularCharIterator>();
+            _repeatingIterators = new Bag<RepeatingCharIterator>();
         }
 
         public static ICharIterator Rent(char value)
         {
-            if (char.IsSurrogate(value))
-                throw new ArgumentOutOfRangeException(nameof(value), "The character is a surrogate.");
+            AssertCharNotSurrogate(value);
 
             lock (_singularIterators)
             {
@@ -55,14 +56,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static ICharIterator Rent(char highSurrogate, char lowSurrogate)
         {
-            if (!char.IsHighSurrogate(highSurrogate))
-                throw new ArgumentException(nameof(highSurrogate));
-
-            if (!char.IsLowSurrogate(lowSurrogate))
-                throw new ArgumentException(nameof(lowSurrogate));
-
-            if (!char.IsSurrogatePair(highSurrogate, lowSurrogate))
-                throw new ArgumentException("The surrogates were not a pair.");
+            AssertSurrogatePair(highSurrogate, lowSurrogate);
 
             lock (_singularIterators)
             {
@@ -73,6 +67,56 @@ namespace MonoGame.Extended.BitmapFonts
                 }
             }
             return new SingularCharIterator(highSurrogate, lowSurrogate);
+        }
+
+        public static ICharIterator RentRepeater(char value, int length)
+        {
+            AssertCharNotSurrogate(value);
+
+            lock (_repeatingIterators)
+            {
+                if (_repeatingIterators.TryTake(out var result))
+                {
+                    result.Set(value, length);
+                    return result;
+                }
+            }
+            return new RepeatingCharIterator(value, length);
+        }
+
+        public static ICharIterator RentRepeater(char highSurrogate, char lowSurrogate, int length)
+        {
+            AssertSurrogatePair(highSurrogate, lowSurrogate);
+
+            lock (_repeatingIterators)
+            {
+                if (_repeatingIterators.TryTake(out var result))
+                {
+                    result.Set(highSurrogate, lowSurrogate, length);
+                    return result;
+                }
+            }
+            return new RepeatingCharIterator(highSurrogate, lowSurrogate, length);
+        }
+
+        [DebuggerHidden]
+        private static void AssertCharNotSurrogate(char value)
+        {
+            if (char.IsSurrogate(value))
+                throw new ArgumentOutOfRangeException(nameof(value), "The character is a surrogate.");
+        }
+
+        [DebuggerHidden]
+        private static void AssertSurrogatePair(char highSurrogate, char lowSurrogate)
+        {
+            if (!char.IsHighSurrogate(highSurrogate))
+                throw new ArgumentException(nameof(highSurrogate));
+
+            if (!char.IsLowSurrogate(lowSurrogate))
+                throw new ArgumentException(nameof(lowSurrogate));
+
+            if (!char.IsSurrogatePair(highSurrogate, lowSurrogate))
+                throw new ArgumentException("The surrogates were not a pair.");
         }
 
         public static ICharIterator Rent(string value, int offset, int count)
@@ -176,7 +220,21 @@ namespace MonoGame.Extended.BitmapFonts
                 lock (_singularIterators)
                 {
                     if (singularIterator._isInUse && _singularIterators.Count < _poolCapacity)
+                    {
                         _singularIterators.Add(singularIterator);
+                        singularIterator._isInUse = false;
+                    }
+                }
+            }
+            else if(iterator is RepeatingCharIterator repeatingIterator)
+            {
+                lock (_repeatingIterators)
+                {
+                    if (repeatingIterator._isInUse && _repeatingIterators.Count < _poolCapacity)
+                    {
+                        _repeatingIterators.Add(repeatingIterator);
+                        repeatingIterator._isInUse = false;
+                    }
                 }
             }
             else if(iterator is EmptyCharIterator)
