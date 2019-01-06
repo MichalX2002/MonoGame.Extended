@@ -6,7 +6,7 @@ using MonoGame.Extended.Serialization;
 
 namespace MonoGame.Extended.Particles.Serialization
 {
-    public class ModifierJsonConverter : BaseTypeJsonConverter<Modifier>
+    public class ModifierJsonConverter : BaseTypeJsonConverter<ParticleModifier>
     {
         public ModifierJsonConverter()
             : base(GetSupportedTypes(), "Modifier")
@@ -15,11 +15,11 @@ namespace MonoGame.Extended.Particles.Serialization
 
         private static IEnumerable<TypeInfo> GetSupportedTypes()
         {
-            return typeof(Modifier)
+            return typeof(ParticleModifier)
                 .GetTypeInfo()
                 .Assembly
                 .DefinedTypes
-                .Where(type => typeof(Modifier).GetTypeInfo().IsAssignableFrom(type) && !type.IsAbstract);
+                .Where(type => typeof(ParticleModifier).GetTypeInfo().IsAssignableFrom(type) && !type.IsAbstract);
         }
     }
 }

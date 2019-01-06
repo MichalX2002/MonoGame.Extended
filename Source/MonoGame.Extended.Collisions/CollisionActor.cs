@@ -13,14 +13,14 @@ namespace MonoGame.Extended.Collisions
 
         public Vector2 Velocity
         {
-            get { return _target.Velocity; }
-            set { _target.Velocity = value; }
+            get => _target.Velocity;
+            set => _target.Velocity = value;
         }
 
         public Vector2 Position
         {
-            get { return _target.Position; }
-            set { _target.Position = value; }
+            get => _target.Position;
+            set => _target.Position = value;
         }
 
         public RectangleF BoundingBox => _target.BoundingBox;

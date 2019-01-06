@@ -1,8 +1,8 @@
 ﻿namespace MonoGame.Extended.Particles.Modifiers.Interpolators
 {
-    public abstract class Interpolator
+    public abstract class ParticleInterpolator
     {
-        protected Interpolator()
+        protected ParticleInterpolator()
         {
             Name = GetType().Name;
         }
@@ -11,7 +11,7 @@
         public abstract unsafe void Update(float amount, Particle* particle);
     }
 
-    public abstract class Interpolator<T> : Interpolator
+    public abstract class ParticleInterpolator<T> : ParticleInterpolator
     {
         /// <summary>
         /// Gets or sets the intial value when the particles are created.

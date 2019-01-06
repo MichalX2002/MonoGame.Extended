@@ -21,7 +21,7 @@ namespace MonoGame.Extended.Gui.Controls
         private string _text;
         public string Text
         {
-            get { return _text; }
+            get => _text;
             set
             {
                 if (_text != value)

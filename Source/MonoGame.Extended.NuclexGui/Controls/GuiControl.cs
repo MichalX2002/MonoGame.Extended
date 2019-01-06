@@ -105,7 +105,7 @@ namespace MonoGame.Extended.NuclexGui.Controls
         /// </remarks>
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 // Don't do anything if we're given the same name we already have. This

@@ -4,15 +4,15 @@ using MonoGame.Extended.Particles.Modifiers.Interpolators;
 
 namespace MonoGame.Extended.Particles.Modifiers
 {
-    public class VelocityModifier : Modifier
+    public class VelocityModifier : ParticleModifier
     {
-        public List<Interpolator> Interpolators { get; set; } = new List<Interpolator>();
+        public List<ParticleInterpolator> Interpolators { get; set; } = new List<ParticleInterpolator>();
 
         public float VelocityThreshold { get; set; }
 
-        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.ParticleIterator iterator)
+        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.Iterator iterator)
         {
-            var velocityThreshold2 = VelocityThreshold*VelocityThreshold;
+            var velocityThreshold2 = VelocityThreshold * VelocityThreshold;
             var n = Interpolators.Count;
 
             while (iterator.HasNext)
@@ -30,7 +30,7 @@ namespace MonoGame.Extended.Particles.Modifiers
                 }
                 else
                 {
-                    var t = (float) Math.Sqrt(velocity2)/VelocityThreshold;
+                    var t = (float)Math.Sqrt(velocity2) / VelocityThreshold;
                     for (var i = 0; i < n; i++)
                     {
                         var interpolator = Interpolators[i];

@@ -11,14 +11,17 @@ namespace MonoGame.Extended.Particles
         public static readonly ParticleModifierExecutionStrategy Serial = new SerialModifierExecutionStrategy();
         public static readonly ParticleModifierExecutionStrategy Parallel = new ParallelModifierExecutionStrategy();
 
-        internal abstract void ExecuteModifiers(List<Modifier> modifiers, float elapsedSeconds, ParticleBuffer.ParticleIterator iterator);
+        internal abstract void ExecuteModifiers(List<ParticleModifier> modifiers, float elapsedSeconds, ParticleBuffer.Iterator iterator);
 
         internal class SerialModifierExecutionStrategy : ParticleModifierExecutionStrategy
         {
-            internal override void ExecuteModifiers(List<Modifier> modifiers, float elapsedSeconds, ParticleBuffer.ParticleIterator iterator)
+            internal override void ExecuteModifiers(List<ParticleModifier> modifiers, float elapsedSeconds, ParticleBuffer.Iterator iterator)
             {
                 for (var i = 0; i < modifiers.Count; i++)
-                    modifiers[i].Update(elapsedSeconds, iterator.Reset());
+                {
+                    iterator.Reset();
+                    modifiers[i].Update(elapsedSeconds, iterator);
+                }
             }
 
             public override string ToString()
@@ -29,9 +32,13 @@ namespace MonoGame.Extended.Particles
 
         internal class ParallelModifierExecutionStrategy : ParticleModifierExecutionStrategy
         {
-            internal override void ExecuteModifiers(List<Modifier> modifiers, float elapsedSeconds, ParticleBuffer.ParticleIterator iterator)
+            internal override void ExecuteModifiers(List<ParticleModifier> modifiers, float elapsedSeconds, ParticleBuffer.Iterator iterator)
             {
-                TPL.Parallel.ForEach(modifiers, modifier => modifier.Update(elapsedSeconds, iterator.Reset()));
+                TPL.Parallel.ForEach(modifiers, modifier =>
+                {
+                    iterator.Reset();
+                    modifier.Update(elapsedSeconds, iterator);
+                });
             }
 
             public override string ToString()

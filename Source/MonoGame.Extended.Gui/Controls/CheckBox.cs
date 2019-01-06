@@ -63,13 +63,13 @@ namespace MonoGame.Extended.Gui.Controls
 
         public override object Content
         {
-            get { return _contentLabel.Content; }
-            set { _contentLabel.Content = value; }
+            get => _contentLabel.Content;
+            set => _contentLabel.Content = value;
         }
 
         public bool IsChecked
         {
-            get { return _toggleButton.IsChecked; }
+            get => _toggleButton.IsChecked;
             set
             {
                 _toggleButton.IsChecked = value;

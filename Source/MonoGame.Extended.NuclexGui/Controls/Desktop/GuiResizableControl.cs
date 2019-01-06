@@ -73,7 +73,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>Whether the control can be dragged with the mouse</summary>
         protected bool EnableResizing
         {
-            get { return _enableResizing; }
+            get => _enableResizing;
             set
             {
                 _enableResizing = value;

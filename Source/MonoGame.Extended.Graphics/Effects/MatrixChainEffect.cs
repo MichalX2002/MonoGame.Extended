@@ -40,8 +40,8 @@ namespace MonoGame.Extended.Graphics.Effects
         /// </value>
         public Matrix World
         {
-            get { return _world; }
-            set { SetWorld(ref value); }
+            get => _world;
+            set => SetWorld(ref value);
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace MonoGame.Extended.Graphics.Effects
         /// </value>
         public Matrix View
         {
-            get { return _view; }
-            set { SetView(ref value); }
+            get => _view;
+            set => SetView(ref value);
         }
 
         /// <summary>
@@ -64,8 +64,8 @@ namespace MonoGame.Extended.Graphics.Effects
         /// </value>
         public Matrix Projection
         {
-            get { return _projection; }
-            set { SetProjection(ref value); }
+            get => _projection;
+            set => SetProjection(ref value);
         }
 
         /// <summary>

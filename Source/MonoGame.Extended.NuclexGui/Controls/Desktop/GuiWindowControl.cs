@@ -17,15 +17,15 @@
         /// <summary>Whether the window can be dragged with the mouse</summary>
         public new bool EnableDragging
         {
-            get { return base.EnableDragging; }
-            set { base.EnableDragging = value; }
+            get => base.EnableDragging;
+            set => base.EnableDragging = value;
         }
 
         /// <summary>Whether the window can be resized with the mouse</summary>
         public new bool EnableResizing
         {
-            get { return base.EnableResizing; }
-            set { base.EnableResizing = value; }
+            get => base.EnableResizing;
+            set => base.EnableResizing = value;
         }
 
         /// <summary>Closes the window</summary>

@@ -18,7 +18,7 @@ namespace MonoGame.Extended.Animations
 
         public bool IsComplete
         {
-            get { return _isComplete; }
+            get => _isComplete;
             protected set
             {
                 if (_isComplete != value)

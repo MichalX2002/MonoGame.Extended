@@ -17,7 +17,7 @@ namespace MonoGame.Extended.Gui.Controls
         private int _selectedIndex = -1;
         public virtual int SelectedIndex
         {
-            get { return _selectedIndex; }
+            get => _selectedIndex;
             set
             {
                 if (_selectedIndex != value)
@@ -42,8 +42,8 @@ namespace MonoGame.Extended.Gui.Controls
 
         public object SelectedItem
         {
-            get { return SelectedIndex >= 0 && SelectedIndex <= Items.Count - 1 ? Items[SelectedIndex] : null; }
-            set { SelectedIndex = Items.IndexOf(value); }
+            get => SelectedIndex >= 0 && SelectedIndex <= Items.Count - 1 ? Items[SelectedIndex] : null;
+            set => SelectedIndex = Items.IndexOf(value);
         }
 
         public override bool OnKeyPressed(IGuiContext context, KeyboardEventArgs args)

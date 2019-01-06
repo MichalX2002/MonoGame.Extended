@@ -1,8 +1,8 @@
 ﻿namespace MonoGame.Extended.Particles.Modifiers
 {
-    public sealed class OpacityFadeModifier : Modifier
+    public sealed class OpacityFadeModifier : ParticleModifier
     {
-        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.ParticleIterator iterator)
+        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.Iterator iterator)
         {
             while (iterator.HasNext)
             {

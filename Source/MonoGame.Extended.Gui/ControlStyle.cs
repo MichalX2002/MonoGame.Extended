@@ -86,8 +86,8 @@ namespace MonoGame.Extended.Gui
 
         public object this[string key]
         {
-            get { return _setters[key]; }
-            set { _setters[key] = value; }
+            get => _setters[key];
+            set => _setters[key] = value;
         }
 
         public ICollection<string> Keys => _setters.Keys;

@@ -13,7 +13,7 @@ namespace MonoGame.Extended.Gui.Controls
         private bool _isChecked;
         public bool IsChecked
         {
-            get { return _isChecked; }
+            get => _isChecked;
             set
             {
                 if (_isChecked != value)
@@ -28,7 +28,7 @@ namespace MonoGame.Extended.Gui.Controls
         private ControlStyle _checkedStyle;
         public ControlStyle CheckedStyle
         {
-            get { return _checkedStyle; }
+            get => _checkedStyle;
             set
             {
                 if (_checkedStyle != value)
@@ -42,7 +42,7 @@ namespace MonoGame.Extended.Gui.Controls
         private ControlStyle _checkedHoverStyle;
         public ControlStyle CheckedHoverStyle
         {
-            get { return _checkedHoverStyle; }
+            get => _checkedHoverStyle;
             set
             {
                 if (_checkedHoverStyle != value)

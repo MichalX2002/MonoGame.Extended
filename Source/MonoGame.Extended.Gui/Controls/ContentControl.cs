@@ -10,7 +10,7 @@ namespace MonoGame.Extended.Gui.Controls
         private object _content;
         public object Content
         {
-            get { return _content; }
+            get => _content;
             set
             {
                 if (_content != value)

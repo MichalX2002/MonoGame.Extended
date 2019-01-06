@@ -4,12 +4,12 @@ using MonoGame.Extended.Particles.Modifiers.Interpolators;
 
 namespace MonoGame.Extended.Particles.Modifiers
 {
-    public class AgeModifier : Modifier
+    public class AgeModifier : ParticleModifier
     {
         [EditorBrowsable(EditorBrowsableState.Always)]
-        public List<Interpolator> Interpolators { get; set; } = new List<Interpolator>();
+        public List<ParticleInterpolator> Interpolators { get; set; } = new List<ParticleInterpolator>();
 
-        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.ParticleIterator iterator)
+        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.Iterator iterator)
         {
             var n = Interpolators.Count;
             while (iterator.HasNext)

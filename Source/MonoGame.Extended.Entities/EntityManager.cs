@@ -101,7 +101,7 @@ namespace MonoGame.Extended.Entities
                 var entity = _entityBag[entityId];
                 _entityBag[entityId] = null;
                 _componentManager.Destroy(entityId);
-                _entityToComponentBits[entityId] = default(BitVector32);
+                _entityToComponentBits[entityId] = default;
                 ActiveCount--;
 
                 // we must notify subscribers before removing it from the pool

@@ -3,15 +3,15 @@ using Microsoft.Xna.Framework;
 
 namespace MonoGame.Extended.Particles.Modifiers.Containers
 {
-    public class CircleContainerModifier : Modifier
+    public class CircleContainerModifier : ParticleModifier
     {
         public float Radius { get; set; }
         public bool Inside { get; set; } = true;
         public float RestitutionCoefficient { get; set; } = 1;
 
-        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.ParticleIterator iterator)
+        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.Iterator iterator)
         {
-            var radiusSq = Radius*Radius;
+            var radius2 = Radius * Radius;
             while (iterator.HasNext)
             {
                 var particle = iterator.Next();
@@ -23,14 +23,14 @@ namespace MonoGame.Extended.Particles.Modifiers.Containers
 
                 if (Inside)
                 {
-                    if (distSq < radiusSq) continue;
-
+                    if (distSq < radius2)
+                        continue;
                     SetReflected(distSq, particle, normal);
                 }
                 else
                 {
-                    if (distSq > radiusSq) continue;
-
+                    if (distSq > radius2)
+                        continue;
                     SetReflected(distSq, particle, -normal);
                 }
             }
@@ -38,15 +38,14 @@ namespace MonoGame.Extended.Particles.Modifiers.Containers
 
         private unsafe void SetReflected(float distSq, Particle* particle, Vector2 normal)
         {
-            var dist = (float) Math.Sqrt(distSq);
+            var dist = (float)Math.Sqrt(distSq);
             var d = dist - Radius; // how far outside the circle is the particle
 
-            var twoRestDot = 2*RestitutionCoefficient*
-                             Vector2.Dot(particle->Velocity, normal);
-            particle->Velocity -= twoRestDot*normal;
+            var twoRestDot = 2 * RestitutionCoefficient * Vector2.Dot(particle->Velocity, normal);
+            particle->Velocity -= twoRestDot * normal;
 
             // exact computation requires sqrt or goniometrics
-            particle->Position -= normal*d;
+            particle->Position -= normal * d;
         }
     }
 }

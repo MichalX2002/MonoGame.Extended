@@ -1,6 +1,6 @@
 ﻿namespace MonoGame.Extended.Particles.Modifiers.Interpolators
 {
-    public class OpacityInterpolator : Interpolator<float>
+    public class OpacityInterpolator : ParticleInterpolator<float>
     {
         public override unsafe void Update(float amount, Particle* particle)
         {

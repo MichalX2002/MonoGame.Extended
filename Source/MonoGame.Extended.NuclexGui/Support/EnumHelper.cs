@@ -16,7 +16,7 @@ namespace MonoGame.Extended.NuclexGui.Support
 
             // If the enumeration is empty, return nothing
             if (values.Length == 0)
-                return default(T);
+                return default;
 
             // Look for the highest value in the enumeration. We initialize the highest value
             // to the first enumeration value so we don't have to use some arbitrary starting
@@ -42,7 +42,7 @@ namespace MonoGame.Extended.NuclexGui.Support
 
             // If the enumeration is empty, return nothing
             if (values.Length == 0)
-                return default(T);
+                return default;
 
             // Look for the lowest value in the enumeration. We initialize the lowest value
             // to the first enumeration value so we don't have to use some arbitrary starting

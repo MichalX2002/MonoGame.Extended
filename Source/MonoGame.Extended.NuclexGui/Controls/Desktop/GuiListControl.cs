@@ -68,8 +68,8 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>How the user can select items in the list</summary>
         public ListSelectionMode SelectionMode
         {
-            get { return _selectionMode; }
-            set { _selectionMode = value; }
+            get => _selectionMode;
+            set => _selectionMode = value;
         }
 
         /// <summary>Slider the list uses to scroll through its items</summary>
@@ -86,7 +86,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// </summary>
         public IListRowLocator ListRowLocator
         {
-            get { return _listRowLocator; }
+            get => _listRowLocator;
             set
             {
                 if (value != _listRowLocator)

@@ -2,12 +2,12 @@
 
 namespace MonoGame.Extended.Particles.Modifiers
 {
-    public class DragModifier : Modifier
+    public class DragModifier : ParticleModifier
     {
         public float DragCoefficient { get; set; } = 0.47f;
         public float Density { get; set; } = .5f;
 
-        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.ParticleIterator iterator)
+        public override unsafe void Update(float elapsedSeconds, ParticleBuffer.Iterator iterator)
         {
             while (iterator.HasNext)
             {

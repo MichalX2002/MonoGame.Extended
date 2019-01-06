@@ -68,7 +68,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>Position of the cursor within the text</summary>
         public int CaretPosition
         {
-            get { return _caretPosition; }
+            get => _caretPosition;
             set
             {
                 if ((value < 0) || (value > Text.Length))
@@ -94,7 +94,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>Text that is being displayed on the control</summary>
         public string Text
         {
-            get { return _text.ToString(); }
+            get => _text.ToString();
             set
             {
                 _text.Remove(0, _text.Length);

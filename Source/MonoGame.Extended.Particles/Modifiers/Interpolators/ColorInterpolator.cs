@@ -3,7 +3,7 @@
     /// <summary>
     /// Defines a modifier which interpolates the color of a particle over the course of its lifetime.
     /// </summary>
-    public sealed class ColorInterpolator : Interpolator<HslColor>
+    public sealed class ColorInterpolator : ParticleInterpolator<HslColor>
     {
         public override unsafe void Update(float amount, Particle* particle)
         {

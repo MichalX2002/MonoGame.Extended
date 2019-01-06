@@ -86,15 +86,15 @@ namespace MonoGame.Extended.NuclexGui
         /// <summary>Width of the screen in pixels</summary>
         public float Width
         {
-            get { return _size.X; }
-            set { _size.X = value; }
+            get => _size.X;
+            set => _size.X = value;
         }
 
         /// <summary>Height of the screen in pixels</summary>
         public float Height
         {
-            get { return _size.Y; }
-            set { _size.Y = value; }
+            get => _size.Y;
+            set => _size.Y = value;
         }
 
         /// <summary>Control responsible for hosting the GUI's top-level controls</summary>

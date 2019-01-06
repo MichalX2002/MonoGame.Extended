@@ -47,7 +47,7 @@ namespace MonoGame.Extended.Graphics.Effects
         /// </value>
         public Texture2D Texture
         {
-            get { return _texture; }
+            get => _texture;
             set
             {
                 _texture = value;
@@ -67,7 +67,7 @@ namespace MonoGame.Extended.Graphics.Effects
         /// </remarks>
         public float Alpha
         {
-            get { return _alpha; }
+            get => _alpha;
 
             set
             {
@@ -81,7 +81,7 @@ namespace MonoGame.Extended.Graphics.Effects
         /// </summary>
         public bool TextureEnabled
         {
-            get { return _textureEnabled; }
+            get => _textureEnabled;
 
             set
             {
@@ -97,7 +97,7 @@ namespace MonoGame.Extended.Graphics.Effects
         /// </summary>
         public bool VertexColorEnabled
         {
-            get { return _vertexColorEnabled; }
+            get => _vertexColorEnabled;
 
             set
             {

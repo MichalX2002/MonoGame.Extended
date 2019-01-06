@@ -47,7 +47,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>Whether the control can be dragged with the mouse</summary>
         protected bool EnableDragging
         {
-            get { return _enableDragging; }
+            get => _enableDragging;
             set
             {
                 _enableDragging = value;

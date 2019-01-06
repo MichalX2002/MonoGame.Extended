@@ -24,7 +24,7 @@ namespace MonoGame.Extended.Particles
 			Buffer = new ParticleBuffer(capacity);
 			Offset = Vector2.Zero;
 			Profile = profile ?? throw new ArgumentNullException(nameof(profile));
-			Modifiers = new List<Modifier>();
+			Modifiers = new List<ParticleModifier>();
 			ModifierExecutionStrategy = ParticleModifierExecutionStrategy.Serial;
 			Parameters = new ParticleReleaseParameters();
 		}
@@ -37,7 +37,7 @@ namespace MonoGame.Extended.Particles
 		public string Name { get; set; }
 		public int ActiveParticles => Buffer.Count;
 		public Vector2 Offset { get; set; }
-		public List<Modifier> Modifiers { get; }
+		public List<ParticleModifier> Modifiers { get; }
 		public Profile Profile { get; set; }
 		public ParticleReleaseParameters Parameters { get; set; }
 		public TextureRegion2D TextureRegion { get; set; }
@@ -51,58 +51,57 @@ namespace MonoGame.Extended.Particles
 		/// Setter resizes the internal <see cref="Buffer"/>.
 		/// </summary>
 		public int Capacity
-		{
-			get { return Buffer.Size; }
-			set
-			{
+        {
+            get => Buffer.Size;
+            set
+            {
                 if (Buffer.Size != value)
                 {
                     Buffer.Dispose();
                     Buffer = new ParticleBuffer(value);
                 }
-			}
-		}
+            }
+        }
 
-		private float _lifeSpanSeconds;
+        private float _lifeSpanSeconds;
 		public TimeSpan LifeSpan
-		{
-			get { return TimeSpan.FromSeconds(_lifeSpanSeconds); }
-			set { _lifeSpanSeconds = (float) value.TotalSeconds; }
-		}
+        {
+            get => TimeSpan.FromSeconds(_lifeSpanSeconds);
+            set => _lifeSpanSeconds = (float)value.TotalSeconds;
+        }
 
-		private float _nextAutoTrigger;
+        private float _nextAutoTrigger;
 
 		private bool _autoTrigger = true;
 		public bool AutoTrigger
-		{
-			get { return _autoTrigger; }
-			set
-			{
-				_autoTrigger = value;
-				_nextAutoTrigger = 0;
-			}
-		}
+        {
+            get => _autoTrigger;
+            set
+            {
+                _autoTrigger = value;
+                _nextAutoTrigger = 0;
+            }
+        }
 
-		private float _autoTriggerFrequency;
+        private float _autoTriggerFrequency;
 		public float AutoTriggerFrequency
-		{
-			get { return _autoTriggerFrequency; }
-			set
-			{
-				_autoTriggerFrequency = value;
-				_nextAutoTrigger = 0;
-			}
-		}
+        {
+            get => _autoTriggerFrequency;
+            set
+            {
+                _autoTriggerFrequency = value;
+                _nextAutoTrigger = 0;
+            }
+        }
 
-		private void ReclaimExpiredParticles()
+        private void ReclaimExpiredParticles()
 		{
-			var iterator = Buffer.Iterator;
-			var expired = 0;
+			var iterator = Buffer.GetIterator();
+			int expired = 0;
 
 			while (iterator.HasNext)
 			{
 				var particle = iterator.Next();
-
 				if (_totalSeconds - particle->Inception < _lifeSpanSeconds)
 					break;
 
@@ -115,13 +114,10 @@ namespace MonoGame.Extended.Particles
 
 		public void Clear()
 		{
-            var oldBuffer = Buffer;
-            int size = oldBuffer.Size;
-            oldBuffer.Dispose();
-            Buffer = new ParticleBuffer(size);
+            Buffer.Clear();
         }
 
-		public bool Update(float elapsedSeconds, Vector2 position = default(Vector2))
+		public bool Update(float elapsedSeconds, Vector2 position = default)
 		{
 			_totalSeconds += elapsedSeconds;
 
@@ -141,8 +137,7 @@ namespace MonoGame.Extended.Particles
 
 			ReclaimExpiredParticles();
 
-			var iterator = Buffer.Iterator;
-
+			var iterator = Buffer.GetIterator();
 			while (iterator.HasNext)
 			{
 				var particle = iterator.Next();
@@ -175,11 +170,9 @@ namespace MonoGame.Extended.Particles
 		private void Release(Vector2 position, int numToRelease, float layerDepth = 0)
 		{
 			var iterator = Buffer.Release(numToRelease);
-
 			while (iterator.HasNext)
 			{
 				var particle = iterator.Next();
-
 				Profile.GetOffsetAndHeading(out particle->Position, out Vector2 heading);
 
 				particle->Age = 0f;
@@ -188,7 +181,6 @@ namespace MonoGame.Extended.Particles
 				particle->TriggerPos = position;
 
 				var speed = _random.NextSingle(Parameters.Speed);
-
 				particle->Velocity = heading * speed;
 
 				_random.NextColor(out particle->Color, Parameters.Color);

@@ -23,7 +23,7 @@ namespace MonoGame.Extended.Gui
         [JsonProperty(Order = 1)]
         public Control Content
         {
-            get { return _content; }
+            get => _content;
             set
             {
                 if (_content != value)

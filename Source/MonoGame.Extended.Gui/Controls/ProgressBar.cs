@@ -15,11 +15,11 @@ namespace MonoGame.Extended.Gui.Controls
         private float _progress = 1.0f;
         public float Progress
         {
-            get { return _progress; }
+            get => _progress;
             set
             {
                 // ReSharper disable once CompareOfFloatsByEqualityOperator
-                if(_progress != value)
+                if (_progress != value)
                 {
                     _progress = value;
                     ProgressChanged?.Invoke(this, EventArgs.Empty);

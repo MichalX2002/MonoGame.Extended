@@ -55,20 +55,20 @@ namespace MonoGame.Extended
 
         public float Degrees
         {
-            get { return Radians * _radianDegree; }
-            set { Radians = value * _degreeRadian; }
+            get => Radians * _radianDegree;
+            set => Radians = value * _degreeRadian;
         }
 
         public float Gradians
         {
-            get { return Radians * _radianGradian; }
-            set { Radians = value * _gradianRadian; }
+            get => Radians * _radianGradian;
+            set => Radians = value * _gradianRadian;
         }
 
         public float Revolutions
         {
-            get { return Radians * _tauInv; }
-            set { Radians = value * _tau; }
+            get => Radians * _tauInv;
+            set => Radians = value * _tau;
         }
 
         public Angle(float value, AngleType angleType = AngleType.Radian)

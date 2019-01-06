@@ -16,30 +16,24 @@ namespace MonoGame.Extended.Content.Pipeline.Text
 
         public static XmlMinifierSettings Aggressive
         {
-            get
-            {
-                return new XmlMinifierSettings
+            get => new XmlMinifierSettings
                 {
                     RemoveEmptyLines = true,
                     RemoveSpaceBetweenElements = true,
                     CloseEmptyTags = true,
                     RemoveComments = true
                 };
-            }
         }
 
         public static XmlMinifierSettings NoMinification
         {
-            get
-            {
-                return new XmlMinifierSettings
+            get => new XmlMinifierSettings
                 {
                     RemoveEmptyLines = false,
                     RemoveSpaceBetweenElements = false,
                     CloseEmptyTags = false,
                     RemoveComments = false
                 };
-            }
         }
     }
 

@@ -117,9 +117,9 @@ namespace MonoGame.Extended.Input.InputListeners
         /// </summary>
         public float VibrationStrengthLeft
         {
-            get { return _vibrationStrengthLeft; }
+            get => _vibrationStrengthLeft;
             // Clamp the value, just to be sure.
-            set { _vibrationStrengthLeft = MathHelper.Clamp(value, 0, 1); }
+            set => _vibrationStrengthLeft = MathHelper.Clamp(value, 0, 1);
         }
 
         /// <summary>
@@ -132,9 +132,9 @@ namespace MonoGame.Extended.Input.InputListeners
         /// </summary>
         public float VibrationStrengthRight
         {
-            get { return _vibrationStrengthRight; }
+            get => _vibrationStrengthRight;
             // Clamp the value, just to be sure.
-            set { _vibrationStrengthRight = MathHelper.Clamp(value, 0, 1); }
+            set => _vibrationStrengthRight = MathHelper.Clamp(value, 0, 1);
         }
 
         /// <summary>

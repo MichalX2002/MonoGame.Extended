@@ -11,35 +11,35 @@ namespace MonoGame.Extended.NuclexGui
         /// <summary>X coordinate of the rectangle's left border</summary>
         public UniScalar Left
         {
-            get { return Location.X; }
-            set { Location.X = value; }
+            get => Location.X;
+            set => Location.X = value;
         }
 
         /// <summary>Y coordinate of the rectangle's upper border</summary>
         public UniScalar Top
         {
-            get { return Location.Y; }
-            set { Location.Y = value; }
+            get => Location.Y;
+            set => Location.Y = value;
         }
 
         /// <summary>X coordinate of the rectangle's right border</summary>
         public UniScalar Right
         {
-            get { return Location.X + Size.X; }
-            set { Size.X = value - Location.X; }
+            get => Location.X + Size.X;
+            set => Size.X = value - Location.X;
         }
 
         /// <summary>Y coordinate of the rectangle's lower border</summary>
         public UniScalar Bottom
         {
-            get { return Location.Y + Size.Y; }
-            set { Size.Y = value - Location.Y; }
+            get => Location.Y + Size.Y;
+            set => Size.Y = value - Location.Y;
         }
 
         /// <summary>Point consisting of the lesser coordinates of the rectangle</summary>
         public UniVector Min
         {
-            get { return Location; }
+            get => Location;
             set
             {
                 // In short: this.Size += this.Location - value;
@@ -56,7 +56,7 @@ namespace MonoGame.Extended.NuclexGui
         /// <summary>Point consisting of the greater coordinates of the rectangle</summary>
         public UniVector Max
         {
-            get { return Location + Size; }
+            get => Location + Size;
             set
             {
                 // In short: this.Size = value - this.Location;

@@ -66,8 +66,8 @@ namespace MonoGame.Extended.NuclexGui.Support
         /// </exception>
         public new TReferencedType Target
         {
-            get { return base.Target as TReferencedType; }
-            set { base.Target = value; }
+            get => base.Target as TReferencedType;
+            set => base.Target = value;
         }
     }
 }

@@ -105,7 +105,7 @@ namespace MonoGame.Extended.NuclexGui
         /// </remarks>
         public IInputCapturer InputCapturer
         {
-            get { return _inputCapturer; }
+            get => _inputCapturer;
             set
             {
                 if (!ReferenceEquals(value, _inputCapturer))
@@ -166,7 +166,7 @@ namespace MonoGame.Extended.NuclexGui
         /// <summary>Whether the GUI should be drawn during Game.Draw()</summary>
         public bool Visible
         {
-            get { return _visible; }
+            get => _visible;
             set
             {
                 if (value != _visible)
@@ -183,7 +183,7 @@ namespace MonoGame.Extended.NuclexGui
         /// </summary>
         public int DrawOrder
         {
-            get { return _drawOrder; }
+            get => _drawOrder;
             set
             {
                 if (value != _drawOrder)
@@ -256,7 +256,7 @@ namespace MonoGame.Extended.NuclexGui
         /// </remarks>
         public IGuiVisualizer Visualizer
         {
-            get { return _guiVisualizer; }
+            get => _guiVisualizer;
             set
             {
                 _guiVisualizer = value;
@@ -273,7 +273,7 @@ namespace MonoGame.Extended.NuclexGui
         /// </remarks>
         public GuiScreen Screen
         {
-            get { return _screen; }
+            get => _screen;
             set
             {
                 _screen = value;
@@ -305,7 +305,7 @@ namespace MonoGame.Extended.NuclexGui
         /// </summary>
         public int UpdateOrder
         {
-            get { return _updateOrder; }
+            get => _updateOrder;
             set
             {
                 if (value != _updateOrder)
