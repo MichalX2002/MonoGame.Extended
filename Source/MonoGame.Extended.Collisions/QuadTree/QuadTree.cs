@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace MonoGame.Extended.Collisions
 {
@@ -31,7 +32,7 @@ namespace MonoGame.Extended.Collisions
         /// <summary>
         ///     Gets the bounds of the area contained in this quad tree.
         /// </summary>
-        public  RectangleF NodeBounds { get; protected set; }
+        public RectangleF NodeBounds { get; protected set; }
 
         /// <summary>
         ///     Gets whether the current node is a leaf node.
@@ -83,7 +84,7 @@ namespace MonoGame.Extended.Collisions
         public void Insert(QuadtreeData data)
         {
             var actorBounds = data.Target.Bounds;
-            
+
             // Object doesn't fit into this node.
             if (!NodeBounds.Intersects(actorBounds))
             {
@@ -256,13 +257,14 @@ namespace MonoGame.Extended.Collisions
         {
             var result = new List<QuadtreeData>();
 
-            if (!NodeBounds.Intersects(area)) return result;
+            if (!NodeBounds.Intersects(area))
+                return result;
 
             if (IsLeaf)
             {
                 for (int i = 0, size = Contents.Count; i < size; i++)
                 {
-                    if (Contents[i].Bounds.Intersects(area) 
+                    if (Contents[i].Bounds.Intersects(area)
                         && !Contents[i].Flag)
                     {
                         result.Add(Contents[i]);

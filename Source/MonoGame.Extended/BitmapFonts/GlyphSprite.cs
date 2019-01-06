@@ -8,7 +8,7 @@ namespace MonoGame.Extended.BitmapFonts
         public int Char;
         public Texture2D Texture;
         public int Index;
-        public Rectangle SourceRect;
+        public RectangleF SourceRect;
         public Vector2 Position;
         public Color Color;
         public float Rotation;

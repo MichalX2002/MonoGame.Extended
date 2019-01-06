@@ -24,7 +24,7 @@ namespace MonoGame.Extended.Testing
                 _circleBuffer = new BatchedSprite[Sides];
             }
 
-            ShapeExtensions.CreateCircle(radius, _circlePointBuffer);
+            ShapeDrawingExtensions.CreateCircle(radius, _circlePointBuffer);
             
             int pointsVisible = (int)(_circleBuffer.Length * progress);
             batch.DrawPolygon(center, _circlePointBuffer, pointsVisible, color, thickness);

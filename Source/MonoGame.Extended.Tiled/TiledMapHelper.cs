@@ -29,7 +29,7 @@ namespace MonoGame.Extended.Tiled
         {
             var x = tileX * tileWidth;
             var y = tileY * tileHeight;
-            return new Vector2(x, y);
+            return new PointF(x, y);
         }
 
         internal static PointF GetIsometricPosition(int tileX, int tileY, int tileWidth, int tileHeight)
@@ -45,7 +45,7 @@ namespace MonoGame.Extended.Tiled
             // -1 because we want the top the tile-diamond (top-center) to be the origin in tile space
             var x = (tileX - tileY - 1) * halfTileWidth;
             var y = (tileX + tileY) * halfTileHeight;
-            return new Vector2(x, y);
+            return new PointF(x, y);
         }
     }
 }

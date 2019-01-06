@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace MonoGame.Extended.Serialization

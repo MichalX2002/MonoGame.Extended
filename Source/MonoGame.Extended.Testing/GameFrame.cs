@@ -49,18 +49,18 @@ namespace MonoGame.Extended.Testing
 
         private void TextDrawTest(GameTime time)
         {
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             string str = "w"; //tf big boi\nok this weird";
 
-            float s = 2f;
+            float s = 5f;
 
             SizeF measure = _font40.MeasureString(str);
             Rectangle clip = new Rectangle(130, 115, 70, (int)measure.Height + 15);
 
-            float x = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 50 + 150 -10 * s;
+            float x = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 60 + 155 -10 * s;
             //float x = 170;                                                               
-            float y = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 50 + 115 -10 * s;
+            float y = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 60 + 115 -10 * s;
             _spriteBatch.DrawString(_font40, str, new Vector2(x, y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, clip);
 
             //_spriteBatch.DrawString(_font40, str, new Vector2(x - 50,  y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, null);

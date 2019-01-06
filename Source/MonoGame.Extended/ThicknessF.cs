@@ -6,28 +6,28 @@ using System.Runtime.Serialization;
 namespace MonoGame.Extended
 {
     [DataContract]
-    public struct Thickness : IEquatable<Thickness>
+    public struct ThicknessF : IEquatable<ThicknessF>
     {
-        [DataMember] public int Left { get; set; }
-        [DataMember] public int Top { get; set; }
-        [DataMember] public int Right { get; set; }
-        [DataMember] public int Bottom { get; set; }
+        [DataMember] public float Left { get; set; }
+        [DataMember] public float Top { get; set; }
+        [DataMember] public float Right { get; set; }
+        [DataMember] public float Bottom { get; set; }
 
-        public int Width => Left + Right;
-        public int Height => Top + Bottom;
-        public Size Size => new Size(Width, Height);
+        public float Width => Left + Right;
+        public float Height => Top + Bottom;
+        public SizeF Size => new SizeF(Width, Height);
 
-        public Thickness(int all)
+        public ThicknessF(float all)
             : this(all, all, all, all)
         {
         }
 
-        public Thickness(int leftRight, int topBottom)
+        public ThicknessF(float leftRight, float topBottom)
             : this(leftRight, topBottom, leftRight, topBottom)
         {
         }
 
-        public Thickness(int left, int top, int right, int bottom)
+        public ThicknessF(float left, float top, float right, float bottom)
             : this()
         {
             Left = left;
@@ -36,20 +36,20 @@ namespace MonoGame.Extended
             Bottom = bottom;
         }
 
-        public static implicit operator Thickness(int value)
+        public static implicit operator ThicknessF(float value)
         {
-            return new Thickness(value);
+            return new ThicknessF(value);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is Thickness other)
+            if (obj is ThicknessF other)
                 return Equals(other);
 
             return base.Equals(obj);
         }
 
-        public bool Equals(Thickness other)
+        public bool Equals(ThicknessF other)
         {
             return Left == other.Left && Right == other.Right && Top == other.Top && Bottom == other.Bottom;
         }
@@ -58,34 +58,34 @@ namespace MonoGame.Extended
         {
             unchecked
             {
-                var hashCode = Left;
-                hashCode = (hashCode * 397) ^ Top;
-                hashCode = (hashCode * 397) ^ Right;
-                hashCode = (hashCode * 397) ^ Bottom;
+                int hashCode = Left.GetHashCode();
+                hashCode = (hashCode * 397) ^ Top.GetHashCode();
+                hashCode = (hashCode * 397) ^ Right.GetHashCode();
+                hashCode = (hashCode * 397) ^ Bottom.GetHashCode();
                 return hashCode;
             }
         }
 
-        public static Thickness FromValues(int[] values)
+        public static ThicknessF FromValues(float[] values)
         {
             switch (values.Length)
             {
                 case 1:
-                    return new Thickness(values[0]);
+                    return new ThicknessF(values[0]);
                 case 2:
-                    return new Thickness(values[0], values[1]);
+                    return new ThicknessF(values[0], values[1]);
                 case 4:
-                    return new Thickness(values[0], values[1], values[2], values[3]);
+                    return new ThicknessF(values[0], values[1], values[2], values[3]);
                 default:
                     throw new FormatException("Invalid thickness");
             }
         }
 
-        public static Thickness Parse(string value)
+        public static ThicknessF Parse(string value)
         {
-            var values = value
+            float[] values = value
                 .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse)
+                .Select(float.Parse)
                 .ToArray();
 
             return FromValues(values);

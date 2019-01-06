@@ -12,8 +12,8 @@ namespace MonoGame.Extended.BitmapFonts
         public int XOffset { get; }
         public int YOffset { get; }
         public int XAdvance { get; }
-        public int Width => TextureRegion.Width;
-        public int Height => TextureRegion.Height;
+        public float Width => TextureRegion.Width;
+        public float Height => TextureRegion.Height;
 
         public IReadOnlyDictionary<int, int> Kernings { get; internal set; }
 

@@ -64,7 +64,7 @@ namespace MonoGame.Extended.BitmapFonts
                 Glyph glyph = iterator.Current;
                 if (glyph.FontRegion != null)
                 {
-                    var right = glyph.Position.X + glyph.FontRegion.Width;
+                    float right = glyph.Position.X + glyph.FontRegion.Width;
                     if (right > rectangle.Right)
                         rectangle.Width = right - rectangle.Left;
                 }

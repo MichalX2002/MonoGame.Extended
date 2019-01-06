@@ -5,36 +5,36 @@ namespace MonoGame.Extended.TextureAtlases
 {
     public class NinePatchRegion2D : TextureRegion2D
     {
-        public Rectangle[] SourcePatches { get; } = new Rectangle[9];
-        public Thickness Padding { get; }
-        public int LeftPadding => Padding.Left;
-        public int TopPadding => Padding.Top;
-        public int RightPadding => Padding.Right;
-        public int BottomPadding => Padding.Bottom;
+        public RectangleF[] SourcePatches { get; } = new RectangleF[9];
+        public ThicknessF Padding { get; }
+        public float LeftPadding => Padding.Left;
+        public float TopPadding => Padding.Top;
+        public float RightPadding => Padding.Right;
+        public float BottomPadding => Padding.Bottom;
 
-        public NinePatchRegion2D(TextureRegion2D textureRegion, Thickness padding)
+        public NinePatchRegion2D(TextureRegion2D textureRegion, ThicknessF padding)
             : base(textureRegion.Name, textureRegion.Texture, textureRegion.X, textureRegion.Y, textureRegion.Width, textureRegion.Height)
         {
             Padding = padding;
             CachePatches(textureRegion.Bounds, SourcePatches);
         }
 
-        public NinePatchRegion2D(TextureRegion2D textureRegion, int padding)
+        public NinePatchRegion2D(TextureRegion2D textureRegion, float padding)
             : this(textureRegion, padding, padding, padding, padding)
         {
         }
 
-        public NinePatchRegion2D(TextureRegion2D textureRegion, int leftRightPadding, int topBottomPadding)
+        public NinePatchRegion2D(TextureRegion2D textureRegion, float leftRightPadding, float topBottomPadding)
             : this(textureRegion, leftRightPadding, topBottomPadding, leftRightPadding, topBottomPadding)
         {
         }
 
-        public NinePatchRegion2D(TextureRegion2D textureRegion, int leftPadding, int topPadding, int rightPadding, int bottomPadding)
-            : this(textureRegion, new Thickness(leftPadding, topPadding, rightPadding, bottomPadding))
+        public NinePatchRegion2D(TextureRegion2D textureRegion, float leftPadding, float topPadding, float rightPadding, float bottomPadding)
+            : this(textureRegion, new ThicknessF(leftPadding, topPadding, rightPadding, bottomPadding))
         {
         }
 
-        public NinePatchRegion2D(Texture2D texture, Thickness thickness)
+        public NinePatchRegion2D(Texture2D texture, ThicknessF thickness)
             : this(new TextureRegion2D(texture), thickness)
         {
         }
@@ -49,36 +49,36 @@ namespace MonoGame.Extended.TextureAtlases
         public const int BottomMiddle = 7;
         public const int BottomRight = 8;
 
-        private readonly Rectangle[] _destinationPatches = new Rectangle[9];
+        private readonly RectangleF[] _destinationPatches = new RectangleF[9];
 
-        public Rectangle[] CreatePatches(Rectangle rectangle)
+        public RectangleF[] CreatePatches(RectangleF rectangle)
         {
             CachePatches(rectangle, _destinationPatches);
             return _destinationPatches;
         }
 
-        private void CachePatches(Rectangle sourceRectangle, Rectangle[] patchCache)
+        private void CachePatches(RectangleF sourceRectangle, RectangleF[] patchCache)
         {
-            var x = sourceRectangle.X;
-            var y = sourceRectangle.Y;
-            var w = sourceRectangle.Width;
-            var h = sourceRectangle.Height;
-            var middleWidth = w - LeftPadding - RightPadding;
-            var middleHeight = h - TopPadding - BottomPadding;
-            var bottomY = y + h - BottomPadding;
-            var rightX = x + w - RightPadding;
-            var leftX = x + LeftPadding;
-            var topY = y + TopPadding;
+            float x = sourceRectangle.X;
+            float y = sourceRectangle.Y;
+            float w = sourceRectangle.Width;
+            float h = sourceRectangle.Height;
+            float middleWidth = w - LeftPadding - RightPadding;
+            float middleHeight = h - TopPadding - BottomPadding;
+            float bottomY = y + h - BottomPadding;
+            float rightX = x + w - RightPadding;
+            float leftX = x + LeftPadding;
+            float topY = y + TopPadding;
 
-            patchCache[TopLeft] = new Rectangle(x, y, LeftPadding, TopPadding);
-            patchCache[TopMiddle] = new Rectangle(leftX, y, middleWidth, TopPadding);
-            patchCache[TopRight] = new Rectangle(rightX, y, RightPadding, TopPadding);
-            patchCache[MiddleLeft] = new Rectangle(x, topY, LeftPadding, middleHeight);
-            patchCache[Middle] = new Rectangle(leftX, topY, middleWidth, middleHeight);
-            patchCache[MiddleRight] = new Rectangle(rightX, topY, RightPadding, middleHeight);
-            patchCache[BottomLeft] = new Rectangle(x, bottomY, LeftPadding, BottomPadding);
-            patchCache[BottomMiddle] = new Rectangle(leftX, bottomY, middleWidth, BottomPadding);
-            patchCache[BottomRight] = new Rectangle(rightX, bottomY, RightPadding, BottomPadding);
+            patchCache[TopLeft] = new RectangleF(x, y, LeftPadding, TopPadding);
+            patchCache[TopMiddle] = new RectangleF(leftX, y, middleWidth, TopPadding);
+            patchCache[TopRight] = new RectangleF(rightX, y, RightPadding, TopPadding);
+            patchCache[MiddleLeft] = new RectangleF(x, topY, LeftPadding, middleHeight);
+            patchCache[Middle] = new RectangleF(leftX, topY, middleWidth, middleHeight);
+            patchCache[MiddleRight] = new RectangleF(rightX, topY, RightPadding, middleHeight);
+            patchCache[BottomLeft] = new RectangleF(x, bottomY, LeftPadding, BottomPadding);
+            patchCache[BottomMiddle] = new RectangleF(leftX, bottomY, middleWidth, BottomPadding);
+            patchCache[BottomRight] = new RectangleF(rightX, bottomY, RightPadding, BottomPadding);
         }
     }
 }

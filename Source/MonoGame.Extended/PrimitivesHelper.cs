@@ -35,8 +35,7 @@ namespace MonoGame.Extended
             // Exit with no collision as soon as slab intersection becomes empty
             return rayMinimumDistance <= rayMaximumDistance;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         internal static void CreateRectangleFromPoints(IReadOnlyList<PointF> points, out PointF minimum, out PointF maximum)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 4.2; Bounding Volumes - Axis-aligned Bounding Boxes (AABBs). pg 82-84
@@ -58,8 +57,7 @@ namespace MonoGame.Extended
                 maximum = PointF.Maximum(maximum, point);
             }
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         internal static void TransformRectangle(ref PointF center, ref Vector2 halfExtents, Matrix2 transformMatrix)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 4.2; Bounding Volumes - Axis-aligned Bounding Boxes (AABBs). pg 86-87
@@ -70,8 +68,7 @@ namespace MonoGame.Extended
             halfExtents.Y = halfExtents.Y * Math.Abs(transformMatrix.M21) + halfExtents.Y * Math.Abs(transformMatrix.M22) +
                       halfExtents.Y * Math.Abs(transformMatrix.M32);
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         internal static float SquaredDistanceToPointFromRectangle(PointF minimum, PointF maximum, PointF point)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.1.3.1; Basic Primitive Tests - Closest-point Computations - Distance of Point to AABB.  pg 130-131
@@ -104,8 +101,7 @@ namespace MonoGame.Extended
             }
             return squaredDistance;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         internal static void ClosestPointToPointFromRectangle(PointF minimum, PointF maximum, PointF point, out PointF result)
         {
             // Real-Time Collision Detection, Christer Ericson, 2005. Chapter 5.1.2; Basic Primitive Tests - Closest-point Computations. pg 130-131

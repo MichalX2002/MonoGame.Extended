@@ -78,13 +78,12 @@
     <Compile Include="OrthographicCamera.cs" />
     <Compile Include="Content\TextData.cs" />
     <Compile Include="Content\TextDataReader.cs" />
-    <Compile Include="PointF.cs" />
     <Compile Include="Point3.cs" />
     <Compile Include="PrimitivesHelper.cs" />
     <Compile Include="RandomExtensions.cs" />
     <Compile Include="Ray2.cs" />
     <Compile Include="RectangleExtensions.cs" />
-    <Compile Include="RectangleF.cs" />
+    <Compile Include="RectangleHelper.cs" />
     <Compile Include="Screens\GameScreen.cs" />
     <Compile Include="Screens\ScreenManager.cs" />
     <Compile Include="Screens\Transitions\ExpandTransition.cs" />
@@ -98,9 +97,7 @@
     <Compile Include="Serialization\ShortNameJsonContractResolver.cs" />
     <Compile Include="Serialization\NinePatchRegion2DJsonConverter.cs" />
     <Compile Include="Serialization\ThicknessJsonConverter.cs" />
-    <Compile Include="ShapeF.cs" />
-    <Compile Include="Size.cs" />
-    <Compile Include="SizeF.cs" />
+    <Compile Include="Shapes\ShapeExtensions.cs" />
     <Compile Include="Size3.cs" />
     <Compile Include="Sprites\ISpriteBatchDrawable.cs" />
     <Compile Include="Serialization\ContentManagerJsonConverter.cs" />
@@ -134,7 +131,7 @@
     <Compile Include="ISizable.cs" />
     <Compile Include="IUpdate.cs" />
     <Compile Include="Range.cs" />
-    <Compile Include="Shapes\ShapeExtensions.cs" />
+    <Compile Include="Shapes\ShapeDrawingExtensions.cs" />
     <Compile Include="Shapes\Polygon.cs" />
     <Compile Include="Content\TextDataType.cs" />
     <Compile Include="StringBuilderExtensions.cs" />
@@ -146,6 +143,7 @@
     <Compile Include="TextureAtlases\TextureRegion2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sprites\Sprite.cs" />
+    <Compile Include="ThicknessF.cs" />
     <Compile Include="Thickness.cs" />
     <Compile Include="Timers\ContinuousClock.cs" />
     <Compile Include="Timers\CountdownTimer.cs" />

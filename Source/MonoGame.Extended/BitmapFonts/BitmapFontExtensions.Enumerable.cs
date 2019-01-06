@@ -13,7 +13,7 @@ namespace MonoGame.Extended.BitmapFonts
     {
         public static SizeF GetGlyphSprites(
             this BitmapFont font, ICollection<GlyphSprite> output, string text, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, RectangleF? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
                 return GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
@@ -21,7 +21,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static SizeF GetGlyphSprites(
             this BitmapFont font, ICollection<GlyphSprite> output, StringBuilder text, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, RectangleF? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
                 return GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
@@ -29,7 +29,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static SizeF GetGlyphSprites(
             this BitmapFont font, ICollection<GlyphSprite> output, ICharIterator text, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, RectangleF? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
                 return GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
@@ -37,7 +37,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         private static SizeF GetSprites(
             GlyphEnumerator glyphs, ICollection<GlyphSprite> output, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, RectangleF? clipRect)
         {
             GlyphSprite sprite;
             SizeF size = SizeF.Empty;
@@ -54,7 +54,7 @@ namespace MonoGame.Extended.BitmapFonts
                 TextureRegion2D region = glyph.FontRegion.TextureRegion;
 
                 sprite.Visible = region.Bounds.IsVisible(
-                    ref newPos, glyphOrigin, scale, clipRect, out Rectangle srcRect);
+                    ref newPos, glyphOrigin, scale, clipRect, out RectangleF srcRect);
 
                 if (!sprite.Visible) // restore values
                 {
@@ -89,7 +89,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static SizeF GetGlyphBatchedSprites(
             this BitmapFont font, ICollection<GlyphBatchedSprite> output, string text, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
+            float rotation, Vector2 origin, Vector2? scale, float depth, RectangleF? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
                 return GetGlyphBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
@@ -97,7 +97,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static SizeF GetGlyphBatchedSprites(
             this BitmapFont font, ICollection<GlyphBatchedSprite> output, StringBuilder text, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
+            float rotation, Vector2 origin, Vector2? scale, float depth, RectangleF? clipRect)
         {
             using (var glyphs = (GlyphEnumerator)font.GetGlyphs(text, position))
                 return GetGlyphBatchedSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
@@ -105,7 +105,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         private static SizeF GetGlyphBatchedSprites(
             GlyphEnumerator glyphs, ICollection<GlyphBatchedSprite> output, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
+            Color color, float rotation, Vector2 origin, Vector2? scale, float depth, RectangleF? clipRect)
         {
             GlyphBatchedSprite sprite;
             var size = new SizeF();
@@ -122,7 +122,7 @@ namespace MonoGame.Extended.BitmapFonts
                 TextureRegion2D region = glyph.FontRegion.TextureRegion;
 
                 sprite.Visible = region.Bounds.IsVisible(
-                    ref newPos, glyphOrigin, scaleValue, clipRect, out Rectangle srcRect);
+                    ref newPos, glyphOrigin, scaleValue, clipRect, out RectangleF srcRect);
 
                 if (!sprite.Visible) // restore values
                 {
@@ -182,7 +182,7 @@ namespace MonoGame.Extended.BitmapFonts
         /// </param>
         public static void DrawString(
             this SpriteBatch spriteBatch, BitmapFont font, string text, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth, Rectangle? clippingRectangle = null)
+            float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth, RectangleF? clippingRectangle = null)
         {
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
@@ -194,7 +194,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static void DrawString(
             this SpriteBatch spriteBatch, BitmapFont font, StringBuilder text, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth, Rectangle? clippingRectangle = null)
+            float rotation, Vector2 origin, Vector2 scale, SpriteEffects effect, float layerDepth, RectangleF? clippingRectangle = null)
         {
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
@@ -206,7 +206,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         private static void DrawString(
             SpriteBatch batch, IEnumerator<Glyph> glyphs, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            float rotation, Vector2 origin, Vector2 scale, float depth, RectangleF? clipRect)
         {
             while (glyphs.MoveNext())
             {
@@ -245,17 +245,19 @@ namespace MonoGame.Extended.BitmapFonts
         /// </param>
         public static void DrawString(
             this SpriteBatch spriteBatch, BitmapFont font, string text, Vector2 position, Color color, float rotation,
-            Vector2 origin, float scale, SpriteEffects effect, float layerDepth, Rectangle? clippingRectangle = null)
+            Vector2 origin, float scale, SpriteEffects effect, float layerDepth, RectangleF? clippingRectangle = null)
         {
-            DrawString(spriteBatch, font, text, position, color, rotation, origin,
+            DrawString(
+                spriteBatch, font, text, position, color, rotation, origin,
                 new Vector2(scale, scale), effect, layerDepth, clippingRectangle);
         }
 
         public static void DrawString(
             this SpriteBatch spriteBatch, BitmapFont font, StringBuilder text, Vector2 position, Color color, float rotation,
-            Vector2 origin, float scale, SpriteEffects effect, float layerDepth, Rectangle? clippingRectangle = null)
+            Vector2 origin, float scale, SpriteEffects effect, float layerDepth, RectangleF? clippingRectangle = null)
         {
-            DrawString(spriteBatch, font, text, position, color, rotation, origin,
+            DrawString(
+                spriteBatch, font, text, position, color, rotation, origin,
                 new Vector2(scale, scale), effect, layerDepth, clippingRectangle);
         }
 
@@ -287,9 +289,10 @@ namespace MonoGame.Extended.BitmapFonts
         /// </param>
         public static void DrawString(
             this SpriteBatch spriteBatch, BitmapFont font, string text, Vector2 position,
-            Color color, float layerDepth, Rectangle? clippingRectangle = null)
+            Color color, float layerDepth, RectangleF? clippingRectangle = null)
         {
-            DrawString(spriteBatch, font, text, position, color, 0, Vector2.Zero,
+            DrawString(
+                spriteBatch, font, text, position, color, 0, Vector2.Zero,
                 Vector2.One, SpriteEffects.None, layerDepth, clippingRectangle);
         }
 
@@ -310,7 +313,7 @@ namespace MonoGame.Extended.BitmapFonts
         /// </param>
         public static void DrawString(
             this SpriteBatch spriteBatch, BitmapFont font, string text,
-            Vector2 position, Color color, Rectangle? clippingRectangle = null)
+            Vector2 position, Color color, RectangleF? clippingRectangle = null)
         {
             DrawString(
                 spriteBatch, font, text, position, color, 0, Vector2.Zero,
@@ -319,7 +322,7 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static void DrawString(
             this SpriteBatch spriteBatch, BitmapFont font, StringBuilder text,
-            Vector2 position, Color color, Rectangle? clippingRectangle = null)
+            Vector2 position, Color color, RectangleF? clippingRectangle = null)
         {
             DrawString(
                 spriteBatch, font, text, position, color, 0, Vector2.Zero,

@@ -1,4 +1,5 @@
-﻿using MonoGame.Extended.NuclexGui.Controls.Desktop;
+﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended.NuclexGui.Controls.Desktop;
 
 namespace MonoGame.Extended.NuclexGui.Visuals.Flat.Renderers
 {

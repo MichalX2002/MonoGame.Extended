@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using MonoGame.Extended.NuclexGui.Controls;
 
@@ -148,7 +149,8 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
                         e =>
                             e.IsConstructedGenericType &&
                             (e.GetGenericTypeDefinition() == typeof(IFlatControlRenderer<>))).FirstOrDefault();
-                if (genericType == default(Type)) continue;
+                if (genericType == default)
+                    continue;
 
                 // Find out which control type the renderer is specialized for
                 var controlType = genericType.GenericTypeArguments;
@@ -178,7 +180,7 @@ namespace MonoGame.Extended.NuclexGui.Visuals.Flat
             var resources = assembly.GetManifestResourceNames();
 
             if (!resources.Contains(skinJsonFile))
-                throw new ArgumentException("Resource '" + skinJsonFile + "' not found", "skinJsonFile");
+                throw new ArgumentException("Resource '" + skinJsonFile + "' not found", nameof(skinJsonFile));
 
             using (var skinStream = assembly.GetManifestResourceStream(skinJsonFile))
             {

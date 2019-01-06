@@ -1,4 +1,5 @@
-﻿
+﻿using Microsoft.Xna.Framework;
+
 namespace MonoGame.Extended.NuclexGui.Controls.Desktop
 {
     /// <summary>

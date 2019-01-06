@@ -13,8 +13,8 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
 
             if (ThumbLocator != null)
                 return ThumbLocator.GetThumbPosition(bounds, ThumbPosition, ThumbSize);
-            var thumbHeight = bounds.Height*ThumbSize;
-            var thumbY = (bounds.Height - thumbHeight)*ThumbPosition;
+            var thumbHeight = bounds.Height * ThumbSize;
+            var thumbY = (bounds.Height - thumbHeight) * ThumbPosition;
 
             return new RectangleF(0, thumbY, bounds.Width, thumbHeight);
         }
@@ -26,12 +26,12 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         {
             var bounds = GetAbsoluteBounds();
 
-            var thumbHeight = bounds.Height*ThumbSize;
+            var thumbHeight = bounds.Height * ThumbSize;
             var maxY = bounds.Height - thumbHeight;
 
             // Prevent divide-by-zero if the thumb fills out the whole rail
             if (maxY > 0.0f)
-                ThumbPosition = MathHelper.Clamp(y/maxY, 0.0f, 1.0f);
+                ThumbPosition = MathHelper.Clamp(y / maxY, 0.0f, 1.0f);
             else ThumbPosition = 0.0f;
 
             OnMoved();

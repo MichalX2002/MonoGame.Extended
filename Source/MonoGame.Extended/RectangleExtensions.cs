@@ -5,6 +5,19 @@ namespace MonoGame.Extended
     public static class RectangleExtensions
     {
         /// <summary>
+        ///     Computes the closest <see cref="PointF" /> on this <see cref="RectangleF" /> to a specified
+        ///     <see cref="PointF" />.
+        /// </summary>
+        /// <param name="rect">The rectangle.</param>
+        /// <param name="point">The point.</param>
+        /// <returns>The closest <see cref="PointF" /> on this <see cref="RectangleF" /> to the <paramref name="point" />.</returns>
+        public static PointF ClosestPointTo(this RectangleF rect, PointF point)
+        {
+            PrimitivesHelper.ClosestPointToPointFromRectangle(rect.TopLeft, rect.BottomRight, point, out PointF result);
+            return result;
+        }
+
+        /// <summary>
         ///     Gets the corners of the rectangle in a clockwise direction starting at the top left.
         /// </summary>
         public static Point[] GetCorners(this Rectangle rectangle)
@@ -28,16 +41,6 @@ namespace MonoGame.Extended
             corners[2] = new Vector2(rectangle.Right, rectangle.Bottom);
             corners[3] = new Vector2(rectangle.Left, rectangle.Bottom);
             return corners;
-        }
-
-        public static Rectangle ToRectangle(this RectangleF rectangle)
-        {
-            return new Rectangle((int) rectangle.X, (int) rectangle.Y, (int) rectangle.Width, (int) rectangle.Height);
-        }
-
-        public static RectangleF ToRectangleF(this Rectangle rectangle)
-        {
-            return new RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
 
         public static Rectangle Clip(this Rectangle rectangle, Rectangle clippingRectangle)

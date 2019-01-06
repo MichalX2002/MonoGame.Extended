@@ -1,4 +1,6 @@
-﻿namespace MonoGame.Extended.Collisions
+﻿using Microsoft.Xna.Framework;
+
+namespace MonoGame.Extended.Collisions
 {
     /// <summary>
     ///     Data structure for the quad tree.

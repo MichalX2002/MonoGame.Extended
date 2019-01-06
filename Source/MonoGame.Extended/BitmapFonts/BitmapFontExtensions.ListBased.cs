@@ -11,7 +11,7 @@ namespace MonoGame.Extended.BitmapFonts
     {
         private static void GetSprites(
             IList<Glyph> glyphs, ICollection<GlyphSprite> output, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, RectangleF? clipRect)
         {
             GlyphSprite sprite;
             for (int i = 0, count = glyphs.Count; i < count; i++)
@@ -24,7 +24,7 @@ namespace MonoGame.Extended.BitmapFonts
                     TextureRegion2D region = glyph.FontRegion.TextureRegion;
 
                     sprite.Visible = region.Bounds.IsVisible(
-                        ref newPos, glyphOrigin, scale, clipRect, out Rectangle srcRect);
+                        ref newPos, glyphOrigin, scale, clipRect, out RectangleF srcRect);
 
                     if (!sprite.Visible) // restore values
                     {
@@ -50,14 +50,14 @@ namespace MonoGame.Extended.BitmapFonts
 
         public static void GetGlyphSprites(
             IList<Glyph> glyphs, ICollection<GlyphSprite> output, Vector2 position,
-            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            Color color, float rotation, Vector2 origin, Vector2 scale, float depth, RectangleF? clipRect)
         {
             GetSprites(glyphs, output, position, color, rotation, origin, scale, depth, clipRect);
         }
 
         private static void GetBatchedSprites(
             IList<Glyph> glyphs, ICollection<GlyphBatchedSprite> output, Vector2 position, Color color,
-            float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
+            float rotation, Vector2 origin, Vector2 scale, float depth, RectangleF? clipRect)
         {
             GlyphBatchedSprite sprite;
             for (int i = 0, count = glyphs.Count; i < count; i++)
@@ -70,7 +70,7 @@ namespace MonoGame.Extended.BitmapFonts
                     TextureRegion2D region = glyph.FontRegion.TextureRegion;
 
                     sprite.Visible = region.Bounds.IsVisible(
-                        ref newPos, glyphOrigin, scale, clipRect, out Rectangle srcRect);
+                        ref newPos, glyphOrigin, scale, clipRect, out RectangleF srcRect);
 
                     if (!sprite.Visible) // restore values
                     {

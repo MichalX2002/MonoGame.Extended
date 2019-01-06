@@ -1,5 +1,7 @@
 ﻿
 
+using Microsoft.Xna.Framework;
+
 namespace MonoGame.Extended.Collisions
 {
     /// <summary>

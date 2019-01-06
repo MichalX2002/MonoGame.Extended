@@ -6,34 +6,34 @@ namespace MonoGame.Extended.TextureAtlases
 {
     public class TextureRegion2D
     {
-        private Rectangle _bounds;
+        private RectangleF _bounds;
 
         public string Name { get; }
         public Texture2D Texture { get; protected set; }
         public object Tag { get; set; }
 
-        public Rectangle Bounds { get => _bounds; protected set => SetBounds(value); }
-        public int X => Bounds.X;
-        public int Y => Bounds.Y;
-        public int Width => Bounds.Width;
-        public int Height => Bounds.Height;
-        public Size Size => _bounds.Size;
+        public RectangleF Bounds { get => _bounds; protected set => SetBounds(value); }
+        public float X => Bounds.X;
+        public float Y => Bounds.Y;
+        public float Width => Bounds.Width;
+        public float Height => Bounds.Height;
+        public SizeF Size => _bounds.Size;
 
         public Vector2 Texel { get; private set; }
         public float TexelWidth => Texel.X;
         public float TexelHeight => Texel.Y;
 
-        public TextureRegion2D(Texture2D texture, int x, int y, int width, int height)
+        public TextureRegion2D(Texture2D texture, float x, float y, float width, float height)
             : this(null, texture, x, y, width, height)
         {
         }
 
-        public TextureRegion2D(Texture2D texture, Rectangle region)
+        public TextureRegion2D(Texture2D texture, RectangleF region)
             : this(null, texture, region.X, region.Y, region.Width, region.Height)
         {
         }
         
-        public TextureRegion2D(string name, Texture2D texture, Rectangle region)
+        public TextureRegion2D(string name, Texture2D texture, RectangleF region)
             : this(name, texture, region.X, region.Y, region.Width, region.Height)
         {
         }
@@ -43,14 +43,14 @@ namespace MonoGame.Extended.TextureAtlases
         {
         }
 
-        public TextureRegion2D(string name, Texture2D texture, int x, int y, int width, int height)
+        public TextureRegion2D(string name, Texture2D texture, float x, float y, float width, float height)
         {
             Texture = texture ?? throw new ArgumentNullException(nameof(texture));
             Name = name;
-            Bounds = new Rectangle(x, y, width, height);
+            Bounds = new RectangleF(x, y, width, height);
         }
 
-        private void SetBounds(Rectangle rectangle)
+        private void SetBounds(RectangleF rectangle)
         {
             _bounds = rectangle;
             Texel = new Vector2(1f / _bounds.Width, 1f / _bounds.Height);
