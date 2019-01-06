@@ -126,15 +126,13 @@ namespace MonoGame.Extended.Particles
         {
             private readonly ParticleBuffer _buffer;
             private unsafe Particle* _current;
-
-            public int Total { get; private set; }
+            
             public unsafe bool HasNext => _current != _buffer.Tail;
 
             public unsafe Iterator(ParticleBuffer buffer, int offset)
             {
                 _buffer = buffer;
                 _current = _buffer.Head;
-                Total = _buffer.Count;
 
                 if (offset != 0)
                 {
@@ -160,7 +158,6 @@ namespace MonoGame.Extended.Particles
             public unsafe void Reset()
             {
                 _current = _buffer.Head;
-                Total = _buffer.Count;
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -22,12 +23,25 @@ namespace MonoGame.Extended.Particles
 
         public void FastForward(Vector2 position, float seconds, float triggerPeriod)
         {
+            if (triggerPeriod <= 0)
+                throw new ArgumentOutOfRangeException(nameof(triggerPeriod));
+
             var time = 0f;
             while (time < seconds)
             {
                 Update(triggerPeriod);
                 Trigger(position);
                 time += triggerPeriod;
+            }
+        }
+
+        public void FastForward(Vector2 position, float seconds)
+        {
+            var time = 0f;
+            while (time < seconds)
+            {
+                Update(0.1f);
+                time += 0.1f;
             }
         }
 

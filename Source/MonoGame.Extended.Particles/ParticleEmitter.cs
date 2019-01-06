@@ -13,8 +13,18 @@ namespace MonoGame.Extended.Particles
 		// Creates a not-so-random number.
 		private readonly FastRandom _random = new FastRandom();
 		private float _totalSeconds;
+        internal ParticleBuffer Buffer;
 
-		[JsonConstructor]
+        public string Name { get; set; }
+        public int ActiveParticles => Buffer.Count;
+        public Vector2 Offset { get; set; }
+        public List<ParticleModifier> Modifiers { get; }
+        public Profile Profile { get; set; }
+        public ParticleReleaseParameters Parameters { get; set; }
+        public TextureRegion2D TextureRegion { get; set; }
+        public ParticleModifierExecutionStrategy ModifierExecutionStrategy { get; set; }
+        
+        [JsonConstructor]
 		public ParticleEmitter(string name, TextureRegion2D textureRegion, int capacity, TimeSpan lifeSpan, Profile profile)
 		{
             _lifeSpanSeconds = (float)lifeSpan.TotalSeconds;
@@ -33,18 +43,6 @@ namespace MonoGame.Extended.Particles
 			: this(null, textureRegion, capacity, lifeSpan, profile)
 		{
 		}
-
-		public string Name { get; set; }
-		public int ActiveParticles => Buffer.Count;
-		public Vector2 Offset { get; set; }
-		public List<ParticleModifier> Modifiers { get; }
-		public Profile Profile { get; set; }
-		public ParticleReleaseParameters Parameters { get; set; }
-		public TextureRegion2D TextureRegion { get; set; }
-        
-		public ParticleModifierExecutionStrategy ModifierExecutionStrategy { get; set; }
-
-		internal ParticleBuffer Buffer;
 
 		/// <summary>
 		/// Getter returns the capacity of the size <see cref="ParticleBuffer" />.
@@ -125,10 +123,18 @@ namespace MonoGame.Extended.Particles
 			{
 				_nextAutoTrigger -= elapsedSeconds;
 
-				if (_nextAutoTrigger <= 0)
+                const int maxTriggers = 5;
+                int triggers = 0;
+				while (_nextAutoTrigger <= 0)
 				{
 					Trigger(position);
-					_nextAutoTrigger = _autoTriggerFrequency;
+
+                    // allow multiple triggers if delta was higher than trigger frequency
+                    _nextAutoTrigger = MathHelper.Clamp(_nextAutoTrigger + _autoTriggerFrequency, -0.25f, _autoTriggerFrequency);
+
+                    triggers++;
+                    if (triggers >= maxTriggers)
+                        break;
 				}
 			}
 
