@@ -9,57 +9,37 @@ namespace MonoGame.Extended.TextureAtlases
         {
             Draw(spriteBatch, textureRegion, position, color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 0, clippingRectangle);
         }
-
+        
         public static void Draw(this SpriteBatch spriteBatch, TextureRegion2D textureRegion, Vector2 position, Color color,
             float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth, Rectangle? clippingRectangle = null)
         {
-            Rectangle srcRect = textureRegion.Bounds;
-
-            if (IsVisible(srcRect, ref position, origin, scale, clippingRectangle, out srcRect) == false)
-                return;
-
-            spriteBatch.Draw(textureRegion.Texture, position, srcRect, color, rotation, origin, scale, effects, layerDepth);
+            if (textureRegion.Bounds.IsVisible(ref position, origin, scale, clippingRectangle, out Rectangle srcRect))
+                spriteBatch.Draw(textureRegion.Texture, position, srcRect, color, rotation, origin, scale, effects, layerDepth);
         }
 
         public static bool IsVisible(
             this Rectangle sourceRect, ref Vector2 position,
-            Vector2 origin, Vector2 scale, Rectangle? clipRect, out Rectangle clipped)
+            Vector2 origin, Vector2 scale, Rectangle? clipRect, out Rectangle clippedRect)
         {
-            /* source
-            
-            var x = (int)(position.X - origin.X);
-            var y = (int)(position.Y - origin.Y);
-            var width = (int)(textureRegion.Width * scale.X);
-            var height = (int)(textureRegion.Height * scale.Y);
-            var destinationRectangle = new Rectangle(x, y, width, height);
-
-            sourceRectangle = ClipSourceRectangle(textureRegion.Bounds, destinationRectangle, clippingRectangle.Value);
-            position.X += sourceRectangle.X - textureRegion.Bounds.X;
-            position.Y += sourceRectangle.Y - textureRegion.Bounds.Y;
-
-            if(sourceRectangle.Width <= 0 || sourceRectangle.Height <= 0)
-                return;
-            */
-
-            if (clipRect.HasValue == false)
+            if (!clipRect.HasValue)
             {
-                clipped = sourceRect;
+                clippedRect = sourceRect;
                 return true;
             }
 
-            int x = (int)(position.X - origin.X);
-            int y = (int)(position.Y - origin.Y);
-            int width = (int)(sourceRect.Width * scale.X);
-            int height = (int)(sourceRect.Height * scale.Y);
-            Rectangle destinationRectangle = new Rectangle(x, y, width, height);
+            float x = position.X - origin.X * scale.X;
+            float y = position.Y - origin.Y * scale.Y;
+            float width = sourceRect.Width * scale.X;
+            float height = sourceRect.Height * scale.Y;
+            var dstRect = new RectangleF(x, y, width, height);
 
-            clipped = ClipSourceRectangle(sourceRect, destinationRectangle, clipRect.Value);
-            position.X += clipped.X - sourceRect.X;
-            position.Y += clipped.Y - sourceRect.Y;
+            var clippedRectF = ClipSourceRectangle(sourceRect, dstRect, clipRect.Value);
+            clippedRect = clippedRectF.ToRectangle();
 
-            if (sourceRect.Width <= 0 || sourceRect.Height <= 0)
-                return false;
-            return true;
+            position.X += 0.5f + (clippedRect.X - sourceRect.X) * scale.X;
+            position.Y += 0.5f + (clippedRect.Y - sourceRect.Y) * scale.Y;
+            
+            return clippedRectF.Width >= 1 && clippedRectF.Height >= 1f;
         }
 
         public static void Draw(
@@ -70,7 +50,7 @@ namespace MonoGame.Extended.TextureAtlases
             else
                 Draw(spriteBatch, textureRegion.Texture, textureRegion.Bounds, destinationRectangle, color, clippingRectangle);
         }
-        
+
         public static void Draw(
             this SpriteBatch spriteBatch, NinePatchRegion2D ninePatchRegion, Rectangle destinationRectangle, Color color, Rectangle? clippingRectangle = null)
         {
@@ -84,8 +64,8 @@ namespace MonoGame.Extended.TextureAtlases
 
                 if (clippingRectangle.HasValue)
                 {
-                    sourcePatch = ClipSourceRectangle(sourcePatch, destinationPatch, clippingRectangle.Value);
-                    destinationPatch = ClipDestinationRectangle(destinationPatch, clippingRectangle.Value);
+                    sourcePatch = ClipSourceRectangle(sourcePatch, destinationPatch, clippingRectangle.Value).ToRectangle();
+                    destinationPatch = ClipDestinationRectangle(destinationPatch, clippingRectangle.Value).ToRectangle();
                     Draw(spriteBatch, ninePatchRegion.Texture, sourcePatch, destinationPatch, color, clippingRectangle);
                 }
                 else
@@ -101,42 +81,46 @@ namespace MonoGame.Extended.TextureAtlases
         {
             if (clippingRectangle.HasValue)
             {
-                sourceRectangle = ClipSourceRectangle(sourceRectangle, destinationRectangle, clippingRectangle.Value);
-                destinationRectangle = ClipDestinationRectangle(destinationRectangle, clippingRectangle.Value);
+                sourceRectangle = ClipSourceRectangle(sourceRectangle, destinationRectangle, clippingRectangle.Value).ToRectangle();
+                destinationRectangle = ClipDestinationRectangle(destinationRectangle, clippingRectangle.Value).ToRectangle();
             }
 
             if (destinationRectangle.Width > 0 && destinationRectangle.Height > 0)
                 spriteBatch.Draw(texture, destinationRectangle, sourceRectangle, color);
         }
 
-        private static Rectangle ClipSourceRectangle(Rectangle sourceRectangle, Rectangle destinationRectangle, Rectangle clippingRectangle)
+        private static RectangleF ClipSourceRectangle(RectangleF sourceRectangle, RectangleF destinationRectangle, RectangleF clippingRectangle)
         {
-            var left = (float)(clippingRectangle.Left - destinationRectangle.Left);
-            var right = (float)(destinationRectangle.Right - clippingRectangle.Right);
-            var top = (float)(clippingRectangle.Top - destinationRectangle.Top);
-            var bottom = (float)(destinationRectangle.Bottom - clippingRectangle.Bottom);
-            var x =  left > 0 ? left : 0;
-            var y = top > 0 ? top : 0;
-            var w = (right > 0 ? right : 0) + x;
-            var h = (bottom > 0 ? bottom : 0) + y;
+            float left = clippingRectangle.Left - destinationRectangle.Left + 1f;
+            float right = destinationRectangle.Right - clippingRectangle.Right + 1f;
+            float top = clippingRectangle.Top - destinationRectangle.Top + 1f;
+            float bottom = destinationRectangle.Bottom - clippingRectangle.Bottom + 1f;
+            float x = left > 0 ? left : 0;
+            float y = top > 0 ? top : 0;
+            float w = (right > 0 ? right : 0) + x;
+            float h = (bottom > 0 ? bottom : 0) + y;
 
-            var scaleX = (float)destinationRectangle.Width / sourceRectangle.Width;
-            var scaleY = (float)destinationRectangle.Height / sourceRectangle.Height;
+            float scaleX = destinationRectangle.Width / sourceRectangle.Width;
+            float scaleY = destinationRectangle.Height / sourceRectangle.Height;
             x /= scaleX;
             y /= scaleY;
             w /= scaleX;
             h /= scaleY;
 
-            return new Rectangle((int)(sourceRectangle.X + x), (int)(sourceRectangle.Y + y), (int)(sourceRectangle.Width - w), (int)(sourceRectangle.Height - h));
+            return new RectangleF(
+                sourceRectangle.X + x,
+                sourceRectangle.Y + y,
+                sourceRectangle.Width - w + 0.5f, 
+                sourceRectangle.Height - h + 0.5f);
         }
 
-        private static Rectangle ClipDestinationRectangle(Rectangle destinationRectangle, Rectangle clippingRectangle)
+        private static RectangleF ClipDestinationRectangle(RectangleF destinationRectangle, RectangleF clippingRectangle)
         {
-            var left = clippingRectangle.Left < destinationRectangle.Left ? destinationRectangle.Left : clippingRectangle.Left;
-            var top = clippingRectangle.Top < destinationRectangle.Top ? destinationRectangle.Top : clippingRectangle.Top;
-            var bottom = clippingRectangle.Bottom < destinationRectangle.Bottom ? clippingRectangle.Bottom : destinationRectangle.Bottom;
-            var right = clippingRectangle.Right < destinationRectangle.Right ? clippingRectangle.Right : destinationRectangle.Right;
-            return new Rectangle(left, top, right - left, bottom - top);
+            float left = clippingRectangle.Left < destinationRectangle.Left ? destinationRectangle.Left : clippingRectangle.Left;
+            float top = clippingRectangle.Top < destinationRectangle.Top ? destinationRectangle.Top : clippingRectangle.Top;
+            float bottom = clippingRectangle.Bottom < destinationRectangle.Bottom ? clippingRectangle.Bottom : destinationRectangle.Bottom;
+            float right = clippingRectangle.Right < destinationRectangle.Right ? clippingRectangle.Right : destinationRectangle.Right;
+            return new RectangleF(left, top, right - left, bottom - top);
         }
     }
 }

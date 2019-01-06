@@ -15,5 +15,6 @@ namespace MonoGame.Extended.BitmapFonts
         public Vector2 Origin;
         public Vector2 Scale;
         public float Depth;
+        public bool Visible;
     }
 }

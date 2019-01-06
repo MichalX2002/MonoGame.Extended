@@ -19,7 +19,7 @@ namespace MonoGame.Extended.Testing
         private static readonly char[] measurementChars = new[] { ' ', 'a', 'b', 'c', 'd', 'A', 'B', '1', '2', '3' };
 
         private GraphicsDeviceManager _graphicsManager;
-        private SpriteBatch _batch;
+        private SpriteBatch _spriteBatch;
         private BitmapFont _font26;
         private BitmapFont _font40;
         private Color _clearColor = Color.DarkSlateBlue * 0.33f;
@@ -46,7 +46,31 @@ namespace MonoGame.Extended.Testing
 
         public PostGraphicsObject HoveredPost;
         public PostGraphicsObject OpenPost;
-        
+
+        private void TextDrawTest(GameTime time)
+        {
+            _spriteBatch.Begin();
+
+            string str = "w"; //tf big boi\nok this weird";
+
+            float s = 2f;
+
+            SizeF measure = _font40.MeasureString(str);
+            Rectangle clip = new Rectangle(130, 115, 70, (int)measure.Height + 15);
+
+            float x = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 50 + 150 -10 * s;
+            //float x = 170;                                                               
+            float y = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 50 + 115 -10 * s;
+            _spriteBatch.DrawString(_font40, str, new Vector2(x, y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, clip);
+
+            //_spriteBatch.DrawString(_font40, str, new Vector2(x - 50,  y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, null);
+            //_spriteBatch.DrawString(_font40, str, new Vector2(x + 50,  y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, null);
+
+            _spriteBatch.DrawRectangle(clip, Color.Red);
+
+            _spriteBatch.End();
+        }
+
         public Frame()
         {
             _graphicsManager = new GraphicsDeviceManager(this);
@@ -75,13 +99,13 @@ namespace MonoGame.Extended.Testing
 
         protected override void LoadContent()
         {
-            _batch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font26 = Content.Load<BitmapFont>("LiberationSerif Regular 26px");
             _font40 = Content.Load<BitmapFont>("LiberationSerif Regular 40px");
 
             _postLoadingBar = new CircularProgressBar(150);
 
-            Task.Run(StartLoadingSubreddit);
+            //Task.Run(StartLoadingSubreddit);
 
             base.LoadContent();
         }
@@ -201,9 +225,10 @@ namespace MonoGame.Extended.Testing
         protected override void Draw(GameTime time)
         {
             GraphicsDevice.Clear(_clearColor);
-            
-            _watch.Restart();
 
+            TextDrawTest(time);
+
+            _watch.Restart();
             if (OpenPost != null)
             {
                 DrawFullPost(OpenPost);
@@ -221,12 +246,12 @@ namespace MonoGame.Extended.Testing
 
             if (OpenPost == null)
             {
-                _batch.Begin();
+                _spriteBatch.Begin();
                 int gCount = _lastVisibleGraphic - _firstVisibleGraphic;
                 string countStr = gCount + "/" + _postGraphics.Count;
-                _batch.DrawString(_font26, countStr, new Vector2(dx - _font26.MeasureString(countStr).Width - 6, 0), Color.LimeGreen);
+                _spriteBatch.DrawString(_font26, countStr, new Vector2(dx - _font26.MeasureString(countStr).Width - 6, 0), Color.LimeGreen);
                 //_batch.DrawString(_font26, _firstVisibleGraphic + " - " + _lastVisibleGraphic, new Vector2(3, _font26.LineHeight - 4), Color.Red);
-                _batch.End();
+                _spriteBatch.End();
             }
 
             base.Draw(time);
@@ -238,8 +263,8 @@ namespace MonoGame.Extended.Testing
             float maxCharsInLine = GetMaxCharsInView(_font40, GraphicsDevice.Viewport.Width * 1.1f);
             PostGraphicsObject.DivideTextIntoLines(post.Data.Title, builder, (int)maxCharsInLine);
             
-            _batch.Begin(samplerState: SamplerState.LinearClamp);
-            _batch.DrawString(_font40, builder, new Vector2(8, 4), Color.White);
+            _spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
+            _spriteBatch.DrawString(_font40, builder, new Vector2(8, 4), Color.White);
 
             if (post.PreviewResponse != null && post.PreviewResponse.ContentLength > 0)
             {
@@ -248,10 +273,10 @@ namespace MonoGame.Extended.Testing
                 {
                     var view = GraphicsDevice.Viewport;
                     var pos = new Vector2(view.Width / 2f, view.Height / 2f);
-                    _postLoadingBar.Draw(_batch, pos, 60, Color.White, 8, p);
+                    _postLoadingBar.Draw(_spriteBatch, pos, 60, Color.White, 8, p);
                 }
             }
-            _batch.End();
+            _spriteBatch.End();
 
             post.UploadPostTexture();
             var postTex = post.PostTexture;
@@ -260,9 +285,9 @@ namespace MonoGame.Extended.Testing
 
                 SizeF size = _font40.MeasureString(builder);
 
-                _batch.Begin(samplerState: SamplerState.PointClamp);
-                _batch.Draw(postTex, new Vector2(5, size.Height + 12), Color.White);
-                _batch.End();
+                _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+                _spriteBatch.Draw(postTex, new Vector2(5, size.Height + 12), Color.White);
+                _spriteBatch.End();
             }
             
             StringBuilderPool.Return(builder);
@@ -385,7 +410,7 @@ namespace MonoGame.Extended.Testing
             if (_firstVisibleGraphic < 0 || _lastVisibleGraphic < 0)
                 return;
 
-            _batch.Begin(SpriteSortMode.BackToFront, transformMatrix: _graphicsMatrix);
+            _spriteBatch.Begin(SpriteSortMode.BackToFront, transformMatrix: _graphicsMatrix);
             int last = Math.Min(_postGraphics.Count, _lastVisibleGraphic + 1);
             for (int i = _firstVisibleGraphic; i < last; i++)
             {
@@ -396,16 +421,16 @@ namespace MonoGame.Extended.Testing
                 if (graphic.ThumbnailTexture != null)
                 {
                     Rectangle dst = graphic.ThumbnailDst.ToRectangle();
-                    _batch.Draw(graphic.ThumbnailTexture, dst, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.1f);
+                    _spriteBatch.Draw(graphic.ThumbnailTexture, dst, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.1f);
                 } 
-                _batch.DrawRectangle(graphic.Boundaries, HoveredPost == graphic ? Color.Green : Color.Red, 1);
+                _spriteBatch.DrawRectangle(graphic.Boundaries, HoveredPost == graphic ? Color.Green : Color.Red, 1);
             }
-            _batch.End();
+            _spriteBatch.End();
         }
 
         private void DrawGraphicText()
         {
-            _batch.Begin(transformMatrix: _graphicsMatrix);
+            _spriteBatch.Begin(transformMatrix: _graphicsMatrix);
             for (int i = _firstVisibleGraphic; i <= _lastVisibleGraphic; i++)
             {
                 if (i < 0 || i >= _postGraphics.Count)
@@ -415,10 +440,10 @@ namespace MonoGame.Extended.Testing
                 if (!graphic.IsVisible)
                     continue;
 
-                _batch.DrawString(graphic.CachedMainText, graphic.MainTextPosition);
-                _batch.DrawString(graphic.CachedStatusText, graphic.StatusTextPosition);
+                _spriteBatch.DrawString(graphic.CachedMainText, graphic.MainTextPosition);
+                _spriteBatch.DrawString(graphic.CachedStatusText, graphic.StatusTextPosition);
             }
-            _batch.End();
+            _spriteBatch.End();
         }
 
         private float DrawDownloaderDebug(ResourceDownloader downloader)
@@ -431,7 +456,7 @@ namespace MonoGame.Extended.Testing
             float offX = 0;
             float offY = 5;
 
-            _batch.Begin();
+            _spriteBatch.Begin();
             for (int i = 0; i < threadCount; i++)
             {
                 var request = downloader.Threads[i].CurrentRequest;
@@ -446,7 +471,7 @@ namespace MonoGame.Extended.Testing
 
                 bool working = request == null ? false : true;
                 Color brickColor = working ? Color.LimeGreen : Color.PaleVioletRed;
-                _batch.DrawFilledRectangle(new RectangleF(pos.X, pos.Y, tileWidth - 5, 29), brickColor);
+                _spriteBatch.DrawFilledRectangle(new RectangleF(pos.X, pos.Y, tileWidth - 5, 29), brickColor);
 
                 double progress = 0;
                 if (working)
@@ -456,9 +481,9 @@ namespace MonoGame.Extended.Testing
                 }
 
                 string ps = (working ? (int)(progress * 100f) : -1).ToString();
-                _batch.DrawString(_font26, ps, pos + new Vector2(5, 1), Color.DarkBlue);
+                _spriteBatch.DrawString(_font26, ps, pos + new Vector2(5, 1), Color.DarkBlue);
             }
-            _batch.End();
+            _spriteBatch.End();
 
             return startX + offX;
         }

@@ -9,10 +9,11 @@ namespace MonoGame.Extended.BitmapFonts
         public int Index;
         public Texture2D Texture;
         public BatchedSprite Sprite;
+        public bool Visible;
         
         public void SetColor(Color color)
         {
-            Sprite.SetColor(ref color);
+            Sprite.SetColor(color);
         }
     }
 }

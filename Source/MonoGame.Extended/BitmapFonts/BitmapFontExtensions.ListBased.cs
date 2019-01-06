@@ -13,31 +13,37 @@ namespace MonoGame.Extended.BitmapFonts
             IList<Glyph> glyphs, ICollection<GlyphSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
-            GlyphSprite tmpSprite;
+            GlyphSprite sprite;
             for (int i = 0, count = glyphs.Count; i < count; i++)
             {
                 Glyph glyph = glyphs[i];
                 if (glyph.FontRegion != null)
                 {
                     Vector2 glyphOrigin = origin - glyph.Position;
-                    Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
                     Vector2 newPos = position;
+                    TextureRegion2D region = glyph.FontRegion.TextureRegion;
 
-                    if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
+                    sprite.Visible = region.Bounds.IsVisible(
+                        ref newPos, glyphOrigin, scale, clipRect, out Rectangle srcRect);
+
+                    if (!sprite.Visible) // restore values
                     {
-                        tmpSprite.Char = glyph.Character;
-                        tmpSprite.Texture = glyph.FontRegion.TextureRegion.Texture;
-                        tmpSprite.Index = i;
-                        tmpSprite.SourceRect = srcRect;
-                        tmpSprite.Position = newPos;
-                        tmpSprite.Color = color;
-                        tmpSprite.Rotation = rotation;
-                        tmpSprite.Origin = glyphOrigin;
-                        tmpSprite.Scale = scale;
-                        tmpSprite.Depth = depth;
-                        
-                        output.Add(tmpSprite);
+                        newPos = position;
+                        srcRect = region.Bounds;
                     }
+
+                    sprite.Char = glyph.Character;
+                    sprite.Texture = glyph.FontRegion.TextureRegion.Texture;
+                    sprite.Index = i;
+                    sprite.SourceRect = srcRect;
+                    sprite.Position = newPos;
+                    sprite.Color = color;
+                    sprite.Rotation = rotation;
+                    sprite.Origin = glyphOrigin;
+                    sprite.Scale = scale;
+                    sprite.Depth = depth;
+
+                    output.Add(sprite);
                 }
             }
         }
@@ -53,29 +59,35 @@ namespace MonoGame.Extended.BitmapFonts
             IList<Glyph> glyphs, ICollection<GlyphBatchedSprite> output, Vector2 position, Color color,
             float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
-            GlyphBatchedSprite tmpSprite;
+            GlyphBatchedSprite sprite;
             for (int i = 0, count = glyphs.Count; i < count; i++)
             {
                 Glyph glyph = glyphs[i];
                 if (glyph.FontRegion != null)
                 {
                     Vector2 glyphOrigin = -glyph.Position + origin;
-                    Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
                     Vector2 newPos = position;
+                    TextureRegion2D region = glyph.FontRegion.TextureRegion;
 
-                    if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
+                    sprite.Visible = region.Bounds.IsVisible(
+                        ref newPos, glyphOrigin, scale, clipRect, out Rectangle srcRect);
+
+                    if (!sprite.Visible) // restore values
                     {
-                        tmpSprite.Char = glyph.Character;
-                        tmpSprite.Index = i;
-                        tmpSprite.Texture = glyph.FontRegion.TextureRegion.Texture;
-                        tmpSprite.Sprite = default;
-                        tmpSprite.Sprite.SetTransform(position, rotation, scale, origin, srcRect.Size);
-                        tmpSprite.Sprite.SetTexCoords(tmpSprite.Texture.Texel, srcRect);
-                        tmpSprite.Sprite.SetDepth(depth);
-                        tmpSprite.Sprite.SetColor(ref color);
-
-                        output.Add(tmpSprite);
+                        newPos = position;
+                        srcRect = region.Bounds;
                     }
+
+                    sprite.Char = glyph.Character;
+                    sprite.Index = i;
+                    sprite.Texture = glyph.FontRegion.TextureRegion.Texture;
+                    sprite.Sprite = default;
+                    sprite.Sprite.SetTransform(newPos, rotation, scale, origin, srcRect.Size);
+                    sprite.Sprite.SetTexCoords(sprite.Texture.Texel, srcRect);
+                    sprite.Sprite.SetDepth(depth);
+                    sprite.Sprite.SetColor(color);
+
+                    output.Add(sprite);
                 }
             }
         }
@@ -94,7 +106,8 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = offset; i < count; i++)
             {
                 ref GlyphBatchedSprite s = ref sprites.GetReferenceAt(i);
-                batch.DrawRef(s.Texture, ref s.Sprite);
+                if (s.Visible)
+                    batch.DrawRef(s.Texture, ref s.Sprite);
             }
         }
 
@@ -110,7 +123,8 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = offset; i < count; i++)
             {
                 ref GlyphBatchedSprite s = ref sprites.GetReferenceAt(i);
-                batch.DrawRef(s.Texture, ref s.Sprite, depth);
+                if (s.Visible)
+                    batch.DrawRef(s.Texture, ref s.Sprite, depth);
             }
         }
 
@@ -127,9 +141,12 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = offset; i < count; i++)
             {
                 ref GlyphSprite p = ref sprites.GetReferenceAt(i);
-                batch.Draw(
-                    p.Texture, p.Position, p.SourceRect, p.Color,
-                    p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth);
+                if (p.Visible)
+                {
+                    batch.Draw(
+                        p.Texture, p.Position, p.SourceRect, p.Color,
+                        p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth);
+                }
             }
         }
 
@@ -144,9 +161,12 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = offset; i < count; i++)
             {
                 ref GlyphSprite p = ref sprites.GetReferenceAt(i);
-                batch.Draw(
+                if (p.Visible)
+                {
+                    batch.Draw(
                     p.Texture, p.Position + position, p.SourceRect,
                     p.Color, p.Rotation, p.Origin, p.Scale, SpriteEffects.None, p.Depth + depth);
+                }
             }
         }
 
@@ -166,7 +186,7 @@ namespace MonoGame.Extended.BitmapFonts
         {
             DrawString(batch, sprites, position, 0);
         }
-        
+
         public static void DrawString(
             this SpriteBatch batch, IReferenceList<GlyphSprite> sprites,
             int offset, int count, Vector2 position, Vector2 scale, float depth)
@@ -174,9 +194,12 @@ namespace MonoGame.Extended.BitmapFonts
             for (int i = offset; i < count; i++)
             {
                 ref GlyphSprite p = ref sprites.GetReferenceAt(i);
-                batch.Draw(
+                if (p.Visible)
+                {
+                    batch.Draw(
                     p.Texture, p.Position + position, p.SourceRect, p.Color, p.Rotation,
                     p.Origin, p.Scale * scale, SpriteEffects.None, p.Depth + depth);
+                }
             }
         }
 

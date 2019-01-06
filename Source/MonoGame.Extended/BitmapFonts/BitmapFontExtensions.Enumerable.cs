@@ -39,7 +39,7 @@ namespace MonoGame.Extended.BitmapFonts
             GlyphEnumerator glyphs, ICollection<GlyphSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2 scale, float depth, Rectangle? clipRect)
         {
-            GlyphSprite tmpSprite;
+            GlyphSprite sprite;
             SizeF size = SizeF.Empty;
 
             int index = 0;
@@ -50,33 +50,39 @@ namespace MonoGame.Extended.BitmapFonts
                     continue;
 
                 Vector2 glyphOrigin = position - glyph.Position + origin;
-                Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
                 Vector2 newPos = position;
+                TextureRegion2D region = glyph.FontRegion.TextureRegion;
 
-                if (srcRect.IsVisible(ref newPos, glyphOrigin, scale, clipRect, out srcRect))
+                sprite.Visible = region.Bounds.IsVisible(
+                    ref newPos, glyphOrigin, scale, clipRect, out Rectangle srcRect);
+
+                if (!sprite.Visible) // restore values
                 {
-                    tmpSprite.Char = glyph.Character;
-                    tmpSprite.Texture = glyph.FontRegion.TextureRegion.Texture;
-                    tmpSprite.Index = index;
-                    tmpSprite.SourceRect = srcRect;
-                    tmpSprite.Position = newPos;
-                    tmpSprite.Color = color;
-                    tmpSprite.Rotation = rotation;
-                    tmpSprite.Origin = glyphOrigin;
-                    tmpSprite.Scale = scale;
-                    tmpSprite.Depth = depth;
-
-                    output.Add(tmpSprite);
-                    index++;
-
-                    float rowX = glyph.Position.X + srcRect.Width * scale.X - position.X;
-                    if (rowX > size.Width)
-                        size.Width = rowX;
-
-                    float rowY = glyph.Position.Y + srcRect.Height * scale.Y - position.Y;
-                    if (rowY > size.Height)
-                        size.Height = rowY;
+                    newPos = position;
+                    srcRect = region.Bounds;
                 }
+
+                sprite.Char = glyph.Character;
+                sprite.Texture = region.Texture;
+                sprite.Index = index;
+                sprite.SourceRect = srcRect;
+                sprite.Position = newPos;
+                sprite.Color = color;
+                sprite.Rotation = rotation;
+                sprite.Origin = glyphOrigin;
+                sprite.Scale = scale;
+                sprite.Depth = depth;
+
+                output.Add(sprite);
+                index++;
+
+                float rowX = glyph.Position.X + srcRect.Width * scale.X - newPos.X;
+                if (rowX > size.Width)
+                    size.Width = rowX;
+
+                float rowY = glyph.Position.Y + srcRect.Height * scale.Y - newPos.Y;
+                if (rowY > size.Height)
+                    size.Height = rowY;
             }
             return new SizeF(size.Width, size.Height);
         }
@@ -101,7 +107,7 @@ namespace MonoGame.Extended.BitmapFonts
             GlyphEnumerator glyphs, ICollection<GlyphBatchedSprite> output, Vector2 position,
             Color color, float rotation, Vector2 origin, Vector2? scale, float depth, Rectangle? clipRect)
         {
-            GlyphBatchedSprite tmpSprite;
+            GlyphBatchedSprite sprite;
             var size = new SizeF();
             var scaleValue = scale ?? Vector2.One;
             int index = 0;
@@ -112,31 +118,37 @@ namespace MonoGame.Extended.BitmapFonts
                     continue;
 
                 Vector2 glyphOrigin = position - glyph.Position + origin;
-                Rectangle srcRect = glyph.FontRegion.TextureRegion.Bounds;
                 Vector2 newPos = position;
+                TextureRegion2D region = glyph.FontRegion.TextureRegion;
 
-                if (srcRect.IsVisible(ref newPos, glyphOrigin, scaleValue, clipRect, out srcRect))
+                sprite.Visible = region.Bounds.IsVisible(
+                    ref newPos, glyphOrigin, scaleValue, clipRect, out Rectangle srcRect);
+
+                if (!sprite.Visible) // restore values
                 {
-                    tmpSprite.Char = glyph.Character;
-                    tmpSprite.Index = index;
-                    tmpSprite.Texture = glyph.FontRegion.TextureRegion.Texture;
-                    tmpSprite.Sprite = default;
-                    tmpSprite.Sprite.SetTransform(position, rotation, scale, origin, srcRect.Size);
-                    tmpSprite.Sprite.SetTexCoords(tmpSprite.Texture.Texel, srcRect);
-                    tmpSprite.Sprite.SetDepth(depth);
-                    tmpSprite.Sprite.SetColor(ref color);
-
-                    output.Add(tmpSprite);
-                    index++;
-
-                    float rowX = glyph.Position.X + srcRect.Width * scaleValue.X - position.X;
-                    if (rowX > size.Width)
-                        size.Width = rowX;
-
-                    float rowY = glyph.Position.Y + srcRect.Height * scaleValue.Y - position.Y;
-                    if (rowY > size.Height)
-                        size.Height = rowY;
+                    newPos = position;
+                    srcRect = region.Bounds;
                 }
+
+                sprite.Char = glyph.Character;
+                sprite.Index = index;
+                sprite.Texture = region.Texture;
+                sprite.Sprite = default;
+                sprite.Sprite.SetTransform(newPos, rotation, scale, origin, srcRect.Size);
+                sprite.Sprite.SetTexCoords(sprite.Texture.Texel, srcRect);
+                sprite.Sprite.SetDepth(depth);
+                sprite.Sprite.SetColor(color);
+
+                output.Add(sprite);
+                index++;
+
+                float rowX = glyph.Position.X + srcRect.Width * scaleValue.X - newPos.X;
+                if (rowX > size.Width)
+                    size.Width = rowX;
+
+                float rowY = glyph.Position.Y + srcRect.Height * scaleValue.Y - newPos.Y;
+                if (rowY > size.Height)
+                    size.Height = rowY;
             }
             return new SizeF(size.Width, size.Height);
         }
@@ -300,7 +312,8 @@ namespace MonoGame.Extended.BitmapFonts
             this SpriteBatch spriteBatch, BitmapFont font, string text,
             Vector2 position, Color color, Rectangle? clippingRectangle = null)
         {
-            DrawString(spriteBatch, font, text, position, color, 0, Vector2.Zero,
+            DrawString(
+                spriteBatch, font, text, position, color, 0, Vector2.Zero,
                 Vector2.One, SpriteEffects.None, 0, clippingRectangle);
         }
 
@@ -308,7 +321,8 @@ namespace MonoGame.Extended.BitmapFonts
             this SpriteBatch spriteBatch, BitmapFont font, StringBuilder text,
             Vector2 position, Color color, Rectangle? clippingRectangle = null)
         {
-            DrawString(spriteBatch, font, text, position, color, 0, Vector2.Zero,
+            DrawString(
+                spriteBatch, font, text, position, color, 0, Vector2.Zero,
                 Vector2.One, SpriteEffects.None, 0, clippingRectangle);
         }
     }
