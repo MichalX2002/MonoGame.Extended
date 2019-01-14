@@ -3,24 +3,20 @@ using System.Net;
 
 namespace MonoGame.Extended.Testing
 {
-    internal partial class ResourceRequest
+    public partial class ResourceRequest
     {
-        public void HandleOnResponse(FileInfo file, WebHeaderCollection headers)
+        public void HandleOnResponse(string file, WebHeaderCollection headers)
         {
-            if (IsCanceled)
+            if (!AssertNotCanceled())
+                return;
+
+            if (!File.Exists(file))
             {
-                Fault = new WebException(EXCEPTION_CANCELED, WebExceptionStatus.RequestCanceled);
+                SetNotFound(WebExceptionStatus.CacheEntryNotFound);
                 return;
             }
 
-            if (!file.Exists)
-            {
-                Fault = new WebException("The resource was not cached.", WebExceptionStatus.CacheEntryNotFound);
-                SetNotFound();
-                return;
-            }
-
-            var resourceStream = new ResourceStream(file.OpenRead(), headers);
+            var resourceStream = new ResourceStream(File.OpenRead(file), headers);
             HandleOnResponse(resourceStream);
         }
     }

@@ -2,27 +2,22 @@
 
 namespace MonoGame.Extended.Testing
 {
-    internal partial class ResourceRequest
+    public partial class ResourceRequest
     {
         public void HandleOnResponse(HttpWebResponse response)
         {
-            if (IsCanceled)
-            {
-                Fault = new WebException(EXCEPTION_CANCELED, WebExceptionStatus.RequestCanceled);
+            if (!AssertNotCanceled())
                 return;
-            }
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                string errorMsg = "The resource was not found: " + response.StatusDescription;
-                Fault = new WebException(errorMsg, WebExceptionStatus.ReceiveFailure);
-                SetNotFound();
+                SetNotFound(WebExceptionStatus.ProtocolError);
                 return;
             }
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                Fault = new WebException("The response was invalid.", WebExceptionStatus.ProtocolError);
+                FaultStatus = WebExceptionStatus.ProtocolError;
                 return;
             }
 

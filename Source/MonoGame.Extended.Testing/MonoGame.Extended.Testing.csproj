@@ -68,8 +68,7 @@
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="HeaderCollection.cs" />
     <Compile Include="Input.cs" />
-    <Compile Include="IResourceRequester.cs" />
-    <Compile Include="IResponseStatus.cs" />
+    <Compile Include="ResourceRequester.cs" />
     <Compile Include="ListArray.cs" />
     <Compile Include="MouseButton.cs" />
     <Compile Include="PostGraphicsObject.cs" />

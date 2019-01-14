@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 
 namespace MonoGame.Extended.Testing
 {
-    internal partial class ResourceRequest : IResponseStatus, IDisposable
+    public partial class ResourceRequest : IDisposable
     {
         public const string EXCEPTION_CANCELED = "This request was canceled.";
 
@@ -15,6 +16,7 @@ namespace MonoGame.Extended.Testing
 
         public Uri Uri { get; }
         public string Accept { get; }
+        public WebExceptionStatus FaultStatus { get; private set; }
         public Exception Fault
         {
             get => _fault;
@@ -47,8 +49,9 @@ namespace MonoGame.Extended.Testing
             OnError = onError;
         }
 
-        private void SetNotFound()
+        internal void SetNotFound(WebExceptionStatus status)
         {
+            FaultStatus = status;
             IsComplete = true;
             IsNotFound = true;
             IsFaulted = true;
@@ -56,9 +59,15 @@ namespace MonoGame.Extended.Testing
 
         public void HandleOnResponse(ResourceStream stream)
         {
+            if (IsCanceled)
+            {
+                FaultStatus = WebExceptionStatus.RequestCanceled;
+                return;
+            }
+
             try
             {
-                ValidateLifetime();
+                AssertNotDisposed();
 
                 _stream = stream;
                 OnResponse.Invoke(Uri, _stream);
@@ -68,6 +77,7 @@ namespace MonoGame.Extended.Testing
             {
                 IsFaulted = true;
                 Fault = exc;
+                FaultStatus = WebExceptionStatus.UnknownError;
             }
             finally
             {
@@ -76,10 +86,16 @@ namespace MonoGame.Extended.Testing
         }
 
         [DebuggerHidden]
-        private void ValidateLifetime()
+        private bool AssertNotDisposed()
         {
-            if (IsDisposed)
-                throw new ObjectDisposedException(nameof(ResourceStream));
+            return !IsDisposed;
+        }
+
+        [DebuggerHidden]
+        private bool AssertNotCanceled()
+        {
+            FaultStatus = WebExceptionStatus.RequestCanceled;
+            return !IsCanceled;
         }
 
         public void Cancel()

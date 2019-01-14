@@ -2,59 +2,37 @@
 
 namespace MonoGame.Extended.Testing
 {
-    public class ResourceManager : IResourceRequester
+    public class ResourceManager : ResourceRequester
     {
-        public bool IsDisposed => Downloader.IsDisposed;
-        public bool IsRunning => Downloader.IsRunning;
-
         public ResourceDownloader Downloader { get; }
         public ResourceCache Cache { get; }
 
-        public ResourceManager(string cachePath)
+        public ResourceManager(string cachePath) : base(workers: 1)
         {
             Downloader = new ResourceDownloader();
             Cache = new ResourceCache(cachePath);
         }
 
-        public void Start()
+        protected override void OnStart()
         {
             Downloader.Start();
             Cache.Start();
         }
 
-        public IResponseStatus Request(string uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public override void OnRequest(ResourceRequest resourceRequest)
         {
-            var cachedResponse = Cache.Request(uri, accept, prioritized, onResponse, onError);
-            if (cachedResponse.IsNotFound)
-            {
+            Cache.OnRequest(resourceRequest);
+        }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Downloader.Dispose();
+                Cache.Dispose();
             }
 
-            return Downloader.Request(uri, accept, prioritized, onResponse, onError);
-        }
-
-        public IResponseStatus Request(Uri uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
-        {
-            Cache.Request(uri, accept, prioritized, onResponse, onError);
-
-            return Downloader.Request(uri, accept, prioritized, onResponse, onError);
-        }
-
-        public void Dispose()
-        {
-            Downloader.Dispose();
-            Cache.Dispose();
-        }
-
-        public class Worker
-        {
-            public int ID { get; }
-            public IResponseStatus CurrentRequest { get; internal set; }
-
-            internal Worker(int id)
-            {
-                ID = id;
-            }
+            base.Dispose(disposing);
         }
     }
 }

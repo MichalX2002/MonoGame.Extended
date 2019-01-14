@@ -448,7 +448,7 @@ namespace MonoGame.Extended.Testing
 
         private float DrawDownloaderDebug(ResourceDownloader downloader)
         {
-            int threadCount = downloader.Threads.Count;
+            int threadCount = downloader.Workers.Count;
             int size = MathHelper.Clamp((int)Math.Sqrt(threadCount), 1, 3);
             const float tileWidth = 46;
             float width = size * tileWidth;
@@ -459,7 +459,7 @@ namespace MonoGame.Extended.Testing
             _spriteBatch.Begin();
             for (int i = 0; i < threadCount; i++)
             {
-                var request = downloader.Threads[i].CurrentRequest;
+                var request = downloader.Workers[i].CurrentRequest;
                 
                 Vector2 pos = new Vector2(startX + offX, offY);
                 offX += tileWidth;

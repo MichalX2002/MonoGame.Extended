@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace MonoGame.Extended.Testing
 {
@@ -13,6 +14,7 @@ namespace MonoGame.Extended.Testing
         bool IsCanceled { get; }
         bool IsFaulted { get; }
         Exception Fault { get; }
+        WebExceptionStatus FaultStatus { get; }
 
         void Cancel();
     }
