@@ -11,9 +11,9 @@ namespace MonoGame.Extended.Testing
     public abstract class ResourceRequester : IDisposable
     {
         private AutoResetEvent _requestEvent;
-        private ConcurrentQueue<ResourceRequest> _requests;
-        private ConcurrentQueue<ResourceRequest> _priorityRequests;
-        private ConcurrentDictionary<Uri, ResourceRequest> _responses;
+        private ConcurrentQueue<ResourceResponse> _requests;
+        private ConcurrentQueue<ResourceResponse> _priorityRequests;
+        private ConcurrentDictionary<Uri, ResourceResponse> _responses;
 
         private Thread[] _threads;
         private Worker[] _workers;
@@ -26,9 +26,9 @@ namespace MonoGame.Extended.Testing
         public ResourceRequester(int workers)
         {
             _requestEvent = new AutoResetEvent(false);
-            _requests = new ConcurrentQueue<ResourceRequest>();
-            _priorityRequests = new ConcurrentQueue<ResourceRequest>();
-            _responses = new ConcurrentDictionary<Uri, ResourceRequest>();
+            _requests = new ConcurrentQueue<ResourceResponse>();
+            _priorityRequests = new ConcurrentQueue<ResourceResponse>();
+            _responses = new ConcurrentDictionary<Uri, ResourceResponse>();
 
             _threads = new Thread[workers];
             _workers = new Worker[_threads.Length];
@@ -49,6 +49,7 @@ namespace MonoGame.Extended.Testing
         {
             if (IsRunning)
                 return;
+            IsRunning = true;
 
             for (int i = 0; i < _threads.Length; i++)
             {
@@ -57,38 +58,50 @@ namespace MonoGame.Extended.Testing
             }
 
             OnStart();
-            IsRunning = true;
         }
 
         protected virtual void OnStart()
         {
         }
 
-        public abstract void OnRequest(ResourceRequest resourceRequest);
+        public abstract RequestStatus ProcessRequest(ResourceResponse request, bool prioritized);
 
-        public ResourceRequest Request(Uri uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public ResourceResponse Request(Uri uri, string accept, bool prioritized, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
-            var request = new ResourceRequest(uri, accept, onResponse, onError);
+            var request = new ResourceResponse(uri, accept, onResponse, onError);
+            Request(request, prioritized);
+            return request;
+        }
+
+        public void Request(ResourceResponse request, bool prioritized)
+        {
+            request.Status = RequestStatus.Queued;
             if (prioritized)
                 _priorityRequests.Enqueue(request);
             else
                 _requests.Enqueue(request);
             _requestEvent.Set();
-            return request;
         }
 
-        private bool DequeueRequest(out ResourceRequest request)
+        private bool DequeueRequest(out ResourceResponse request, out bool prioritized)
         {
             if (IsRunning)
             {
                 if (_priorityRequests.TryDequeue(out request))
+                {
+                    prioritized = true;
                     return true;
+                }
 
                 if (_requests.TryDequeue(out request))
+                {
+                    prioritized = false;
                     return true;
+                }
             }
 
             request = null;
+            prioritized = false;
             return false;
         }
 
@@ -99,8 +112,8 @@ namespace MonoGame.Extended.Testing
             {
                 if (!_requestEvent.WaitOne(10))
                     continue;
-
-                while (DequeueRequest(out ResourceRequest request))
+                
+                while (DequeueRequest(out ResourceResponse request, out bool prioritized))
                 {
                     var uri = request.Uri;
                     _responses.TryAdd(uri, request);
@@ -108,13 +121,17 @@ namespace MonoGame.Extended.Testing
 
                     try
                     {
-                        OnRequest(request);
+                        request.Status = RequestStatus.Processing;
+                        request.Status = ProcessRequest(request, prioritized);
                     }
                     catch (Exception exc)
                     {
+                        request.Fault = exc;
+                        request.Status = RequestStatus.Faulted;
                         request.OnError?.Invoke(uri, exc);
                     }
 
+                    request.OnCompletion();
                     worker.CurrentRequest = null;
                     request.Dispose();
                     _responses.TryRemove(uri, out var finishedRequest);
@@ -128,6 +145,8 @@ namespace MonoGame.Extended.Testing
             {
                 if (IsRunning)
                 {
+                    IsRunning = false;
+
                     if (_threads != null)
                     {
                         for (int i = 0; i < _threads.Length; i++)
@@ -147,8 +166,6 @@ namespace MonoGame.Extended.Testing
                         _requestEvent.Dispose();
                         _requestEvent = null;
                     }
-
-                    IsRunning = false;
                 }
 
                 IsDisposed = true;
@@ -163,7 +180,7 @@ namespace MonoGame.Extended.Testing
         public class Worker
         {
             public int ID { get; }
-            public ResourceRequest CurrentRequest { get; internal set; }
+            public ResourceResponse CurrentRequest { get; internal set; }
 
             internal Worker(int id)
             {

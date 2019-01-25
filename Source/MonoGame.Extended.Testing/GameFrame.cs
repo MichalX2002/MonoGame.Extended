@@ -47,29 +47,29 @@ namespace MonoGame.Extended.Testing
         public PostGraphicsObject HoveredPost;
         public PostGraphicsObject OpenPost;
 
-        private void TextDrawTest(GameTime time)
-        {
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-
-            string str = "w"; //tf big boi\nok this weird";
-
-            float s = 5f;
-
-            SizeF measure = _font40.MeasureString(str);
-            Rectangle clip = new Rectangle(130, 115, 70, (int)measure.Height + 15);
-
-            float x = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 60 + 155 -10 * s;
-            //float x = 170;                                                               
-            float y = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 60 + 115 -10 * s;
-            _spriteBatch.DrawString(_font40, str, new Vector2(x, y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, clip);
-
-            //_spriteBatch.DrawString(_font40, str, new Vector2(x - 50,  y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, null);
-            //_spriteBatch.DrawString(_font40, str, new Vector2(x + 50,  y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, null);
-
-            _spriteBatch.DrawRectangle(clip, Color.Red);
-
-            _spriteBatch.End();
-        }
+        //private void TextDrawTest(GameTime time)
+        //{
+        //    _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        //
+        //    string str = "w"; //tf big boi\nok this weird";
+        //
+        //    float s = 5f;
+        //
+        //    SizeF measure = _font40.MeasureString(str);
+        //    Rectangle clip = new Rectangle(130, 115, 70, (int)measure.Height + 15);
+        //
+        //    float x = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 60 + 155 -10 * s;
+        //    //float x = 170;                                                               
+        //    float y = (float)(Math.Sin(time.TotalGameTime.TotalSeconds * 1.1f)) * 60 + 115 -10 * s;
+        //    _spriteBatch.DrawString(_font40, str, new Vector2(x, y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, clip);
+        //
+        //    //_spriteBatch.DrawString(_font40, str, new Vector2(x - 50,  y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, null);
+        //    //_spriteBatch.DrawString(_font40, str, new Vector2(x + 50,  y), Color.White, 0, Vector2.Zero, s, SpriteEffects.None, 0, null);
+        //
+        //    _spriteBatch.DrawRectangle(clip, Color.Red);
+        //
+        //    _spriteBatch.End();
+        //}
 
         public Frame()
         {
@@ -105,7 +105,7 @@ namespace MonoGame.Extended.Testing
 
             _postLoadingBar = new CircularProgressBar(150);
 
-            //Task.Run(StartLoadingSubreddit);
+            Task.Run(StartLoadingSubreddit);
 
             base.LoadContent();
         }
@@ -225,9 +225,7 @@ namespace MonoGame.Extended.Testing
         protected override void Draw(GameTime time)
         {
             GraphicsDevice.Clear(_clearColor);
-
-            TextDrawTest(time);
-
+            
             _watch.Restart();
             if (OpenPost != null)
             {
@@ -446,9 +444,9 @@ namespace MonoGame.Extended.Testing
             _spriteBatch.End();
         }
 
-        private float DrawDownloaderDebug(ResourceDownloader downloader)
+        private float DrawDownloaderDebug(ResourceRequester requester)
         {
-            int threadCount = downloader.Workers.Count;
+            int threadCount = requester.Workers.Count;
             int size = MathHelper.Clamp((int)Math.Sqrt(threadCount), 1, 3);
             const float tileWidth = 46;
             float width = size * tileWidth;
@@ -459,7 +457,7 @@ namespace MonoGame.Extended.Testing
             _spriteBatch.Begin();
             for (int i = 0; i < threadCount; i++)
             {
-                var request = downloader.Workers[i].CurrentRequest;
+                var request = requester.Workers[i].CurrentRequest;
                 
                 Vector2 pos = new Vector2(startX + offX, offY);
                 offX += tileWidth;
@@ -478,6 +476,8 @@ namespace MonoGame.Extended.Testing
                 {
                     if (request.ContentLength > 0 && request.BytesDownloaded >= 0)
                         progress = (double)request.BytesDownloaded / request.ContentLength;
+
+                    Console.WriteLine(request.ContentLength + " / " + request.BytesDownloaded);
                 }
 
                 string ps = (working ? (int)(progress * 100f) : -1).ToString();

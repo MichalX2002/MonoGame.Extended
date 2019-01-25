@@ -7,7 +7,7 @@ namespace MonoGame.Extended.Testing
         public ResourceDownloader Downloader { get; }
         public ResourceCache Cache { get; }
 
-        public ResourceManager(string cachePath) : base(workers: 1)
+        public ResourceManager(string cachePath) : base(workers: 2)
         {
             Downloader = new ResourceDownloader();
             Cache = new ResourceCache(cachePath);
@@ -19,9 +19,18 @@ namespace MonoGame.Extended.Testing
             Cache.Start();
         }
 
-        public override void OnRequest(ResourceRequest resourceRequest)
+        public override RequestStatus ProcessRequest(ResourceResponse resourceRequest, bool prioritized)
         {
-            Cache.OnRequest(resourceRequest);
+            //var cacheResult = Cache.ProcessRequest(resourceRequest)
+            //if (cacheResult == RequestStatus.Complete)
+            //{
+            //
+            //}
+
+            Downloader.Request(resourceRequest, prioritized);
+            resourceRequest.Wait();
+
+            return resourceRequest.Status;
         }
 
         protected override void Dispose(bool disposing)

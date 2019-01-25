@@ -17,14 +17,19 @@ namespace MonoGame.Extended.Testing
         {
         }
 
-        public override void OnRequest(ResourceRequest request)
+        public override RequestStatus ProcessRequest(ResourceResponse request, bool prioritized)
         {
             var headers = new WebHeaderCollection();
             if (!string.IsNullOrWhiteSpace(request.Accept))
                 headers.Add(HttpRequestHeader.Accept, request.Accept);
 
             string path = UriToCachePath(request.Uri);
-            request.HandleOnResponse(path, headers);
+            if (!File.Exists(path))
+                return RequestStatus.NotFound;
+            
+            var resourceStream = new ResourceStream(File.OpenRead(path), headers);
+            request.OnResponseStream(resourceStream);
+            return request.Status;
         }
 
         private string UriToCachePath(Uri uri)

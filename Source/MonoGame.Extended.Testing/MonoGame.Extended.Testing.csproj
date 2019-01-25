@@ -68,6 +68,7 @@
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="HeaderCollection.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="RequestStatus.cs" />
     <Compile Include="ResourceRequester.cs" />
     <Compile Include="ListArray.cs" />
     <Compile Include="MouseButton.cs" />
@@ -79,7 +80,6 @@
     <Compile Include="ResourceCache.cs" />
     <Compile Include="ResourceDownloader.cs" />
     <Compile Include="ResourceManager.cs" />
-    <Compile Include="ResourceRequest.Cache.cs" />
     <Compile Include="ResourceRequest.cs" />
     <Compile Include="ResourceStream.cs" />
     <Compile Include="Subreddit.cs" />
@@ -133,7 +133,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <Compile Include="ResourceRequest.Http.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoGame.Extended\MonoGame.Extended.csproj">

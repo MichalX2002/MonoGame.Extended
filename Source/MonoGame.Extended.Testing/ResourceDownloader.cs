@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace MonoGame.Extended.Testing
 {
@@ -8,13 +9,31 @@ namespace MonoGame.Extended.Testing
         {
         }
 
-        public override void OnRequest(ResourceRequest resourceRequest)
+        public override RequestStatus ProcessRequest(ResourceResponse request, bool prioritized)
         {
-            var request = WebRequest.CreateHttp(resourceRequest.Uri);
-            request.Accept = resourceRequest.Accept;
+            try
+            {
+                var httpRequest = WebRequest.CreateHttp(request.Uri);
+                httpRequest.Accept = request.Accept;
 
-            using (var response = request.GetResponse())
-                resourceRequest.HandleOnResponse(response as HttpWebResponse);
+                using (var httpResponse = httpRequest.GetResponse() as HttpWebResponse)
+                {
+                    if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                        return RequestStatus.NotFound;
+
+                    if (httpResponse.StatusCode != HttpStatusCode.OK)
+                        return RequestStatus.ProtocolError;
+                    
+                    var resourceStream = new ResourceStream(httpResponse);
+                    request.OnResponseStream(resourceStream);
+                    return request.Status;
+                }
+            }
+            catch (Exception exc)
+            {
+                request.Fault = exc;
+                return RequestStatus.Faulted;
+            }
         }
     }
 }

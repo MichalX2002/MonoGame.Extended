@@ -1,44 +1,38 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net;
+using System.Threading;
 
 namespace MonoGame.Extended.Testing
 {
-    public partial class ResourceRequest : IDisposable
+    public partial class ResourceResponse : IDisposable
     {
-        public const string EXCEPTION_CANCELED = "This request was canceled.";
-
         private ResourceStream _stream;
         private Exception _fault;
+        private AutoResetEvent _event;
 
         public long ContentLength { get { return _stream == null ? -1 : _stream.Length; } }
         public long BytesDownloaded { get { return _stream == null ? -1 : _stream.Position; } }
 
         public Uri Uri { get; }
         public string Accept { get; }
-        public WebExceptionStatus FaultStatus { get; private set; }
+
+        public bool IsDisposed { get; private set; }
+        public RequestStatus Status { get; internal set; }
         public Exception Fault
         {
             get => _fault;
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException();
-                IsFaulted = true;
+                _fault = value ?? throw new ArgumentNullException();
+                Status = RequestStatus.Faulted;
                 OnError?.Invoke(Uri, value);
             }
         }
 
-        public bool IsDisposed { get; private set; }
-        public bool IsFaulted { get; private set; }
-        public bool IsComplete { get; private set; }
-        public bool IsCanceled { get; private set; }
-        public bool IsNotFound { get; private set; }
-
         public OnResponseDelegate OnResponse { get; private set; }
         public OnErrorDelegate OnError { get; private set; }
 
-        public ResourceRequest(Uri uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
+        public ResourceResponse(Uri uri, string accept, OnResponseDelegate onResponse, OnErrorDelegate onError)
         {
             if (string.IsNullOrWhiteSpace(accept))
                 throw new ArgumentNullException(accept);
@@ -47,55 +41,38 @@ namespace MonoGame.Extended.Testing
             Accept = accept;
             OnResponse = onResponse ?? throw new ArgumentNullException(nameof(onResponse));
             OnError = onError;
+
+            _event = new AutoResetEvent(false);
         }
 
-        internal void SetNotFound(WebExceptionStatus status)
+        public bool Wait()
         {
-            FaultStatus = status;
-            IsComplete = true;
-            IsNotFound = true;
-            IsFaulted = true;
+            return _event.WaitOne();
         }
 
-        public void HandleOnResponse(ResourceStream stream)
+        public bool Wait(int millisecondsTimeout)
         {
-            if (IsCanceled)
-            {
-                FaultStatus = WebExceptionStatus.RequestCanceled;
-                return;
-            }
+            return _event.WaitOne(millisecondsTimeout);
+        }
 
-            try
-            {
-                AssertNotDisposed();
+        public void OnResponseStream(ResourceStream stream)
+        {
+            AssertNotDisposed();
 
-                _stream = stream;
-                OnResponse.Invoke(Uri, _stream);
-                IsComplete = true;
-            }
-            catch (Exception exc)
-            {
-                IsFaulted = true;
-                Fault = exc;
-                FaultStatus = WebExceptionStatus.UnknownError;
-            }
-            finally
-            {
-                Dispose();
-            }
+            _stream = stream;
+            OnResponse.Invoke(Uri, _stream);
+        }
+
+        internal void OnCompletion()
+        {
+            _event.Set();
         }
 
         [DebuggerHidden]
-        private bool AssertNotDisposed()
+        private void AssertNotDisposed()
         {
-            return !IsDisposed;
-        }
-
-        [DebuggerHidden]
-        private bool AssertNotCanceled()
-        {
-            FaultStatus = WebExceptionStatus.RequestCanceled;
-            return !IsCanceled;
+            if (IsDisposed)
+                throw new ObjectDisposedException("this");
         }
 
         public void Cancel()
@@ -107,8 +84,8 @@ namespace MonoGame.Extended.Testing
         {
             if (!IsDisposed)
             {
-                if (!IsComplete)
-                    IsCanceled = true;
+                if (Status != RequestStatus.Complete)
+                    Status = RequestStatus.Canceled;
 
                 if (_stream != null)
                 {
@@ -117,6 +94,7 @@ namespace MonoGame.Extended.Testing
                 }
 
                 OnResponse = null;
+                OnError = null;
 
                 IsDisposed = true;
             }

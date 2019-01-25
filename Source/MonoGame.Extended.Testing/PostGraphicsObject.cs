@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoGame.Extended.Testing
 {
@@ -24,7 +23,7 @@ namespace MonoGame.Extended.Testing
         public Subreddit.Post Post { get; }
         public Subreddit.PostData Data => Post.Data;
         public GraphicsDevice GraphicsDevice { get; }
-        public IResourceRequester Requester { get; }
+        public ResourceRequester Requester { get; }
 
         public bool IsVisible;
         public bool IsTextDirty;
@@ -50,7 +49,7 @@ namespace MonoGame.Extended.Testing
         public bool IsPostImageRequested { get; private set; }
         public bool IsPostImageLoaded { get; private set; }
         public bool IsPostImageFaulted { get; private set; }
-        public IResponseStatus PreviewResponse { get; private set; }
+        public ResourceResponse PreviewResponse { get; private set; }
 
         public Texture2D ThumbnailTexture
         {
@@ -70,7 +69,7 @@ namespace MonoGame.Extended.Testing
             }
         }
 
-        public PostGraphicsObject(Subreddit.Post post, GraphicsDevice device, IResourceRequester requester)
+        public PostGraphicsObject(Subreddit.Post post, GraphicsDevice device, ResourceRequester requester)
         {
             Post = post;
             GraphicsDevice = device;
@@ -99,7 +98,7 @@ namespace MonoGame.Extended.Testing
                 !IsThumbnailLoaded)
             {
                 IsThumbnailRequested = true;
-                Requester.Request(Data.Thumbnail.Url, HttpAccept_Image, false, OnThumbnailResponse, null);
+                Requester.Request(new Uri(Data.Thumbnail.Url), HttpAccept_Image, false, OnThumbnailResponse, null);
             }
         }
 
@@ -116,7 +115,8 @@ namespace MonoGame.Extended.Testing
             {
                 IsPostImageRequested = true;
                 PreviewResponse = Requester.Request(
-                    Data.Preview.Images[0].Source.Url, HttpAccept_Image, true, OnPostImageResponse, (u, x) => Console.WriteLine(u + ": " + x));
+                    new Uri(Data.Preview.Images[0].Source.Url), HttpAccept_Image, true, OnPostImageResponse, 
+                    (u, x) => Console.WriteLine(u + ": " + x));
             }
         }
 
