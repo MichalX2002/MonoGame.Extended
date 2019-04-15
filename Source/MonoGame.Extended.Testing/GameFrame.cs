@@ -477,7 +477,7 @@ namespace MonoGame.Extended.Testing
                     if (request.ContentLength > 0 && request.BytesDownloaded >= 0)
                         progress = (double)request.BytesDownloaded / request.ContentLength;
 
-                    Console.WriteLine(request.ContentLength + " / " + request.BytesDownloaded);
+                    //Console.WriteLine(request.ContentLength + " / " + request.BytesDownloaded);
                 }
 
                 string ps = (working ? (int)(progress * 100f) : -1).ToString();

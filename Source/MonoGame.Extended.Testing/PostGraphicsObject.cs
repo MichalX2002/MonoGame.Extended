@@ -140,7 +140,7 @@ namespace MonoGame.Extended.Testing
                 if (ptr != IntPtr.Zero && _thumbnailImage.Info.IsValid())
                 {
                     int channels = (int)_thumbnailImage.PixelFormat;
-                    int length = _thumbnailImage.PointerLength;
+                    int length = _thumbnailImage.Width * _thumbnailImage.Height * channels;
                     var format = GetSurfaceFormat(channels);
 
                     _thumbnailTexture = new Texture2D(GraphicsDevice, _thumbnailImage.Width, _thumbnailImage.Height, false, format);
@@ -166,7 +166,7 @@ namespace MonoGame.Extended.Testing
                 if (ptr != IntPtr.Zero && _postImage.Info.IsValid())
                 {
                     int channels = (int)_postImage.PixelFormat;
-                    int length = _postImage.PointerLength;
+                    int length = _postImage.Width * _postImage.Height * channels;
                     var format = GetSurfaceFormat(channels);
 
                     _postTexture = new Texture2D(GraphicsDevice, _postImage.Width, _postImage.Height, false, format);
