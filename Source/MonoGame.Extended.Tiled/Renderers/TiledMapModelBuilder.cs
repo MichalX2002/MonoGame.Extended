@@ -59,6 +59,7 @@ namespace MonoGame.Extended.Tiled.Renderers
 
                     // animated tiles
                     var tilesetTile = tileset.Tiles.FirstOrDefault(x => x.LocalTileIdentifier == localTileIdentifier);
+
                     if (tilesetTile is TiledMapTilesetAnimatedTile animatedTilesetTile)
                     {
                         animatedLayerBuilder.AddSprite(texture, position, sourceRectangle, flipFlags);

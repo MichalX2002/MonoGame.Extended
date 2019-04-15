@@ -191,25 +191,23 @@ namespace MonoGame.Extended.Particles
 
 				_random.NextColor(out particle->Color, Parameters.Color);
 
-				particle->Opacity = _random.NextSingle(Parameters.Opacity);
-				var scale = _random.NextSingle(Parameters.Scale);
-				particle->Scale = new Vector2(scale, scale);
-				particle->Rotation = _random.NextSingle(Parameters.Rotation);
-				particle->Mass = _random.NextSingle(Parameters.Mass);
-				particle->LayerDepth = layerDepth;
-			}
-		}
-
-		public void Dispose()
-		{
-			Buffer.Dispose();
-			GC.SuppressFinalize(this);
-		}
-
-		~ParticleEmitter()
-		{
-			Dispose();
-		}
+                particle->Opacity = _random.NextSingle(Parameters.Opacity);
+                
+                if(Parameters.MaintainAspectRatioOnScale)
+                {
+                    var scale = _random.NextSingle(Parameters.Scale);
+                    particle->Scale = new Vector2(scale, scale);
+                }
+                else
+                {
+                    particle->Scale = new Vector2(_random.NextSingle(Parameters.ScaleX), _random.NextSingle(Parameters.ScaleY));
+                }
+                
+                particle->Rotation = _random.NextSingle(Parameters.Rotation);
+                particle->Mass = _random.NextSingle(Parameters.Mass);
+                particle->LayerDepth = layerDepth;
+            }
+        }
 
 		public override string ToString()
 		{

@@ -256,16 +256,17 @@ namespace MonoGame.Extended.Gui.Controls
 
         public object GetAttachedProperty(string name)
         {
-
-            if (AttachedProperties.TryGetValue(name, out object value))
-                return value;
-
-            return null;
+            return AttachedProperties.TryGetValue(name, out var value) ? value : null;
         }
 
         public void SetAttachedProperty(string name, object value)
         {
             AttachedProperties[name] = value;
+        }
+
+        public virtual Type GetAttachedPropertyType(string propertyName)
+        {
+            return null;
         }
     }
 }

@@ -9,12 +9,18 @@ using Newtonsoft.Json;
 
 namespace MonoGame.Extended.Particles
 {
-    public class ParticleEffect : Transform2
+    public class ParticleEffect : Transform2, IDisposable
     {
         public ParticleEffect(string name = null, bool autoTrigger = true, float autoTriggerDelay = 0f)
         {
             Name = name;
             Emitters = new List<ParticleEmitter>();
+        }
+
+        public void Dispose()
+        {
+            foreach (var emitter in Emitters)
+                emitter.Dispose();
         }
 
         public string Name { get; set; }

@@ -48,8 +48,8 @@
     <Compile Include="QuadTree\CollisionComponent.cs" />
     <Compile Include="QuadTree\CollisionEventArgs.cs" />
     <Compile Include="QuadTree\ICollisionActor.cs" />
-    <Compile Include="QuadTree\QuadTree.cs" />
-    <Compile Include="QuadTree\QuadTreeData.cs" />
+    <Compile Include="QuadTree\Quadtree.cs" />
+    <Compile Include="QuadTree\QuadtreeData.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoGame.Extended.Tiled\MonoGame.Extended.Tiled.csproj">

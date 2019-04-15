@@ -62,12 +62,8 @@ namespace MonoGame.Extended.Tiled
 
         private static TiledMapTileset ReadTileset(ContentReader reader, TiledMap map)
         {
-            TiledMapTileset tileset;
             var external = reader.ReadBoolean();
-            if (external)
-                tileset = reader.ReadExternalReference<TiledMapTileset>();
-            else
-                tileset = TiledMapTilesetReader.ReadTileset(reader);
+			var tileset = external ? reader.ReadExternalReference<TiledMapTileset>() : TiledMapTilesetReader.ReadTileset(reader);
 
             return tileset;
         }
@@ -223,7 +219,7 @@ namespace MonoGame.Extended.Tiled
             var tileHeight = map.TileHeight;
 
             var tileCount = reader.ReadInt32();
-            var tiles = new TiledMapTile[width * height];
+            var layer = new TiledMapTileLayer(name, width, height, tileWidth, tileHeight, offset, opacity, isVisible);
 
             for (var i = 0; i < tileCount; i++)
             {
@@ -231,10 +227,10 @@ namespace MonoGame.Extended.Tiled
                 var x = reader.ReadUInt16();
                 var y = reader.ReadUInt16();
 
-                tiles[x + y * width] = new TiledMapTile(globalTileIdentifierWithFlags, x, y);
+                layer.Tiles[x + y * width] = new TiledMapTile(globalTileIdentifierWithFlags, x, y);
             }
 
-            return new TiledMapTileLayer(name, width, height, tileWidth, tileHeight, tiles, offset, opacity, isVisible);
+            return layer;
         }
     }
 }

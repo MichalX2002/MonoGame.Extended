@@ -28,7 +28,7 @@ bld/
 site/
 
 # Cake
-tools/
+/tools/
 
 # NuGet Packages
 artifacts/
@@ -208,7 +208,3 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
-*.DotSettings
-
-# FFmpeg binaries
-FFmpeg/

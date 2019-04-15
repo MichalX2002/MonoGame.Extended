@@ -42,14 +42,18 @@ Thanks to all those that support the project on Patreon! Running an open source 
 
 ### Special thanks to the top supporters
 
- - Ben 
- - Patrick ([PRT Studios](http://prt-studios.com/))
- - Benny
- - Walter
- - Marcel
- - Nathanial ([optimuspi](http://www.optimuspi.com/))
- - Austin
- - McKenzie ([Pseudo Motion](https://pseudomotion.wordpress.com/))
+We're in the process of developing MonoGame.Extended 3.6! 
+
+There may be some confusion, pain and disruption for a while. Here's what you need to know:
+ 
+ - Everything that used to be in the `develop` branch is now in `master`
+ - NuGet packages built from `master` have been [published to nuget.org as version 1.1](https://www.nuget.org/packages?q=monogame.extended)
+ - There's lots of breaking changes happening to create a cleaner more useful API
+ - From now on we're going to (attempt) to use [Git Flow](https://gitversion.readthedocs.io/en/latest/git-branching-strategies/gitflow/)
+ - We're now using [cake builds](https://cakebuild.net/) so that you can build everything (including the NuGet packages) locally
+ - We're migrating everything to [.NET Standard!](https://www.patreon.com/posts/one-library-to-18916187)
+
+## Patreon Supporters
 
 If you're not on the list and you should be please let me know! Managing Patreon is a job in itself.
 
@@ -57,9 +61,11 @@ If you're not on the list and you should be please let me know! Managing Patreon
 
 If you're using the [NuGet packages](https://www.nuget.org/packages?q=monogame.extended) please read the [install guide](http://craftworkgames.github.io/MonoGame.Extended/installation/) to setup the Pipeline tool.
 
-Alternately, you might want to [build from source](http://craftworkgames.github.io/MonoGame.Extended/Building-from-Source/) or use a [pre-release NuGet package](http://craftworkgames.github.io/MonoGame.Extended/NuGet-Pre-Release/).
-
-Please keep in mind that the project is still evolving. Some breaking API changes are likely to occur as we progress.
+As a reward to some of my patrons I've linked thier websites here:
+ - [PRT Studios](http://prt-studios.com/)
+ - [optimuspi](http://www.optimuspi.com/)
+ 
+If you're not on the list and you should be please let me know!
 
 ## Forums
 
@@ -73,7 +79,6 @@ Our forum is part of the [MonoGame community](http://community.monogame.net/cate
 
 ## License
 
-MonoGame.Extended is released under the [The MIT License (MIT)](https://github.com/craftworkgames/MonoGame.Extended/blob/master/LICENSE).
 
 ## Special Thanks
 

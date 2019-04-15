@@ -103,9 +103,12 @@ namespace MonoGame.Extended.Tiled
 
         public TiledMapTileset GetTilesetByTileGlobalIdentifier(int tileIdentifier)
         {
-            foreach (var tileset in _firstGlobalIdentifiers)
-                if (tileIdentifier >= tileset.Item2 && tileIdentifier < tileset.Item2 + tileset.Item1.TileCount)
-                    return tileset.Item1;
+			foreach (var tileset in _firstGlobalIdentifiers)
+			{
+			    if (tileIdentifier >= tileset.Item2 && tileIdentifier < tileset.Item2 + tileset.Item1.TileCount)
+			        return tileset.Item1;
+			}
+
             return null;
         }
 

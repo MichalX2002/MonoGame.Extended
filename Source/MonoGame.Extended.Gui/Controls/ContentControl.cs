@@ -40,24 +40,19 @@ namespace MonoGame.Extended.Gui.Controls
 
         public override void Update(IGuiContext context, float deltaSeconds)
         {
-
-            if (_content is Control control)
+            if (_content is Control control && _contentChanged)
             {
-                if (_contentChanged)
-                {
-                    control.Parent = this;
-                    control.ActualSize = ContentRectangle.Size;
-                    control.Position = new Point(Padding.Left, Padding.Top);
-                    control.InvalidateMeasure();
-                    _contentChanged = false;
-                }
+                control.Parent = this;
+                control.ActualSize = ContentRectangle.Size;
+                control.Position = new Point(Padding.Left, Padding.Top);
+                control.InvalidateMeasure();
+                _contentChanged = false;
             }
         }
 
         public override void Draw(IGuiContext context, IGuiRenderer renderer, float deltaSeconds)
         {
             base.Draw(context, renderer, deltaSeconds);
-
 
             if (Content is Control control)
             {
@@ -75,7 +70,6 @@ namespace MonoGame.Extended.Gui.Controls
 
         public override Size GetContentSize(IGuiContext context)
         {
-
             if (Content is Control control)
                 return control.CalculateActualSize(context);
 
