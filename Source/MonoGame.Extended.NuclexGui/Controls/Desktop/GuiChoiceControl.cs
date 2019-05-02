@@ -39,8 +39,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>Triggers the changed event</summary>
         protected virtual void OnChanged()
         {
-            if (Changed != null)
-                Changed(this, EventArgs.Empty);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>Disables all sibling choices on the same level</summary>

@@ -16,9 +16,7 @@ namespace MonoGame.Extended.Tiled.Renderers
 
         public TiledMapRenderer(GraphicsDevice graphicsDevice, TiledMap map = null)
         {
-            if (graphicsDevice == null) throw new ArgumentNullException(nameof(graphicsDevice));
-
-            _graphicsDevice = graphicsDevice;
+            _graphicsDevice = graphicsDevice ?? throw new ArgumentNullException(nameof(graphicsDevice));
             _defaultEffect = new TiledMapEffect(graphicsDevice);
             _mapModelBuilder = new TiledMapModelBuilder(graphicsDevice);
 

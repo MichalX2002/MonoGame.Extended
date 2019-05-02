@@ -30,7 +30,7 @@ namespace MonoGame.Extended
                     return;
 
                 _isEnabled = value;
-                EnabledChanged?.Invoke(this, EventArgs.Empty);
+                EnabledChanged?.Invoke(this);
             }
         }
 
@@ -58,12 +58,12 @@ namespace MonoGame.Extended
                     return;
 
                 _updateOrder = value;
-                UpdateOrderChanged?.Invoke(this, EventArgs.Empty);
+                UpdateOrderChanged?.Invoke(this);
             }
         }
 
-        public event EventHandler<EventArgs> EnabledChanged;
-        public event EventHandler<EventArgs> UpdateOrderChanged;
+        public event SenderDelegate<object> EnabledChanged;
+        public event SenderDelegate<object> UpdateOrderChanged;
 
         public abstract void Update(GameTime gameTime);
         

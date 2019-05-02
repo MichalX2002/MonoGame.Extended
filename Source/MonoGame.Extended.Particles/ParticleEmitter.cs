@@ -213,5 +213,10 @@ namespace MonoGame.Extended.Particles
 		{
 			return Name;
 		}
+
+        public void Dispose()
+        {
+            Buffer.Dispose();
+        }
 	}
 }

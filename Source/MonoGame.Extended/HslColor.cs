@@ -290,7 +290,7 @@ namespace MonoGame.Extended
         
         private static float ComponentFromHue(float m1, float m2, float h)
         {
-            h = h - (int)h; // h % 1f
+            h -= (int)h; // h % 1f
 
             if (h * 6f < 1)
                 return m1 + (m2 - m1) * 6f * h;

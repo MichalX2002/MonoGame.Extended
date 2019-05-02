@@ -90,7 +90,7 @@ namespace MonoGame.Extended.Gui.Controls
         {
             var dropDownRectangle = BoundingRectangle;
 
-            dropDownRectangle.Y = dropDownRectangle.Y + dropDownRectangle.Height;
+            dropDownRectangle.Y += dropDownRectangle.Height;
             dropDownRectangle.Height = (int) Items
                 .Select(item => GetItemSize(context, item))
                 .Select(itemSize => itemSize.Height)

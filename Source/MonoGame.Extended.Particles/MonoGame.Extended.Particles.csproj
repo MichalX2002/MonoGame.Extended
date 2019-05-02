@@ -89,9 +89,14 @@
     <Compile Include="Serialization\TimeSpanJsonConverter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.7.0.479, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Binaries\MonoGame\DesktopGL\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Imaging">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Utilities">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>

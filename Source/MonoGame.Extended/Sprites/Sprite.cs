@@ -77,8 +77,8 @@ namespace MonoGame.Extended.Sprites
 
             if (scale != Vector2.One)
             {
-                min = min * scale;
-                max = max * scale;
+                min *= scale;
+                max *= scale;
             }
 
             var corners = new Vector2[4];

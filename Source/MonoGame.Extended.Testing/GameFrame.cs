@@ -88,7 +88,7 @@ namespace MonoGame.Extended.Testing
             Window.ClientSizeChanged += Window_ClientSizeChanged;
         }
 
-        private void Window_ClientSizeChanged(object s, EventArgs e)
+        private void Window_ClientSizeChanged()
         {
             lock (_postGraphics)
             {

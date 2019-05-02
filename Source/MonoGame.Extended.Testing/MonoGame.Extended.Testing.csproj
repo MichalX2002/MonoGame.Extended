@@ -39,17 +39,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Binaries\MonoGame\DesktopGL\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Imaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Binaries\MonoGame\MonoGame.Imaging.dll</HintPath>
+    <Reference Include="MonoGame.Imaging">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Imaging.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Utilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Binaries\MonoGame\MonoGame.Utilities.dll</HintPath>
+    <Reference Include="MonoGame.Utilities">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -88,47 +85,47 @@
   <ItemGroup>
     <None Include="App.config" />
     <MonoGameContentReference Include="Content\Content.mgcb" />
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\x86\SDL2.dll">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\x86\SDL2.dll">
       <Link>x86\SDL2.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\x64\SDL2.dll">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\x64\SDL2.dll">
       <Link>x64\SDL2.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\x86\soft_oal.dll">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\x86\soft_oal.dll">
       <Link>x86\soft_oal.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\x64\soft_oal.dll">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\x64\soft_oal.dll">
       <Link>x64\soft_oal.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\x86\libSDL2-2.0.so.0">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\x86\libSDL2-2.0.so.0">
       <Link>x86\libSDL2-2.0.so.0</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\x64\libSDL2-2.0.so.0">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\x64\libSDL2-2.0.so.0">
       <Link>x64\libSDL2-2.0.so.0</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\x86\libopenal.so.1">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\x86\libopenal.so.1">
       <Link>x86\libopenal.so.1</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\x64\libopenal.so.1">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\x64\libopenal.so.1">
       <Link>x64\libopenal.so.1</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\libSDL2-2.0.0.dylib">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\libSDL2-2.0.0.dylib">
       <Link>libSDL2-2.0.0.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\libopenal.1.dylib">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\libopenal.1.dylib">
       <Link>libopenal.1.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\Binaries\MonoGame\DesktopGL\MonoGame.Framework.dll.config">
+    <None Include="$(SolutionDir)\..\ThirdParty\MonoGame\MonoGame.Framework.dll.config">
       <Link>MonoGame.Framework.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

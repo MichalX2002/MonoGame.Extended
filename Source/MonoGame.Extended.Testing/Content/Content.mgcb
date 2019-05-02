@@ -10,10 +10,21 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\..\..\MonoGame.Extended.Content.Pipeline\bin\MonoGame.Extended.Content.Pipeline.dll
-/reference:..\..\MonoGame.Extended.Content.Pipeline\bin\MonoGame.Extended.Content.Pipeline.dll
+/reference:..\..\MonoGame.Extended.Content.Pipeline\bin\Release\netstandard2.0\MonoGame.Extended.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
+
+#begin circle_part.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:circle_part.png
 
 #begin LiberationSerif Regular 26px.fnt
 /importer:BitmapFontImporter
@@ -48,16 +59,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:LiberationSerif Regular 40px_0.png
-
-#begin circle_part.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:circle_part.png
 

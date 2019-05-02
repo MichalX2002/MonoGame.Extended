@@ -58,16 +58,16 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
         {
             writer.Write(tileset.FirstGlobalIdentifier);
 
-			if (!string.IsNullOrWhiteSpace(tileset.Source))
-			{
-				writer.Write(true);
-				writer.WriteExternalReference(_contentItem.GetExternalReference<TiledMapTilesetContent>(tileset.Source));
-			}
-			else
-			{
-				writer.Write(false);
-				TiledMapTilesetWriter.WriteTileset(writer, tileset, _contentItem);
-			}
+            if (!string.IsNullOrWhiteSpace(tileset.Source))
+            {
+                writer.Write(true);
+                writer.WriteExternalReference(_contentItem.GetExternalReference<TiledMapTilesetContent>(tileset.Source));
+            }
+            else
+            {
+                writer.Write(false);
+                TiledMapTilesetWriter.WriteTileset(writer, tileset, _contentItem);
+            }
         }
 
         private void WriteLayers(ContentWriter writer, IReadOnlyCollection<TiledMapLayerContent> layers)
@@ -95,15 +95,19 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
                 case TiledMapLayerType.ImageLayer:
                     WriteImageLayer(writer, (TiledMapImageLayerContent)layer);
                     break;
+
                 case TiledMapLayerType.TileLayer:
                     WriteTileLayer(writer, (TiledMapTileLayerContent)layer);
                     break;
+
                 case TiledMapLayerType.ObjectLayer:
                     WriteObjectLayer(writer, (TiledMapObjectLayerContent)layer);
                     break;
-				case TiledMapLayerType.GroupLayer:
-					WriteLayers(writer, ((TiledMapGroupLayerContent)layer).Layers);
-					break;
+
+                case TiledMapLayerType.GroupLayer:
+                    WriteLayers(writer, ((TiledMapGroupLayerContent)layer).Layers);
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layer.Type));
             }
@@ -215,7 +219,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
 
             return TiledMapObjectType.Rectangle;
         }
-        
+
         public override string GetRuntimeType(TargetPlatform targetPlatform) => "MonoGame.Extended.Tiled.TiledMap, MonoGame.Extended.Tiled";
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform) => "MonoGame.Extended.Tiled.TiledMapReader, MonoGame.Extended.Tiled";

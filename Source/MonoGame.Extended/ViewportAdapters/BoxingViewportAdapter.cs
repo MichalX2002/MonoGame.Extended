@@ -83,7 +83,7 @@ namespace MonoGame.Extended.ViewportAdapters
 
         public BoxingMode BoxingMode { get; private set; }
 
-        private void OnClientSizeChanged(object sender, EventArgs eventArgs)
+        private void OnClientSizeChanged()
         {
             var viewport = GraphicsDevice.Viewport;
 
@@ -129,7 +129,7 @@ namespace MonoGame.Extended.ViewportAdapters
         public override void Reset()
         {
             base.Reset();
-            OnClientSizeChanged(this, EventArgs.Empty);
+            OnClientSizeChanged();
         }
 
         public override Point PointToScreen(int x, int y)

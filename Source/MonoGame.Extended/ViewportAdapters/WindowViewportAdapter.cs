@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGame.Extended.ViewportAdapters
@@ -25,11 +24,10 @@ namespace MonoGame.Extended.ViewportAdapters
             return Matrix.Identity;
         }
 
-        private void OnClientSizeChanged(object sender, EventArgs eventArgs)
+        private void OnClientSizeChanged()
         {
             var x = Window.ClientBounds.Width;
             var y = Window.ClientBounds.Height;
-
             GraphicsDevice.Viewport = new Viewport(0, 0, x, y);
         }
     }

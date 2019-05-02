@@ -18,8 +18,7 @@ namespace MonoGame.Extended.NuclexGui.Controls.Desktop
         /// <summary>Called when the button is pressed</summary>
         protected override void OnPressed()
         {
-            if (Pressed != null)
-                Pressed(this, EventArgs.Empty);
+            Pressed?.Invoke(this, EventArgs.Empty);
         }
 
         public GuiButtonControl() : base()

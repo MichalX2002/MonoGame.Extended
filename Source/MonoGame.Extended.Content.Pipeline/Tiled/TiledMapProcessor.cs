@@ -5,7 +5,8 @@ using System.IO.Compression;
 using System.Linq;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
-using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tiled.Serialization;
 using MonoGame.Utilities;
 using CompressionMode = System.IO.Compression.CompressionMode;
 
@@ -71,7 +72,7 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
             }
         }
     }
-   
+
 
     [ContentProcessor(DisplayName = "Tiled Map Processor - MonoGame.Extended")]
     public class TiledMapProcessor : ContentProcessor<TiledMapContentItem, TiledMapContentItem>
@@ -79,77 +80,96 @@ namespace MonoGame.Extended.Content.Pipeline.Tiled
         public override TiledMapContentItem Process(TiledMapContentItem contentItem, ContentProcessorContext context)
         {
             try
-			{
-				ContentLogger.Logger = context.Logger;
+            {
+                ContentLogger.Logger = context.Logger;
+                var map = contentItem.Data;
 
-                var previousWorkingDirectory = Environment.CurrentDirectory;
-                var newWorkingDirectory = Path.GetDirectoryName(map.FilePath);
+                if (map.Orientation == TiledMapOrientationContent.Hexagonal || map.Orientation == TiledMapOrientationContent.Staggered)
+                    throw new NotSupportedException($"{map.Orientation} Tiled Maps are currently not implemented!");
 
-				foreach (var tileset in map.Tilesets)
-				{
-					if (String.IsNullOrWhiteSpace(tileset.Source))
-						// Load the Texture2DContent for the tileset as it will be saved into the map content file.
-						tileset.Image.ContentRef = context.BuildAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(tileset.Image.Source), "", new OpaqueDataDictionary() { { "ColorKeyColor", tileset.Image.TransparentColor }, { "ColorKeyEnabled", true } }, "", "");
-					else
-						// Link to the tileset for the content loader to load at runtime.
-						tileset.Content = context.BuildAsset<TiledMapTilesetContent, TiledMapTilesetContent>(new ExternalReference<TiledMapTilesetContent>(tileset.Source), "");
-					
-				}
+                foreach (var tileset in map.Tilesets)
+                {
+                    if (string.IsNullOrWhiteSpace(tileset.Source))
+                    {
+                        // Load the Texture2DContent for the tileset as it will be saved into the map content file.
+                        //var externalReference = new ExternalReference<Texture2DContent>(tileset.Image.Source);
+                        var parameters = new OpaqueDataDictionary
+                        {
+                            { "ColorKeyColor", tileset.Image.TransparentColor },
+                            { "ColorKeyEnabled", true }
+                        };
+                        //tileset.Image.ContentRef = context.BuildAsset<Texture2DContent, Texture2DContent>(externalReference, "", parameters, "", "");
+                        contentItem.BuildExternalReference<Texture2DContent>(context, tileset.Image.Source, parameters);
+                    }
+                    else
+                    {
+                        // Link to the tileset for the content loader to load at runtime.
+                        //var externalReference = new ExternalReference<TiledMapTilesetContent>(tileset.Source);
+                        //tileset.Content = context.BuildAsset<TiledMapTilesetContent, TiledMapTilesetContent>(externalReference, "");
+                        contentItem.BuildExternalReference<TiledMapTilesetContent>(context, tileset.Source);
+                    }
+                }
 
-				ProcessLayers(map, context, map.Layers);
-				
-				return map;
-			}
-			catch (Exception ex)
+                ProcessLayers(contentItem, map, context, map.Layers);
+
+                return contentItem;
+            }
+            catch (Exception ex)
             {
                 context.Logger.LogImportantMessage(ex.Message);
-                context.Logger.LogImportantMessage("Hello World!");
-				throw ex;
+                throw;
             }
         }
 
-		private static void ProcessLayers(TiledMapContent map, ContentProcessorContext context, List<TiledMapLayerContent> layers)
-		{
-			foreach (var layer in layers)
-			{
-				if (layer is TiledMapImageLayerContent imageLayer)
-				{
-					ContentLogger.Log($"Processing image layer '{imageLayer.Name}'");
-					imageLayer.Image.ContentRef = context.BuildAsset<Texture2DContent, Texture2DContent>(new ExternalReference<Texture2DContent>(imageLayer.Image.Source), "", new OpaqueDataDictionary() { { "ColorKeyColor", imageLayer.Image.TransparentColor }, { "ColorKeyEnabled", true } }, "", "");
-					ContentLogger.Log($"Processed image layer '{imageLayer.Name}'");
-				}
+        private static void ProcessLayers(TiledMapContentItem contentItem, TiledMapContent map, ContentProcessorContext context, List<TiledMapLayerContent> layers)
+        {
+            foreach (var layer in layers)
+            {
+                switch (layer)
+                {
+                    case TiledMapImageLayerContent imageLayer:
+                        ContentLogger.Log($"Processing image layer '{imageLayer.Name}'");
+                        //var externalReference = new ExternalReference<Texture2DContent>(imageLayer.Image.Source);
+                        var parameters = new OpaqueDataDictionary
+                        {
+                            { "ColorKeyColor", imageLayer.Image.TransparentColor },
+                            { "ColorKeyEnabled", true }
+                        };
+                        //imageLayer.Image.ContentRef = context.BuildAsset<Texture2DContent, Texture2DContent>(externalReference, "", parameters, "", "");
+                        contentItem.BuildExternalReference<Texture2DContent>(context, imageLayer.Image.Source, parameters);
+                        ContentLogger.Log($"Processed image layer '{imageLayer.Name}'");
+                        break;
 
-				if (layer is TiledMapTileLayerContent tileLayer)
-				{
-					if (tileLayer.Data.Chunks.Count > 0)
-						throw new NotSupportedException($"{map.FilePath} contains data chunks. These are currently not supported.");
+                    case TiledMapTileLayerContent tileLayer when tileLayer.Data.Chunks.Count > 0:
+                        throw new NotSupportedException($"{map.FilePath} contains data chunks. These are currently not supported.");
 
-					var data = tileLayer.Data;
-					var encodingType = data.Encoding ?? "xml";
-					var compressionType = data.Compression ?? "xml";
+                    case TiledMapTileLayerContent tileLayer:
+                        var data = tileLayer.Data;
+                        var encodingType = data.Encoding ?? "xml";
+                        var compressionType = data.Compression ?? "xml";
 
-					ContentLogger.Log(
-						$"Processing tile layer '{tileLayer.Name}': Encoding: '{encodingType}', Compression: '{compressionType}'");
+                        ContentLogger.Log($"Processing tile layer '{tileLayer.Name}': Encoding: '{encodingType}', Compression: '{compressionType}'");
+                        var tileData = DecodeTileLayerData(encodingType, tileLayer);
+                        var tiles = CreateTiles(map.RenderOrder, map.Width, map.Height, tileData);
+                        tileLayer.Tiles = tiles;
+                        ContentLogger.Log($"Processed tile layer '{tileLayer}': {tiles.Length} tiles");
+                        break;
 
-					var tileData = DecodeTileLayerData(encodingType, tileLayer);
-					var tiles = CreateTiles(map.RenderOrder, map.Width, map.Height, tileData);
-					tileLayer.Tiles = tiles;
+                    case TiledMapObjectLayerContent objectLayer:
+                        ContentLogger.Log($"Processing object layer '{objectLayer.Name}'");
 
-					ContentLogger.Log($"Processed tile layer '{tileLayer}': {tiles.Length} tiles");
-				}
+                        foreach (var obj in objectLayer.Objects)
+                            TiledMapContentHelper.Process(obj, context);
 
-				if (layer is TiledMapObjectLayerContent objectLayer)
-				{
-					ContentLogger.Log($"Processing object layer '{objectLayer.Name}'");
-					foreach (var obj in objectLayer.Objects)
-						TiledMapObjectContent.Process(obj, context);
-					ContentLogger.Log($"Processed object layer '{objectLayer.Name}'");
-				}
+                        ContentLogger.Log($"Processed object layer '{objectLayer.Name}'");
+                        break;
 
-				if (layer is TiledMapGroupLayerContent groupLayer)
-					ProcessLayers(map, context, groupLayer.Layers);
-			}
-		}
+                    case TiledMapGroupLayerContent groupLayer:
+                        ProcessLayers(contentItem, map, context, groupLayer.Layers);
+                        break;
+                }
+            }
+        }
 
         private static List<TiledMapTileContent> DecodeTileLayerData(string encodingType, TiledMapTileLayerContent tileLayer)
         {

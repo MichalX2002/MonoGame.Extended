@@ -41,8 +41,8 @@ namespace MonoGame.Extended.Animations.SpriteSheets
         public new bool IsComplete => CurrentTime >= AnimationDuration;
 
         public float AnimationDuration => IsPingPong
-            ? (KeyFrames.Length*2 - 2)*FrameDuration
-            : KeyFrames.Length*FrameDuration;
+            ? (KeyFrames.Length * 2 - 2) * FrameDuration
+            : KeyFrames.Length * FrameDuration;
 
         public TextureRegion2D CurrentFrame => KeyFrames[CurrentFrameIndex];
         public int CurrentFrameIndex { get; private set; }
@@ -71,12 +71,12 @@ namespace MonoGame.Extended.Animations.SpriteSheets
                 return IsComplete;
             }
 
-            var frameIndex = (int) (CurrentTime/FrameDuration);
+            var frameIndex = (int)(CurrentTime / FrameDuration);
             var length = KeyFrames.Length;
 
             if (IsPingPong)
             {
-                frameIndex = frameIndex%(length*2 - 2);
+                frameIndex %= length * 2 - 2;
 
                 if (frameIndex >= length)
                     frameIndex = length - 2 - (frameIndex - length);
@@ -86,11 +86,11 @@ namespace MonoGame.Extended.Animations.SpriteSheets
             {
                 if (IsReversed)
                 {
-                    frameIndex = frameIndex%length;
+                    frameIndex %= length;
                     frameIndex = length - frameIndex - 1;
                 }
                 else
-                    frameIndex = frameIndex%length;
+                    frameIndex %= length;
             }
             else
                 frameIndex = IsReversed ? Math.Max(length - frameIndex - 1, 0) : Math.Min(length - 1, frameIndex);

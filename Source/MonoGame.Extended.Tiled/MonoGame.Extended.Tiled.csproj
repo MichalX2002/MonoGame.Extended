@@ -60,6 +60,33 @@
     <Compile Include="Renderers\TiledMapRenderer.cs" />
     <Compile Include="Renderers\TiledMapStaticLayerModel.cs" />
     <Compile Include="Renderers\TiledMapStaticLayerModelBuilder.cs" />
+    <Compile Include="Serialization\TiledMapContent.cs" />
+    <Compile Include="Serialization\TiledMapEllipseContent.cs" />
+    <Compile Include="Serialization\TiledMapGroupLayerContent.cs" />
+    <Compile Include="Serialization\TiledMapImageContent.cs" />
+    <Compile Include="Serialization\TiledMapImageLayerContent.cs" />
+    <Compile Include="Serialization\TiledMapLayerContent.cs" />
+    <Compile Include="Serialization\TiledMapLayerModelContent.cs" />
+    <Compile Include="Serialization\TiledMapObjectContent.cs" />
+    <Compile Include="Serialization\TiledMapObjectDrawOrderContent.cs" />
+    <Compile Include="Serialization\TiledMapObjectLayerContent.cs" />
+    <Compile Include="Serialization\TiledMapObjectTemplateContent.cs" />
+    <Compile Include="Serialization\TiledMapOrientationContent.cs" />
+    <Compile Include="Serialization\TiledMapPolygonContent.cs" />
+    <Compile Include="Serialization\TiledMapPolylineContent.cs" />
+    <Compile Include="Serialization\TiledMapPropertyContent.cs" />
+    <Compile Include="Serialization\TiledMapStaggerAxisContent.cs" />
+    <Compile Include="Serialization\TiledMapStaggerIndexContent.cs" />
+    <Compile Include="Serialization\TiledMapTileContent.cs" />
+    <Compile Include="Serialization\TiledMapTileDrawOrderContent.cs" />
+    <Compile Include="Serialization\TiledMapTileLayerContent.cs" />
+    <Compile Include="Serialization\TiledMapTileLayerDataChunkContent.cs" />
+    <Compile Include="Serialization\TiledMapTileLayerDataContent.cs" />
+    <Compile Include="Serialization\TiledMapTileOffsetContent.cs" />
+    <Compile Include="Serialization\TiledMapTilesetContent.cs" />
+    <Compile Include="Serialization\TiledMapTilesetGridContent.cs" />
+    <Compile Include="Serialization\TiledMapTilesetTileAnimationFrameContent.cs" />
+    <Compile Include="Serialization\TiledMapTilesetTileContent.cs" />
     <Compile Include="TiledMapEllipseObject.cs" />
     <Compile Include="TiledMapGroupLayer.cs" />
     <Compile Include="TiledMapHelper.cs" />
@@ -89,11 +116,17 @@
     <Compile Include="TiledMapTileObject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.7.0.479, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Binaries\MonoGame\DesktopGL\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Imaging">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Utilities">
+      <HintPath>..\..\ThirdParty\MonoGame\MonoGame.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

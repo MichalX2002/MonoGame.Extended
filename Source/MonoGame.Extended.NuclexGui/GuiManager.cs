@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.NuclexGui.Input;
 using MonoGame.Extended.NuclexGui.Visuals;
 using MonoGame.Extended.NuclexGui.Visuals.Flat;
-using GameEventHandler = System.EventHandler<System.EventArgs>;
 
 namespace MonoGame.Extended.NuclexGui
 {
@@ -158,10 +157,10 @@ namespace MonoGame.Extended.NuclexGui
         }
 
         /// <summary>Fired when the DrawOrder property changes</summary>
-        public event GameEventHandler DrawOrderChanged;
+        public event SenderDelegate<object> DrawOrderChanged;
 
         /// <summary>Fired when the Visible property changes</summary>
-        public event GameEventHandler VisibleChanged;
+        public event SenderDelegate<object> VisibleChanged;
 
         /// <summary>Whether the GUI should be drawn during Game.Draw()</summary>
         public bool Visible
@@ -287,10 +286,10 @@ namespace MonoGame.Extended.NuclexGui
         }
 
         /// <summary>Fired when the UpdateOrder property changes</summary>
-        public event GameEventHandler UpdateOrderChanged;
+        public event SenderDelegate<object> UpdateOrderChanged;
 
         /// <summary>Fired when the enabled property changes, which is never</summary>
-        event GameEventHandler IUpdateable.EnabledChanged
+        event SenderDelegate<object> IUpdateable.EnabledChanged
         {
             add { }
             remove { }
@@ -327,19 +326,19 @@ namespace MonoGame.Extended.NuclexGui
         /// <summary>Fires the UpdateOrderChanged event</summary>
         protected void OnUpdateOrderChanged()
         {
-            UpdateOrderChanged?.Invoke(this, EventArgs.Empty);
+            UpdateOrderChanged?.Invoke(this);
         }
 
         /// <summary>Fires the DrawOrderChanged event</summary>
         protected void OnDrawOrderChanged()
         {
-            DrawOrderChanged?.Invoke(this, EventArgs.Empty);
+            DrawOrderChanged?.Invoke(this);
         }
 
         /// <summary>Fires the VisibleChanged event</summary>
         protected void OnVisibleChanged()
         {
-            VisibleChanged?.Invoke(this, EventArgs.Empty);
+            VisibleChanged?.Invoke(this);
         }
 
         /// <summary>Retrieves the input service from a service provider</summary>

@@ -20,7 +20,7 @@ namespace MonoGame.Extended.Serialization
             var jsonObject = new
             {
                 TextureRegion = region.Name,
-                Padding = region.Padding
+                region.Padding
             };
             serializer.Serialize(writer, jsonObject);
         }
