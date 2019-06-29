@@ -9,7 +9,7 @@ namespace MonoGame.Extended.Testing
 {
     public static class Input
     {
-        public static event GameWindow.TextInputEventDelegate TextInput;
+        public static event MessageDelegate<GameWindow, TextInputEvent> TextInput;
 
         private static readonly ListArray<HeldKey> _lastKeysHeld;
         private static readonly ListArray<HeldKey> _keysHeld;
@@ -67,9 +67,9 @@ namespace MonoGame.Extended.Testing
             window.TextInput -= Window_TextInput;
         }
 
-        private static void Window_TextInput(TextInputEvent ev)
+        private static void Window_TextInput(GameWindow window, TextInputEvent ev)
         {
-            TextInput?.Invoke(ev);
+            TextInput?.Invoke(window, ev);
         }
 
         public static bool IsKeyHeld(Keys key, float timeThreshold)

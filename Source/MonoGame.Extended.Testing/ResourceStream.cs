@@ -12,7 +12,7 @@ namespace MonoGame.Extended.Testing
         private long _length;
 
         public override bool CanWrite => false;
-        public override bool CanSeek => true;
+        public override bool CanSeek => _stream.CanSeek;
         public override bool CanRead => _stream.CanRead;
         public override long Position { get => _position; set => Seek(value, SeekOrigin.Begin); }
         

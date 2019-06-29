@@ -110,7 +110,7 @@ namespace MonoGame.Extended.Testing
             var worker = state as Worker;
             while (IsRunning)
             {
-                if (!_requestEvent.WaitOne(10))
+                if (!_requestEvent.WaitOne(1))
                     continue;
                 
                 while (DequeueRequest(out ResourceResponse request, out bool prioritized))

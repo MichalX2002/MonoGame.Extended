@@ -74,7 +74,7 @@ namespace MonoGame.Extended.Tiled.Renderers
                 }
 
                 // copy (upload) the updated vertices to the GPU's memory
-                animatedModel.VertexBuffer.SetData(animatedModel.Vertices, 0, animatedModel.Vertices.Length);
+                animatedModel.VertexBuffer.SetData(animatedModel.Vertices.AsSpan());
             }
         }
 

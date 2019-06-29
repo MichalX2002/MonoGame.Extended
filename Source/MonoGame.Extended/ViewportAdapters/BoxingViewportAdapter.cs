@@ -83,22 +83,22 @@ namespace MonoGame.Extended.ViewportAdapters
 
         public BoxingMode BoxingMode { get; private set; }
 
-        private void OnClientSizeChanged()
+        private void OnClientSizeChanged(GameWindow window)
         {
             var viewport = GraphicsDevice.Viewport;
 
-            var worldScaleX = (float) viewport.Width/VirtualWidth;
-            var worldScaleY = (float) viewport.Height/VirtualHeight;
+            var worldScaleX = (float)viewport.Width / VirtualWidth;
+            var worldScaleY = (float)viewport.Height / VirtualHeight;
 
-            var safeScaleX = (float) viewport.Width/(VirtualWidth - HorizontalBleed);
-            var safeScaleY = (float) viewport.Height/(VirtualHeight - VerticalBleed);
+            var safeScaleX = (float)viewport.Width / (VirtualWidth - HorizontalBleed);
+            var safeScaleY = (float)viewport.Height / (VirtualHeight - VerticalBleed);
 
             var worldScale = MathHelper.Max(worldScaleX, worldScaleY);
             var safeScale = MathHelper.Min(safeScaleX, safeScaleY);
             var scale = MathHelper.Min(worldScale, safeScale);
 
-            var width = (int) (scale*VirtualWidth + 0.5f);
-            var height = (int) (scale*VirtualHeight + 0.5f);
+            var width = (int)(scale * VirtualWidth + 0.5f);
+            var height = (int)(scale * VirtualHeight + 0.5f);
 
             if ((height >= viewport.Height) && (width < viewport.Width))
                 BoxingMode = BoxingMode.Pillarbox;
@@ -110,8 +110,8 @@ namespace MonoGame.Extended.ViewportAdapters
                     BoxingMode = BoxingMode.None;
             }
 
-            var x = viewport.Width/2 - width/2;
-            var y = viewport.Height/2 - height/2;
+            var x = viewport.Width / 2 - width / 2;
+            var y = viewport.Height / 2 - height / 2;
             GraphicsDevice.Viewport = new Viewport(x, y, width, height);
 
             // Needed for a DirectX bug in MonoGame 3.4. Hopefully it will be fixed in future versions
@@ -129,7 +129,7 @@ namespace MonoGame.Extended.ViewportAdapters
         public override void Reset()
         {
             base.Reset();
-            OnClientSizeChanged();
+            OnClientSizeChanged(_window);
         }
 
         public override Point PointToScreen(int x, int y)

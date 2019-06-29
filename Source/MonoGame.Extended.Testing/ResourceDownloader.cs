@@ -23,7 +23,7 @@ namespace MonoGame.Extended.Testing
 
                     if (httpResponse.StatusCode != HttpStatusCode.OK)
                         return RequestStatus.ProtocolError;
-                    
+
                     var resourceStream = new ResourceStream(httpResponse);
                     request.OnResponseStream(resourceStream);
                     return request.Status;

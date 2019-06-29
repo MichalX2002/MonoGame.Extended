@@ -1,12 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
-using MonoGame.Imaging;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace MonoGame.Extended.Testing
 {
@@ -14,10 +17,10 @@ namespace MonoGame.Extended.Testing
     {
         public const string HttpAccept_Image = "image/png, image/jpeg, image/jpg, image/bmp, image/gif";
 
-        private Image _thumbnailImage;
+        private Image<Rgba32> _thumbnailImage;
         private Texture2D _thumbnailTexture;
         
-        private Image _postImage;
+        private Image<Rgba32> _postImage;
         private Texture2D _postTexture;
 
         public Subreddit.Post Post { get; }
@@ -131,24 +134,14 @@ namespace MonoGame.Extended.Testing
 
         public void UploadThumbnailTexture()
         {
-            if (IsThumbnailDownloaded && 
-                !IsThumbnailFaulted &&
-                _thumbnailTexture == null &&
-                _thumbnailImage != null)
+            if (IsThumbnailDownloaded && !IsThumbnailFaulted &&
+                _thumbnailTexture == null && _thumbnailImage != null)
             {
-                IntPtr ptr = _thumbnailImage.GetPointer();
-                if (ptr != IntPtr.Zero && _thumbnailImage.Info.IsValid())
-                {
-                    int channels = (int)_thumbnailImage.PixelFormat;
-                    int length = _thumbnailImage.Width * _thumbnailImage.Height * channels;
-                    var format = GetSurfaceFormat(channels);
-
-                    _thumbnailTexture = new Texture2D(GraphicsDevice, _thumbnailImage.Width, _thumbnailImage.Height, false, format);
-                    _thumbnailTexture.SetData(ptr, 0, channels, length / channels);
-                    IsThumbnailLoaded = true;
-                }
-                else
-                    IsThumbnailFaulted = true;
+                int channels = _thumbnailImage.PixelType.BitsPerPixel / 8;
+                var format = GetSurfaceFormat(channels);
+                _thumbnailTexture = new Texture2D(GraphicsDevice, _thumbnailImage.Width, _thumbnailImage.Height, false, format);
+                _thumbnailTexture.SetData(_thumbnailImage.GetPixelSpan());
+                IsThumbnailLoaded = true;
 
                 _thumbnailImage.Dispose();
                 _thumbnailImage = null;
@@ -157,24 +150,14 @@ namespace MonoGame.Extended.Testing
 
         public void UploadPostTexture()
         {
-            if (IsPostImageDownloaded &&
-                !IsPostImageFaulted &&
-                _postTexture == null &&
-                _postImage != null)
+            if (IsPostImageDownloaded && !IsPostImageFaulted &&
+                _postTexture == null && _postImage != null)
             {
-                IntPtr ptr = _postImage.GetPointer();
-                if (ptr != IntPtr.Zero && _postImage.Info.IsValid())
-                {
-                    int channels = (int)_postImage.PixelFormat;
-                    int length = _postImage.Width * _postImage.Height * channels;
-                    var format = GetSurfaceFormat(channels);
-
-                    _postTexture = new Texture2D(GraphicsDevice, _postImage.Width, _postImage.Height, false, format);
-                    _postTexture.SetData(ptr, 0, channels, length / channels);
-                    IsPostImageLoaded = true;
-                }
-                else
-                    IsPostImageFaulted = true;
+                int channels = _postImage.PixelType.BitsPerPixel / 8;
+                var format = GetSurfaceFormat(channels);
+                _postTexture = new Texture2D(GraphicsDevice, _postImage.Width, _postImage.Height, false, format);
+                _postTexture.SetData(_postImage.GetPixelSpan());
+                IsPostImageLoaded = true;
 
                 _postImage.Dispose();
                 _postImage = null;
@@ -185,12 +168,15 @@ namespace MonoGame.Extended.Testing
         {
             if (!ValidateContentTypeForImage(stream))
                 return;
-            
-            _thumbnailImage = new Image(stream, false);
-
-            // GetPointer() here to decode the image on the downloader thread
-            _thumbnailImage.GetPointer();
-
+            try
+            {
+                _thumbnailImage = Image.Load<Rgba32>(stream);
+            }
+            catch (Exception exc)
+            {
+                IsThumbnailFaulted = true;
+                Console.WriteLine(exc);
+            }
             IsThumbnailDownloaded = true;
         }
 
@@ -198,19 +184,21 @@ namespace MonoGame.Extended.Testing
         {
             if (!ValidateContentTypeForImage(stream))
                 return;
-
-            // needs to be RgbWithAlpha because Texture2D only supports RGBA
-            _postImage = new Image(stream, ImagePixelFormat.RgbWithAlpha, false);
-
-            // GetPointer() here to decode the image on the downloader thread
-            _postImage.GetPointer();
-
+            try
+            {
+                _postImage = Image.Load<Rgba32>(stream);
+            }
+            catch(Exception exc)
+            {
+                IsPostImageFaulted = true;
+                Console.WriteLine(exc);
+            }
             IsPostImageDownloaded = true;
         }
 
         private bool ValidateContentTypeForImage(ResourceStream stream)
         {
-            switch (stream.ContentType.ToLower())
+            switch (stream.ContentType.ToLowerInvariant())
             {
                 case "image/jpg":
                 case "image/jpeg":

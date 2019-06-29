@@ -86,14 +86,14 @@ namespace MonoGame.Extended.Graphics
         protected override void SortDrawCallsAndBindBuffers()
         {
             // Upload the vertices to the GPU and then select that vertex stream for drawing
-            _vertexBuffer.SetData(_vertices, 0, _vertexCount);
+            _vertexBuffer.SetData(_vertices.AsSpan(0, _vertexCount));
             GraphicsDevice.SetVertexBuffer(_vertexBuffer);
 
             Array.Sort(DrawCalls, 0, EnqueuedDrawCallCount);
             BuildSortedIndices();
 
             // Upload the indices to the GPU and then select that index stream for drawing
-            _indexBuffer.SetData(_sortedIndices, 0, _indexCount);
+            _indexBuffer.SetData(_sortedIndices.AsSpan(0, _indexCount));
             GraphicsDevice.Indices = _indexBuffer;
             
             _indexCount = 0;

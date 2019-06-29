@@ -36,7 +36,7 @@ namespace MonoGame.Extended.Testing
         private Vector2 offset = new Vector2(10, 10);
         private Vector2 scrollOffset;
         private float lastScroll;
-        private float smoothScroll;
+        private float _smoothScroll;
         private float layoutHeight;
         private bool _processPosts = true;
 
@@ -88,7 +88,7 @@ namespace MonoGame.Extended.Testing
             Window.ClientSizeChanged += Window_ClientSizeChanged;
         }
 
-        private void Window_ClientSizeChanged()
+        private void Window_ClientSizeChanged(GameWindow window)
         {
             lock (_postGraphics)
             {
@@ -192,9 +192,10 @@ namespace MonoGame.Extended.Testing
 
             if (Input.IsKeyPressed(Keys.Escape))
             {
-                if(OpenPost != null)
+                if (OpenPost != null)
                 {
                     OpenPost = null;
+                    _fullPostOffset = Vector2.Zero;
                 }
                 else
                     Exit();
@@ -225,11 +226,12 @@ namespace MonoGame.Extended.Testing
         protected override void Draw(GameTime time)
         {
             GraphicsDevice.Clear(_clearColor);
-            
+            var viewport = GraphicsDevice.Viewport;
+
             _watch.Restart();
             if (OpenPost != null)
             {
-                DrawFullPost(OpenPost);
+                DrawFullPost(time, viewport, OpenPost);
             }
             else
             {
@@ -238,7 +240,7 @@ namespace MonoGame.Extended.Testing
             }
             _watch.Stop();
 
-            float dx = GraphicsDevice.Viewport.Width + 1;
+            float dx = viewport.Width + 1;
             if(_resourceManager != null)
                 dx = DrawDownloaderDebug(_resourceManager.Downloader);
 
@@ -255,12 +257,14 @@ namespace MonoGame.Extended.Testing
             base.Draw(time);
         }
 
-        private void DrawFullPost(PostGraphicsObject post)
+        private Vector2 _fullPostOffset;
+
+        private void DrawFullPost(GameTime time, Viewport view, PostGraphicsObject post)
         {
             var builder = StringBuilderPool.Rent(post.Data.Title.Length + 5);
-            float maxCharsInLine = GetMaxCharsInView(_font40, GraphicsDevice.Viewport.Width * 1.1f);
+            float maxCharsInLine = Math.Max(1, GetMaxCharsInView(_font40, view.Width * 1.1f));
             PostGraphicsObject.DivideTextIntoLines(post.Data.Title, builder, (int)maxCharsInLine);
-            
+
             _spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
             _spriteBatch.DrawString(_font40, builder, new Vector2(8, 4), Color.White);
 
@@ -269,7 +273,6 @@ namespace MonoGame.Extended.Testing
                 float p = (float)(post.PreviewResponse.BytesDownloaded / (decimal)post.PreviewResponse.ContentLength);
                 if (p >= 0 && p <= 1)
                 {
-                    var view = GraphicsDevice.Viewport;
                     var pos = new Vector2(view.Width / 2f, view.Height / 2f);
                     _postLoadingBar.Draw(_spriteBatch, pos, 60, Color.White, 8, p);
                 }
@@ -280,14 +283,37 @@ namespace MonoGame.Extended.Testing
             var postTex = post.PostTexture;
             if (postTex != null)
             {
+                SizeF titleSize = _font40.MeasureString(builder);
 
-                SizeF size = _font40.MeasureString(builder);
+                float marginX = 5;
+                var textureDst = new RectangleF(
+                    marginX, titleSize.Height + 15, postTex.Width - marginX * 2, postTex.Height);
 
-                _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                _spriteBatch.Draw(postTex, new Vector2(5, size.Height + 12), Color.White);
+                float maxWidth = view.Width - marginX * 2;
+                float zoom = maxWidth / textureDst.Width;
+                if (zoom < 1f)
+                {
+                    textureDst.Width *= zoom;
+                    textureDst.Height *= zoom;
+                }
+
+                const float scrollUpThreshold = 0;
+                float scrollDownThreshold = Math.Min(0, -(textureDst.Height + textureDst.Y + 5 - view.Height));
+
+                if (_fullPostOffset.Y > scrollUpThreshold)
+                    _fullPostOffset.Y = MathHelper.Lerp(_fullPostOffset.Y, scrollUpThreshold, time.Delta * 30f);
+                else if (_fullPostOffset.Y < scrollDownThreshold)
+                    _fullPostOffset.Y = MathHelper.Lerp(_fullPostOffset.Y, scrollDownThreshold, time.Delta * 30f);
+
+                _fullPostOffset.Y += MathHelper.Clamp(_smoothScroll * 10f * time.Delta, -350, 350);
+                textureDst.Position += _fullPostOffset;
+
+                _spriteBatch.Begin(samplerState: zoom < 1f ? SamplerState.LinearClamp : SamplerState.PointClamp);
+                _spriteBatch.DrawRectangle(textureDst + new RectangleF(-1, -1, 2, 2), Color.BlueViolet, 2f);
+                _spriteBatch.Draw(postTex, textureDst, Color.White);
                 _spriteBatch.End();
             }
-            
+
             StringBuilderPool.Return(builder);
         }
 
@@ -369,7 +395,7 @@ namespace MonoGame.Extended.Testing
 
                 Vector2 titleScale = Vector2.One;
                 float textSpace = view.Width - graphic.MainTextPosition.X;
-                int maxTitleChars = GetMaxCharsInTitle(_font26, (int)textSpace, titleScale);
+                int maxTitleChars = Math.Max(1, GetMaxCharsInTitle(_font26, (int)textSpace, titleScale));
 
                 graphic.RenderMainText(_font26, Color.White, titleScale, maxTitleChars);
                 graphic.RenderStatusText(_font26, Color.White, Vector2.One);
@@ -387,7 +413,7 @@ namespace MonoGame.Extended.Testing
             float newScroll = Mouse.GetState().ScrollWheelValue;
             float scroll = newScroll - lastScroll;
             lastScroll = newScroll;
-            smoothScroll = MathHelper.Lerp(smoothScroll + scroll, 0, time.Delta * 8f);
+            _smoothScroll = MathHelper.Lerp(_smoothScroll + scroll, 0, time.Delta * 8f);
 
             if (OpenPost != null)
                 return;
@@ -400,7 +426,7 @@ namespace MonoGame.Extended.Testing
             else if (scrollOffset.Y < scrollDownThreshold)
                 scrollOffset.Y = MathHelper.Lerp(scrollOffset.Y, scrollDownThreshold, time.Delta * 30f);
 
-            scrollOffset.Y += MathHelper.Clamp(smoothScroll * 9f * time.Delta, -350, 350);
+            scrollOffset.Y += MathHelper.Clamp(_smoothScroll * 9f * time.Delta, -350, 350);
         }
 
         private void DrawGraphicTextures()
@@ -454,7 +480,7 @@ namespace MonoGame.Extended.Testing
             float offX = 0;
             float offY = 5;
 
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
             for (int i = 0; i < threadCount; i++)
             {
                 var request = requester.Workers[i].CurrentRequest;
@@ -468,9 +494,6 @@ namespace MonoGame.Extended.Testing
                 }
 
                 bool working = request == null ? false : true;
-                Color brickColor = working ? Color.LimeGreen : Color.PaleVioletRed;
-                _spriteBatch.DrawFilledRectangle(new RectangleF(pos.X, pos.Y, tileWidth - 5, 29), brickColor);
-
                 double progress = 0;
                 if (working)
                 {
@@ -480,8 +503,16 @@ namespace MonoGame.Extended.Testing
                     //Console.WriteLine(request.ContentLength + " / " + request.BytesDownloaded);
                 }
 
-                string ps = (working ? (int)(progress * 100f) : -1).ToString();
-                _spriteBatch.DrawString(_font26, ps, pos + new Vector2(5, 1), Color.DarkBlue);
+                float actualTileWidth = tileWidth - 5;
+                float cutTileWidth = actualTileWidth * (float)progress;
+
+                var tileBackColor = new Color(working ? Color.Goldenrod : Color.PaleVioletRed, 0.5f);
+                var tileColor = new Color(Color.LimeGreen, 0.5f);
+                _spriteBatch.DrawFilledRectangle(new RectangleF(pos.X, pos.Y, actualTileWidth, 29), tileBackColor);
+                _spriteBatch.DrawFilledRectangle(new RectangleF(pos.X, pos.Y, cutTileWidth, 29), tileColor);
+
+                string progresStr = (working ? (int)(progress * 100f) : -1).ToString();
+                _spriteBatch.DrawString(_font26, progresStr, pos + new Vector2(4, 1), Color.LightCyan);
             }
             _spriteBatch.End();
 

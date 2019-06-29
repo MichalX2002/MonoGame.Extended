@@ -21,7 +21,7 @@ namespace MonoGame.Extended
                 if (_whitePixel == null)
                 {
                     var tex = new Texture2D(spriteBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Rgba32);
-                    tex.SetData(new[] { Color.White });
+                    tex.SetData(new[] { Color.White }.AsSpan());
 
                     _whitePixel = new TextureRegion2D(tex, _rectOne);
                 }

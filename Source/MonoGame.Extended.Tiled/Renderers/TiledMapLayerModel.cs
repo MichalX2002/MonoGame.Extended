@@ -5,17 +5,18 @@ namespace MonoGame.Extended.Tiled.Renderers
 {
     public abstract class TiledMapLayerModel : IDisposable
     {
-        protected TiledMapLayerModel(GraphicsDevice graphicsDevice, Texture2D texture, VertexPositionTexture[] vertices, ushort[] indices)
+        protected TiledMapLayerModel(
+            GraphicsDevice graphicsDevice, Texture2D texture, VertexPositionTexture[] vertices, ushort[] indices)
         {
             Texture = texture;
 
             // ReSharper disable once VirtualMemberCallInConstructor
             VertexBuffer = CreateVertexBuffer(graphicsDevice, vertices.Length);
-            VertexBuffer.SetData(vertices, 0, vertices.Length);
+            VertexBuffer.SetData(vertices.AsSpan());
 
             // ReSharper disable once VirtualMemberCallInConstructor
             IndexBuffer = CreateIndexBuffer(graphicsDevice, indices.Length);
-            IndexBuffer.SetData(indices, 0, indices.Length);
+            IndexBuffer.SetData(indices.AsSpan());
 
             TriangleCount = indices.Length / 3;
         }
